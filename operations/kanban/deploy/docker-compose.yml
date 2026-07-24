@@ -1,0 +1,16 @@
+version: "3.9"
+networks: { ops-net: { driver: bridge } }
+services:
+  kanban-service:
+    image: kanban-service:latest; container_name: aiw-kanban; restart: unless-stopped
+    networks: [ops-net]; ports: ["8074:8074", "8080:8080"]
+    environment:
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      QUALITY_API: http://quality-service:8081
+      EQUIPMENT_API: http://equipment-service:8082
+      PRODUCTION_API: http://production-service:8083
+      ANDON_API: http://andon-service:8088
+      ENERGY_API: http://energy-service:8089
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8074/health"]
+      interval: 30s; timeout: 5s; retries: 3; start_period: 30s

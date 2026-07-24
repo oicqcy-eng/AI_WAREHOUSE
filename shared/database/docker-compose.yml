@@ -1,33 +1,18 @@
 # AI-WAREHOUSE — 基础数据库
 # docker compose -f shared/database/docker-compose.yml up -d
 version: "3.9"
-networks:
-  infra-net: { driver: bridge }
-volumes:
-  postgres-data: { }
-  mysql-data: { }
-  redis-data: { }
+networks: { infra-net: { driver: bridge } }
+volumes: { postgres-data: { }, redis-data: { } }
 services:
   postgres:
-    image: postgres:16-alpine
-    container_name: aiw-postgres
-    restart: unless-stopped
-    networks: [infra-net]
-    ports: ["5432:5432"]
+    image: postgres:16-alpine; container_name: aiw-postgres; restart: unless-stopped
+    networks: [infra-net]; ports: ["5432:5432"]
     volumes: [postgres-data:/var/lib/postgresql/data]
-    environment:
-      POSTGRES_DB: ai_warehouse
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    environment: { POSTGRES_DB: ai_warehouse, POSTGRES_USER: app_user, POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me} }
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app_user"]
-      interval: 10s; timeout: 5s; retries: 5
-
+      test: ["CMD-SHELL", "pg_isready -U app_user"]; interval: 10s; timeout: 5s; retries: 5
   redis:
-    image: redis:7-alpine
-    container_name: aiw-redis
-    restart: unless-stopped
-    networks: [infra-net]
-    ports: ["6379:6379"]
+    image: redis:7-alpine; container_name: aiw-redis; restart: unless-stopped
+    networks: [infra-net]; ports: ["6379:6379"]
     volumes: [redis-data:/data]
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-change_me}

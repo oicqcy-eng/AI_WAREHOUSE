@@ -1,0 +1,13 @@
+version: "3.9"
+networks: { mfg-net: { driver: bridge } }
+services:
+  equipment-service:
+    image: equipment-service:latest; container_name: aiw-equipment; restart: unless-stopped
+    networks: [mfg-net]; ports: ["8082:8082"]
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}; DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: equipment_db; DB_USER: ${DB_USER:-app_user}; DB_PASSWORD: ${DB_PASSWORD:-change_me}
+      IIOT_API_URL: http://iiot-service:8090
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s; timeout: 5s; retries: 3; start_period: 30s

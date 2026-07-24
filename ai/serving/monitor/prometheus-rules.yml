@@ -1,0 +1,11 @@
+groups:
+  - name: ai-serving
+    rules:
+      - alert: VLLMDown
+        expr: up{service="vllm"} == 0; for: 1m
+        labels: { severity: critical, module: ai-serving }
+        annotations: { summary: "AI 推理服务宕机" }
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, rate(vllm:request_duration_seconds_bucket[5m])) > 30; for: 5m
+        labels: { severity: warning, module: ai-serving }
+        annotations: { summary: "推理延迟过高 (P95 > 30s)" }

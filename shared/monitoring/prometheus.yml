@@ -1,22 +1,18 @@
 global:
   scrape_interval: 15s; evaluation_interval: 15s
   external_labels: { cluster: ai-warehouse, env: ${ENV:-dev} }
-
 rule_files:
-  # 加载各模块告警规则
-  - ../../master-data/monitor/prometheus-rules.yml
-  - ../../quality/monitor/prometheus-rules.yml
-  - ../../equipment/monitor/prometheus-rules.yml
-  - ../../warehouse/monitor/prometheus-rules.yml
-  - ../../system/monitor/prometheus-rules.yml
-  - ../../kanban/monitor/prometheus-rules.yml
-  - ../../ai-serving/monitor/prometheus-rules.yml
-  - ../../gpu/monitor/prometheus-rules.yml
-
+  - ../../base/system/monitor/prometheus-rules.yml
+  - ../../base/master-data/monitor/prometheus-rules.yml
+  - ../../manufacturing/quality/monitor/prometheus-rules.yml
+  - ../../manufacturing/equipment/monitor/prometheus-rules.yml
+  - ../../manufacturing/warehouse/monitor/prometheus-rules.yml
+  - ../../operations/kanban/monitor/prometheus-rules.yml
+  - ../../ai/serving/monitor/prometheus-rules.yml
+  - ../../ai/gpu/monitor/prometheus-rules.yml
 alerting:
   alertmanagers:
     - static_configs: [targets: ["alertmanager:9093"]]
-
 scrape_configs:
   - job_name: prometheus; static_configs: [targets: ["localhost:9090"]]
   - job_name: node; static_configs: [targets: ["node-exporter:9100"]]

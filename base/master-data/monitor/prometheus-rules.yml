@@ -1,0 +1,11 @@
+groups:
+  - name: master-data
+    rules:
+      - alert: MasterDataDown
+        expr: up{service="master-data-service"} == 0; for: 1m
+        labels: { severity: critical, module: master-data }
+        annotations: { summary: "基础数据服务宕机" }
+      - alert: CodeRuleExhausted
+        expr: master_data_code_usage_percent > 90; for: 24h
+        labels: { severity: warning, module: master-data }
+        annotations: { summary: "编码规则 {{ $labels.code_type }} 使用率超过 90%" }

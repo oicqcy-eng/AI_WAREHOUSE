@@ -1,0 +1,17 @@
+version: "3.9"
+networks: { ai-net: { driver: bridge } }
+volumes: { model-cache: { } }
+services:
+  vllm:
+    image: vllm/vllm-openai:latest; container_name: aiw-vllm; restart: unless-stopped
+    networks: [ai-net]; ports: ["8000:8000"]
+    volumes: [model-cache:/root/.cache/huggingface]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      HF_TOKEN: ${HF_TOKEN:-}
+      MODEL_NAME: ${MODEL_NAME:-Qwen/Qwen2.5-7B-Instruct}
+    command: ["--model", "${MODEL_NAME:-Qwen/Qwen2.5-7B-Instruct}", "--host", "0.0.0.0", "--port", "8000", "--gpu-memory-utilization", "0.9"]
+    deploy:
+      resources:
+        reservations:
+          devices: [{ driver: nvidia, count: all, capabilities: [gpu] }]

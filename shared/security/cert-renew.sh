@@ -8,7 +8,6 @@ for domain in "${DOMAINS[@]}"; do
     certbot renew --cert-name "$domain" --non-interactive --quiet
     cp "/etc/letsencrypt/live/$domain/fullchain.pem" "$CERT_DIR/${domain}.crt"
     cp "/etc/letsencrypt/live/$domain/privkey.pem" "$CERT_DIR/${domain}.key"
-    echo "[$(date)] 证书已更新: $domain"
   fi
 done
 docker exec aiw-nginx nginx -s reload 2>/dev/null || true

@@ -1,27 +1,11 @@
-# AI-WAREHOUSE v3 - 运维实施仓库
-
-# 密钥/证书
+# AI-WAREHOUSE v4
 *.key *.pem *.p12 *.pfx *.cert *.crt *.csr
-**/secrets/*.yaml !**/secrets/*.example.*
 kubeconfig* !kubeconfig.example
-
-# 环境变量
-.env .env.* !.env.example !.env.template
-
-# Terraform/Ansible
+.env .env.* !.env.example
 .terraform/ *.tfstate *.tfvars !*.example.tfvars
 *vault* *.vault
-
-# 日志
 *.log /var/log/ logs/
-
-# IDE/OS
 .DS_Store Thumbs.db *.swp *~ .vscode/ .idea/ *.iml
-
-# 临时
 tmp/ temp/ *.bak *.old
-
-# 大文件/模型
 *.iso *.dmg *.bin model-weights/ *.pt *.pth *.onnx *.gguf
-!**/config/*
 **/docker/data/ **/docker/volumes/

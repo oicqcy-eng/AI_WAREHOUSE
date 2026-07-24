@@ -1,0 +1,14 @@
+version: "3.9"
+networks: { base-net: { driver: bridge } }
+services:
+  system-service:
+    image: system-service:latest; container_name: aiw-system; restart: unless-stopped
+    networks: [base-net]; ports: ["8086:8086"]
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}; DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: system_db; DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s; timeout: 5s; retries: 3; start_period: 30s

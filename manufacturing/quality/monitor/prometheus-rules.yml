@@ -1,0 +1,11 @@
+groups:
+  - name: quality
+    rules:
+      - alert: QualityDown
+        expr: up{service="quality-service"} == 0; for: 1m
+        labels: { severity: critical, module: quality }
+        annotations: { summary: "品质管理服务宕机" }
+      - alert: NCROverdue
+        expr: ncr_overdue_count > 5
+        for: 1h; labels: { severity: warning, module: quality }
+        annotations: { summary: "不合格品超期未处理 ({{ $value }} 单)" }
