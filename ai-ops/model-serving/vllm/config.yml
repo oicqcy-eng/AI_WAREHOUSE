@@ -1,0 +1,40 @@
+# ============================================
+# AI-WAREHOUSE — vLLM 推理服务配置
+# ============================================
+# 参考: https://docs.vllm.ai/en/latest/
+# ============================================
+
+# ── 模型配置 ──
+model:
+  name: Qwen/Qwen2.5-7B-Instruct
+  # 也可用: meta-llama/Llama-3.1-8B-Instruct
+  #          deepseek-ai/DeepSeek-V2-Lite-Chat
+  revision: main
+  dtype: auto            # auto / float16 / bfloat16
+  max_model_len: 8192    # 最大上下文长度
+  trust_remote_code: true
+
+# ── 服务配置 ──
+server:
+  host: 0.0.0.0
+  port: 8000
+  api_key: ${VLLM_API_KEY:-}    # OpenAI 兼容 API Key
+
+# ── GPU 配置 ──
+gpu:
+  memory_utilization: 0.90       # 显存利用率 (0-1)
+  tensor_parallel_size: 1        # 张量并行度 (多 GPU 时增加)
+  gpu_count: 1                   # 使用 GPU 数量
+
+# ── 推理参数 ──
+inference:
+  max_num_batched_tokens: 8192
+  max_num_seqs: 256              # 最大并发序列数
+  enable_prefix_caching: true    # 前缀缓存
+  enable_chunked_prefill: false  # 分块预填充
+
+# ── 性能参数 ──
+performance:
+  block_size: 16                 # 16 / 32 PagedAttention 块大小
+  swap_space: 4                  # Swap 空间 (GB)
+  gpu_memory_utilization: 0.90

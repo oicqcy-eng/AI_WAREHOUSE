@@ -1,0 +1,49 @@
+# ============================================
+# AI-WAREHOUSE — Milvus 向量数据库配置
+# ============================================
+# 部署: single-node 模式（开发/小规模）
+#   docker compose -f orchestration/docker/docker-compose.ai.yml up -d milvus
+# 生产建议: 使用 Milvus Operator 部署分布式集群
+# ============================================
+
+# ── 资源配置 ──
+resources:
+  # 单机模式建议配置
+  standalone:
+    memory: 8Gi
+    cpu: 4
+    disk: 100Gi       # 向量数据存储
+
+  # 索引内存估算
+  # 1M 条 768维 float32 向量 ≈ 3GB 原始数据
+  # IVF_FLAT 索引 ≈ 原始数据 * 1.1
+  # HNSW 索引 ≈ 原始数据 * 1.5 ~ 3
+
+# ── 索引策略 ──
+index:
+  default_metric_type: IP          # IP (内积) / L2 (欧氏距离) / COSINE (余弦)
+  default_index_type: HNSW         # IVF_FLAT / IVF_SQ8 / HNSW / DISKANN
+  index_params:
+    HNSW:
+      M: 16                        # 每个节点的连接数 (4-64)
+      efConstruction: 200          # 构建时的动态范围 (8-512)
+
+# ── 性能调优 ──
+performance:
+  # 资源限制
+  maxQueryMemory: 4Gi
+  maxInsertMemory: 2Gi
+  queryNodeGroups: 1
+
+  # 通道配置
+  msgChannel:
+    chanNamePrefix:
+      cluster: ai-warehouse
+    enableRcvTimeout: 0
+
+# ── 备份策略 ──
+backup:
+  # 使用 milvus-backup 工具
+  # 参考: https://github.com/zilliztech/milvus-backup
+  schedule: "0 2 * * *"            # 每天凌晨 2 点
+  retention: 7                     # 保留 7 天

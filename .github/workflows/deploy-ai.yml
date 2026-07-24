@@ -1,0 +1,54 @@
+name: Deploy AI Services
+
+on:
+  push:
+    tags:
+      - 'ai/v*'
+    paths:
+      - 'orchestration/docker/docker-compose.ai.yml'
+      - 'ai-ops/**'
+      - 'cicd/scripts/deploy.sh'
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'AI 服务名称'
+        required: true
+        type: choice
+        options:
+          - vllm
+          - triton
+          - milvus
+      environment:
+        description: '部署环境'
+        required: true
+        type: choice
+        options:
+          - staging
+          - prod
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, gpu]
+    environment: ${{ inputs.environment || 'staging' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run deploy script
+        run: |
+          chmod +x cicd/scripts/deploy.sh
+          export HF_TOKEN=${{ secrets.HF_TOKEN }}
+          ./cicd/scripts/deploy.sh \
+            "${{ inputs.service }}" \
+            "${{ inputs.environment || 'staging' }}" \
+            "${GITHUB_REF_NAME#ai/v}"
+
+      - name: Health check
+        run: |
+          sleep 10
+          ./cicd/scripts/health-check.sh --json
+
+      - name: Notify
+        if: always()
+        run: |
+          echo "部署完成: ${{ inputs.service }} → ${{ inputs.environment || 'staging' }}"

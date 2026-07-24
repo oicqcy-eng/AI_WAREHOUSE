@@ -1,0 +1,84 @@
+# ====================
+# AI-WAREHOUSE .gitignore
+# 运维实施仓库 — 谨慎忽略敏感与临时文件
+# ====================
+
+# --- 密钥 / 证书 / 凭证 ---
+*.key
+*.pem
+*.p12
+*.pfx
+*.cert
+*.crt
+*.csr
+**/secrets/*.env
+**/secrets/*.json
+**/secrets/*.yaml
+!**/secrets/*.template.*
+!**/secrets/*.example.*
+**/kubeconfig*
+!**/kubeconfig.example
+.helm/secrets/
+
+# --- 环境变量（避免泄露密钥） ---
+.env
+.env.*
+!.env.example
+!.env.template
+
+# --- Terraform ---
+**/terraform/.terraform/
+**/terraform/*.tfstate
+**/terraform/*.tfstate.backup
+**/terraform/*.tfvars
+!**/terraform/*.example.tfvars
+**/terraform/crash.log
+
+# --- Ansible ---
+**/ansible/vault-password
+**/ansible/*.vault
+
+# --- 操作系统 / IDE ---
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.idea/
+*.iml
+*.sublime-*
+
+# --- 日志 ---
+*.log
+/var/log/
+logs/
+
+# --- 临时文件 ---
+tmp/
+temp/
+*.bak
+*.old
+
+# --- 大文件 / 二进制 ---
+*.iso
+*.dmg
+*.pkg
+*.bin
+*.tar.gz
+*.zip
+!scripts/**/*.zip
+model-weights/
+*.pt
+*.pth
+*.onnx
+*.gguf
+!ai-ops/**/*.md
+
+# --- Docker ---
+**/docker/data/
+**/docker/volumes/
+
+# --- 证书相关 ---
+certbot/
+acme-challenge/

@@ -1,0 +1,38 @@
+# ============================================
+# AI-WAREHOUSE — DCGM GPU Exporter 配置
+# ============================================
+# 采集 GPU 指标：温度、显存、功率、利用率
+# 部署方式：
+#   docker run -d --gpus all --restart unless-stopped \
+#     -p 9400:9400 nvidia/dcgm-exporter:latest
+# ============================================
+
+# ── 采集指标列表 ──
+# 温度相关
+#   DCGM_FI_DEV_GPU_TEMP              GPU 核心温度 (°C)
+#   DCGM_FI_DEV_MEMORY_TEMP           显存温度 (°C)
+#
+# 显存相关
+#   DCGM_FI_DEV_FB_FREE               显存空闲 (MiB)
+#   DCGM_FI_DEV_FB_USED               显存已用 (MiB)
+#   DCGM_FI_DEV_FB_TOTAL              显存总量 (MiB)
+#
+# 性能相关
+#   DCGM_FI_DEV_GPU_UTIL              GPU 利用率 (%)
+#   DCGM_FI_DEV_MEM_COPY_UTIL         显存带宽利用率 (%)
+#   DCGM_FI_DEV_SM_CLOCK              SM 时钟 (MHz)
+#   DCGM_FI_DEV_MEM_CLOCK             显存时钟 (MHz)
+#
+# 功耗相关
+#   DCGM_FI_DEV_POWER_USAGE           当前功耗 (W)
+#   DCGM_FI_DEV_POWER_MGMT_LIMIT      功耗上限 (W)
+#
+# 进程相关
+#   DCGM_FI_DEV_COMPUTE_PROCESSES     计算进程数
+
+# ── Prometheus 告警阈值参考 ──
+# GPU Temperature > 85°C   → warning
+# GPU Temperature > 95°C   → critical
+# GPU Memory Used > 95%    → warning
+# GPU Memory Used > 98%    → critical
+# GPU Utilization < 10% for 1h → idle alert (可选)

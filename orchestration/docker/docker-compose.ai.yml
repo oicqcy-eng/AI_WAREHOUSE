@@ -1,0 +1,99 @@
+# ============================================
+# AI-WAREHOUSE — AI 平台服务编排
+# ============================================
+# 使用方式：
+#   docker compose -f docker-compose.yml -f docker-compose.ai.yml up -d
+# ============================================
+
+version: "3.9"
+
+networks:
+  ai-warehouse-net:
+    external: true
+
+volumes:
+  milvus-data:
+  model-cache:
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "50m"
+    max-file: "5"
+
+services:
+
+  # ──────────── 向量数据库 ────────────
+  milvus:
+    image: milvusdb/milvus:v2.4-latest
+    container_name: ai-warehouse-milvus
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - milvus-data:/var/lib/milvus
+    environment:
+      ETCD_USE_EMBED: "true"
+      COMMON_STORAGE_TYPE: local
+    logging: *default-logging
+
+  # ──────────── 模型 Serving（vLLM） ────────────
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: ai-warehouse-vllm
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "8000:8000"
+    volumes:
+      - model-cache:/root/.cache/huggingface
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      HF_TOKEN: ${HF_TOKEN:-}
+    command:
+      - "--model"
+      - "${MODEL_NAME:-Qwen/Qwen2.5-7B-Instruct}"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8000"
+      - "--gpu-memory-utilization"
+      - "0.9"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    logging: *default-logging
+    profiles:
+      - gpu
+
+  # ──────────── Triton Inference Server ────────────
+  triton:
+    image: nvcr.io/nvidia/tritonserver:24.08-py3
+    container_name: ai-warehouse-triton
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ../../ai-ops/model-serving/triton/models:/models
+    command: tritonserver --model-repository=/models --http-port=8001 --grpc-port=8002
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    logging: *default-logging
+    profiles:
+      - gpu

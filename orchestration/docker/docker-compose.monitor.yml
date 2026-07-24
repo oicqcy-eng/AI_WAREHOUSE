@@ -1,0 +1,126 @@
+# ============================================
+# AI-WAREHOUSE — 监控观测栈编排
+# ============================================
+# docker compose -f docker-compose.yml -f docker-compose.monitor.yml up -d
+# ============================================
+
+version: "3.9"
+
+networks:
+  ai-warehouse-net:
+    external: true
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  alertmanager-data:
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "50m"
+    max-file: "5"
+
+services:
+
+  # ──────────── Prometheus ────────────
+  prometheus:
+    image: prom/prometheus:v2.53
+    container_name: ai-warehouse-prometheus
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ../../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../monitoring/prometheus/rules/:/etc/prometheus/rules/:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=30d"
+    logging: *default-logging
+
+  # ──────────── Node Exporter ────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: ai-warehouse-node-exporter
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "9100:9100"
+    command:
+      - "--path.rootfs=/host"
+    volumes:
+      - /:/host:ro,rslave
+    logging: *default-logging
+
+  # ──────────── GPU Exporter ────────────
+  gpu-exporter:
+    image: nvidia/dcgm-exporter:latest
+    container_name: ai-warehouse-gpu-exporter
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "9400:9400"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    logging: *default-logging
+    profiles:
+      - gpu
+
+  # ──────────── Grafana ────────────
+  grafana:
+    image: grafana/grafana:11.1
+    container_name: ai-warehouse-grafana
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ../../monitoring/grafana/datasources/:/etc/grafana/provisioning/datasources/:ro
+      - ../../monitoring/grafana/dashboards/:/etc/grafana/provisioning/dashboards/:ro
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    logging: *default-logging
+
+  # ──────────── Loki（日志） ────────────
+  loki:
+    image: grafana/loki:3.1
+    container_name: ai-warehouse-loki
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+      - ../../monitoring/logging/loki/loki.yml:/etc/loki/loki.yml:ro
+    logging: *default-logging
+
+  # ──────────── Alertmanager ────────────
+  alertmanager:
+    image: prom/alertmanager:v0.27
+    container_name: ai-warehouse-alertmanager
+    restart: unless-stopped
+    networks:
+      - ai-warehouse-net
+    ports:
+      - "9093:9093"
+    volumes:
+      - alertmanager-data:/alertmanager
+      - ../../monitoring/prometheus/rules/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    logging: *default-logging

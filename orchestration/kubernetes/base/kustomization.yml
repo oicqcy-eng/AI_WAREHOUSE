@@ -1,0 +1,33 @@
+# ============================================
+# AI-WAREHOUSE — K8s 基础 Kustomization
+# ============================================
+# kubectl apply -k orchestration/kubernetes/base/
+# ============================================
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  managed-by: ai-warehouse
+  environment: ${ENV}
+
+resources:
+  - ../namespaces/namespace.yml
+  - ../ai-platform/namespace.yml
+  - ../manufacturing/namespace.yml
+  - ../monitoring/namespace.yml
+  - ../storage/namespace.yml
+
+# 按环境覆盖
+patches:
+  - path: ${ENV}-patch.yml
+    target:
+      kind: Deployment
+
+configMapGenerator:
+  - name: ai-platform-config
+    files:
+      - configs/ai-platform.yml
+  - name: monitoring-config
+    files:
+      - configs/monitoring.yml

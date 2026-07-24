@@ -1,0 +1,59 @@
+# ============================================
+# AI-WAREHOUSE — 分布式训练任务模板
+# ============================================
+# 适用于 PyTorch DDP / DeepSpeed / FSDP
+# 调度方式: K8s / Slurm / Ray Train
+# ============================================
+
+# ── 任务定义 ──
+name: llm-finetune
+framework: pytorch
+parallelism: ddp           # ddp / deepspeed / fsdp
+
+# ── 资源需求 ──
+resources:
+  gpu:
+    count: 8
+    model: "A100-80GB"
+    memory_per_gpu: 80Gi
+  cpu: 64
+  memory: 512Gi
+  ephemeral_storage: 1Ti
+
+# ── 训练参数 ──
+training:
+  model: Qwen/Qwen2.5-7B-Instruct
+  precision: bf16           # fp32 / fp16 / bf16 / fp8
+  batch_size: 4
+  gradient_accumulation: 8
+  learning_rate: 2e-5
+  num_epochs: 3
+  max_seq_length: 4096
+
+  # DeepSpeed 配置
+  deepspeed:
+    zero_stage: 3           # 0 / 1 / 2 / 3
+    offload_optimizer: true
+    offload_param: false
+
+  # 分布式
+  distributed:
+    backend: nccl
+    master_port: 29500
+
+# ── 存储 ──
+storage:
+  checkpoint:
+    path: /data/checkpoints
+    interval: 500           # 每 N 步保存一次
+    keep_last: 3
+  output:
+    path: /data/models/finetuned
+  dataset:
+    path: /data/datasets/instruction
+
+# ── 监控 ──
+monitoring:
+  tensorboard: true
+  wandb_project: ai-warehouse-finetune
+  log_every_n_steps: 10

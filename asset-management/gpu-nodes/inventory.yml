@@ -1,0 +1,76 @@
+# ============================================
+# AI-WAREHOUSE — GPU 节点清单
+# ============================================
+
+gpu_nodes:
+  - hostname: ai-dev-01
+    role: development
+    gpu:
+      - index: 0
+        model: "NVIDIA GeForce RTX 4090"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 24564 MiB
+        cuda_version: "12.4"
+        driver_version: "550.54.15"
+        status: active
+        assigned_workload: "模型开发/调试"
+    nvidia_operator: false
+
+  - hostname: ai-stg-01
+    role: staging
+    gpu:
+      - index: 0
+        model: "NVIDIA A100 40GB"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 40960 MiB
+        cuda_version: "12.4"
+        driver_version: "550.54.15"
+        status: active
+        assigned_workload: "预发布推理"
+      - index: 1
+        model: "NVIDIA A100 40GB"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 40960 MiB
+        cuda_version: "12.4"
+        status: active
+        assigned_workload: "预发布推理(冗余)"
+    nvidia_operator: true
+
+  - hostname: ai-prod-01
+    role: production
+    gpu:
+      - index: 0
+        model: "NVIDIA A100 80GB"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 81920 MiB
+        cuda_version: "12.4"
+        driver_version: "550.54.15"
+        status: active
+        assigned_workload: "生产推理-主"
+      - index: 1
+        model: "NVIDIA A100 80GB"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 81920 MiB
+        cuda_version: "12.4"
+        status: active
+        assigned_workload: "生产推理-备"
+    nvidia_operator: true
+
+  - hostname: ai-prod-02
+    role: production
+    gpu:
+      - index: 0
+        model: "NVIDIA A100 80GB"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 81920 MiB
+        cuda_version: "12.4"
+        status: active
+        assigned_workload: "生产推理"
+      - index: 1
+        model: "NVIDIA A100 80GB"
+        uuid: "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        vram: 81920 MiB
+        cuda_version: "12.4"
+        status: active
+        assigned_workload: "训练任务"
+    nvidia_operator: true
