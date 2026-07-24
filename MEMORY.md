@@ -1,3 +1,5 @@
 - [设计演化历程](memory/design-evolution.md) — v1→v2→v3→v4 的完整演变过程与决策原因
 - [仓库结构规范](memory/structure-conventions.md) — 目录组织、模块结构、命名规范的说明
 - [鼎华SMES对照表](memory/smes-coverage.md) — 鼎华SMES功能模块与仓库目录的映射关系
+- [使用指南](memory/usage-guide.md) — 仓库日常使用场景与操作方法
+- [后续任务](memory/next-steps.md) — 仓库创建完成后的推荐任务清单
