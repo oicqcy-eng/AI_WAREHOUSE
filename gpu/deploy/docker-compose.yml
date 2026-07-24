@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  gpu-exporter:
+    image: nvidia/dcgm-exporter:latest
+    container_name: aiw-gpu-exporter
+    restart: unless-stopped
+    ports: ["9400:9400"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

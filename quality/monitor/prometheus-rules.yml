@@ -1,0 +1,37 @@
+# ============================================
+# 质量管理 — 告警规则
+# ============================================
+
+groups:
+  - name: quality
+    interval: 30s
+    rules:
+      - alert: QualityServiceDown
+        expr: up{service="quality-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          module: quality
+        annotations:
+          summary: "质量管理服务宕机"
+          description: "quality-service 已离线超过 1 分钟，请立即检查"
+
+      - alert: QualityHighErrorRate
+        expr: rate(quality_errors_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          module: quality
+        annotations:
+          summary: "质量模块错误率过高 ({{ $value }}/s)"
+          description: "最近 5 分钟错误率 {{ $value }}次/秒，超过阈值 10次/秒"
+
+      - alert: NCROverdue
+        expr: ncr_overdue_count > 5
+        for: 1h
+        labels:
+          severity: warning
+          module: quality
+        annotations:
+          summary: "不合格品超期未处理 ({{ $value }} 单)"
+          description: "有 {{ $value }} 单 NCR 超过处理时限"

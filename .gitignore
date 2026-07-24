@@ -1,9 +1,6 @@
-# ====================
-# AI-WAREHOUSE .gitignore
-# 运维实施仓库 — 谨慎忽略敏感与临时文件
-# ====================
+# AI-WAREHOUSE — 运维实施仓库 .gitignore
 
-# --- 密钥 / 证书 / 凭证 ---
+# 密钥/证书/凭证
 *.key
 *.pem
 *.p12
@@ -11,74 +8,67 @@
 *.cert
 *.crt
 *.csr
-**/secrets/*.env
-**/secrets/*.json
-**/secrets/*.yaml
-!**/secrets/*.template.*
+**/secrets/*
 !**/secrets/*.example.*
+!**/secrets/*.template.*
 **/kubeconfig*
 !**/kubeconfig.example
-.helm/secrets/
 
-# --- 环境变量（避免泄露密钥） ---
+# 环境变量
 .env
 .env.*
 !.env.example
 !.env.template
 
-# --- Terraform ---
-**/terraform/.terraform/
-**/terraform/*.tfstate
-**/terraform/*.tfstate.backup
-**/terraform/*.tfvars
-!**/terraform/*.example.tfvars
-**/terraform/crash.log
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!*.example.tfvars
+crash.log
 
-# --- Ansible ---
-**/ansible/vault-password
-**/ansible/*.vault
+# Ansible
+ansible-vault-password
+*.vault
 
-# --- 操作系统 / IDE ---
+# 日志
+*.log
+/var/log/
+logs/
+
+# 操作系统/IDE
 Thumbs.db
 .DS_Store
 *.swp
 *.swo
 *~
-.vscode/settings.json
+.vscode/
 .idea/
 *.iml
-*.sublime-*
 
-# --- 日志 ---
-*.log
-/var/log/
-logs/
-
-# --- 临时文件 ---
+# 临时文件
 tmp/
 temp/
 *.bak
 *.old
 
-# --- 大文件 / 二进制 ---
+# 大文件/模型权重
 *.iso
 *.dmg
 *.pkg
 *.bin
-*.tar.gz
-*.zip
-!scripts/**/*.zip
 model-weights/
 *.pt
 *.pth
 *.onnx
 *.gguf
-!ai-ops/**/*.md
+!**/config/*
 
-# --- Docker ---
+# Docker 持久数据
 **/docker/data/
 **/docker/volumes/
 
-# --- 证书相关 ---
+# 证书
 certbot/
 acme-challenge/

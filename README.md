@@ -2,145 +2,91 @@
 
 > **复合AI平台 · 运维实施仓库**
 >
-> 面向 AI + 智能制造融合平台的**基础设施即代码（IaC）**与**运维实施中心**。
-> 覆盖从 GPU 集群管理、模型 Serving 部署到制造执行系统（MES）全链路的
-> 部署、监控、灾备与日常运维。
-
-[![GitHub](https://img.shields.io/badge/repo-ops--center-blue)]()
+> 按业务功能模块组织的运维实施中心，覆盖 AI 推理 + 智能制造全链路的
+> 部署、监控、维护、灾备与日常运维。
 
 ---
 
-## 📌 仓库定位
+## 🏗️ 功能模块导航
 
-本仓库**不是**软件开发仓库，而是**运维实施**的单一可信源（Single Source of Truth）：
+### 🏭 制造域
 
-| 包含 ✅ | 不包含 ❌ |
-|---------|----------|
-| Docker Compose / K8s 编排文件 | 微服务业务源码 |
-| Prometheus / Grafana 监控配置 | 前端 / 移动端代码 |
-| 部署 & 回滚脚本 | 开发环境构建工具链 |
-| Ansible / Terraform 自动化 | 单元测试 / 集成测试 |
-| 数据库迁移与备份策略 | 业务逻辑代码 |
-| AI 模型 Serving 与 GPU 运维 | 模型训练代码 |
-| 应急预案 / SOP / Runbooks | 产品需求文档 |
-| SSL 证书 / 网络 / 安全基线 | UI/UX 设计稿 |
+| 模块 | 说明 | 端口 | 运维入口 |
+|------|------|------|---------|
+| **[quality](quality/)** | 质量管理 (IQC/IPQC/OQC/SPC/NCR) | 8081 | [部署](quality/runbooks/deploy.md) · [监控](quality/monitor/) · [故障排查](quality/runbooks/troubleshoot.md) |
+| **[equipment](equipment/)** | 设备管理 (台账/OEE/保养/维修) | 8082 | [部署](equipment/runbooks/deploy.md) · [监控](equipment/monitor/) |
+| **[production](production/)** | 生产管理 (执行/派工/报工/WIP) | 8083 | 部署 · 监控 |
+| **[material](material/)** | 物料管理 (库存/BOM/出入库) | 8084 | 部署 · 监控 |
+| **[work-order](work-order/)** | 工单管理 (拆分/优先级/完工) | 8085 | 部署 · 监控 |
+| **[system](system/)** | 系统配置 (用户/角色/权限/审计) | 8086 | [部署](system/runbooks/deploy.md) · [监控](system/monitor/) |
+| **[process](process/)** | 工艺管理 (路线/SOP/参数/版本) | 8087 | 部署 · 监控 |
+| **[andon](andon/)** | 安灯 (异常呼叫/升级/响应) | 8088 | 部署 · 监控 |
+| **[energy](energy/)** | 能源管理 (能耗/能效/碳排) | 8089 | 部署 · 监控 |
+| **[iiot](iiot/)** | IIoT 采集 (边缘/协议/采集器) | 8090 | 部署 · 监控 |
+| **[reporting](reporting/)** | 报表引擎 (报表/导出/分发) | 8091 | 部署 · 监控 |
+| **[notification](notification/)** | 通知服务 (站内/邮件/短信/企微) | 8092 | 部署 · 监控 |
+| **[document](document/)** | 文档管理 (图纸/文档/审批/检索) | 8093 | 部署 · 监控 |
+| **[traceability](traceability/)** | 追溯管理 (批次/正反追溯) | 8094 | 部署 · 监控 |
 
----
+### 🤖 AI 域
 
-## 🏗️ 目录概览
+| 模块 | 说明 | 端口 | 运维入口 |
+|------|------|------|---------|
+| **[ai-serving](ai-serving/)** | AI 推理 (vLLM / Triton) | 8000 | [部署](ai-serving/runbooks/deploy.md) · [监控](ai-serving/monitor/) |
+| **[gpu](gpu/)** | GPU 资源管理 | 9400 | [运维](gpu/runbooks/ops.md) · [监控](gpu/monitor/) |
+| **[vector-db](vector-db/)** | 向量数据库 (Milvus / Qdrant) | 19530 | 部署 · 监控 |
+| **[training](training/)** | 模型训练 | - | 部署 · 监控 |
 
-```
-AI-WAREHOUSE/
-├── environments/          # 🌍 环境定义（dev/staging/prod）
-├── orchestration/         # 🐳 容器编排（Docker + K8s）
-├── ai-ops/               # 🤖 AI 平台运维（GPU/模型/向量库）
-├── cicd/                 # 🔄 CI/CD 流水线
-├── monitoring/           # 📊 监控与可观测性
-├── database/             # 🗄️ 数据库运维
-├── disaster-recovery/    # 🛡️ 灾备与恢复
-├── security/             # 🔒 安全运维
-├── network/              # 🌐 网络管理
-├── asset-management/     # 📋 资产清单
-├── runbooks/             # 📖 运维手册（SOP）
-├── automation/           # ⚙️ 自动化（Ansible/Terraform）
-├── scripts/              # 🔧 工具脚本
-└── docs/                 # 📝 文档
-```
+### 🔧 共享基础设施
 
----
-
-## 🚀 快速导航
-
-| 我想做什么 | 去看这里 |
-|-----------|---------|
-| 查看环境配置 | [`environments/`](environments/) |
-| 部署整个平台 | [`orchestration/docker/docker-compose.yml`](orchestration/docker/docker-compose.yml) |
-| 部署 AI 模型 | [`ai-ops/model-serving/`](ai-ops/model-serving/) |
-| 查看 GPU 状态 | [`ai-ops/gpu/monitoring/`](ai-ops/gpu/monitoring/) |
-| 部署到 K8s | [`orchestration/kubernetes/`](orchestration/kubernetes/) |
-| 配置告警规则 | [`monitoring/prometheus/rules/`](monitoring/prometheus/rules/) |
-| 查看部署手册 | [`runbooks/deployment/`](runbooks/deployment/) |
-| 故障排查 | [`runbooks/troubleshooting/`](runbooks/troubleshooting/) |
-| 数据库备份 | [`database/postgresql/backup/`](database/postgresql/backup/) |
-| 灾备恢复 | [`disaster-recovery/restore/runbooks/`](disaster-recovery/restore/runbooks/) |
+| 组件 | 说明 | 目录 |
+|------|------|------|
+| **PostgreSQL** | 关系数据库 | [shared/database/postgresql/](shared/database/postgresql/) |
+| **Redis** | 缓存 | [shared/database/redis/](shared/database/redis/) |
+| **Nginx** | API 网关 | [shared/gateway/nginx/](shared/gateway/nginx/) |
+| **MinIO** | 对象存储 | [shared/storage/minio/](shared/storage/minio/) |
+| **Prometheus** | 指标采集 | [shared/monitoring/prometheus/](shared/monitoring/prometheus/) |
+| **Grafana** | 可视化面板 | [shared/monitoring/grafana/](shared/monitoring/grafana/) |
+| **Loki** | 日志汇聚 | [shared/monitoring/loki/](shared/monitoring/loki/) |
+| **SSL** | 证书管理 | [shared/security/ssl/](shared/security/ssl/) |
+| **Ansible** | 自动化 | [shared/automation/ansible/](shared/automation/ansible/) |
+| **Terraform** | IaC | [shared/automation/terraform/](shared/automation/terraform/) |
 
 ---
 
-## 📋 管理范围
-
-### 系统组件
-
-```mermaid
-graph TB
-    subgraph "AI 平台"
-        A1[模型 Serving<br/>Triton/vLLM/Ray] 
-        A2[GPU 集群<br/>NVIDIA Operator]
-        A3[向量数据库<br/>Milvus/Qdrant]
-        A4[ML Pipeline]
-    end
-    
-    subgraph "制造平台"
-        B1[MES 微服务群<br/>15 模块]
-        B2[IIoT 边缘网关]
-        B3[工业数据库<br/>PG/Redis/TimescaleDB]
-        B4[看板大屏]
-    end
-    
-    subgraph "基础设施"
-        C1[监控栈<br/>Prometheus/Grafana]
-        C2[日志中心<br/>Loki/Filebeat]
-        C3[API 网关<br/>Nginx/Traefik]
-        C4[认证<br/>Keycloak]
-    end
-    
-    A1 <--> A2
-    B1 <--> B2
-    A1 <--> C1
-    B1 <--> C1
-    C1 <--> C2
-    C1 <--> C3
-    C3 <--> A1
-    C3 <--> B1
-    C4 <--> C3
-```
-
----
-
-## 🔧 快速使用
+## 🚀 快速开始
 
 ```bash
-# ── 本地全栈部署 ──
-docker compose -f orchestration/docker/docker-compose.yml up -d
+# 1. 启动基础设施 (数据库/缓存/监控)
+docker compose -f shared/database/docker-compose.yml up -d
+docker compose -f shared/monitoring/docker-compose.yml up -d
 
-# ── 仅 AI 服务 ──
-docker compose -f orchestration/docker/docker-compose.ai.yml up -d
+# 2. 启动业务模块 (以 quality 为例)
+docker compose -f quality/deploy/docker-compose.yml up -d
 
-# ── 仅监控栈 ──
-docker compose -f orchestration/docker/docker-compose.monitor.yml up -d
+# 3. 启动 AI 推理 (需要 GPU)
+docker compose -f ai-serving/deploy/docker-compose.yml up -d vllm
 
-# ── K8s 部署 ──
-kubectl apply -k orchestration/kubernetes/base/
+# 4. 健康检查
+./cicd/scripts/health-check.sh
 ```
 
 ---
 
-## 🧭 运维原则
+## 📋 运维原则
 
-1. **IaC 优先** — 所有环境配置以代码形式管理，可追溯、可复现
-2. **不可变基础设施** — 不手工登录修改服务器，变更走 CI/CD 或 IaC
-3. **可观测性** — 无监控不发布，所有服务必须挂载到监控体系
-4. **文档即运维** — SOP/Runbook 与配置同步更新
-5. **最小权限** — 密钥使用临时凭证 + 自动轮转
-
----
-
-## 🤝 贡献
-
-提交 Issue 或 PR 时请参考 [Issue 模板](.github/ISSUE_TEMPLATE/)。
-所有变更需更新对应 runbook 和监控面板。
+1. **模块自治** — 每个模块的部署/监控/文档都在自己目录内
+2. **IaC 优先** — 所有配置以代码形式管理
+3. **可观测性** — 无监控不发布
+4. **文档即运维** — Runbook 与配置同步更新
 
 ---
 
-## 📄 许可
+## 📂 全局目录
 
-MIT License — 详见 [LICENSE](LICENSE)
+| 目录 | 说明 |
+|------|------|
+| [cicd/](cicd/) | CI/CD 流水线与部署脚本 |
+| [environments/](environments/) | 环境变量配置 (dev/staging/prod) |
+| [docs/](docs/) | 全局架构文档与变更日志 |
+| [scripts/](scripts/) | 全局工具脚本 |

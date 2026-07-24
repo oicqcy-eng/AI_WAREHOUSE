@@ -1,0 +1,39 @@
+groups:
+  - name: gpu
+    interval: 30s
+    rules:
+      - alert: GPUTemperature
+        expr: DCGM_FI_DEV_GPU_TEMP > 85
+        for: 5m
+        labels:
+          severity: warning
+          module: gpu
+        annotations:
+          summary: "GPU 温度过高 ({{ $value }}°C)"
+
+      - alert: GPUUnavailable
+        expr: up{job="gpu"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          module: gpu
+        annotations:
+          summary: "GPU Exporter 不可达"
+
+      - alert: GPUMemoryHigh
+        expr: (DCGM_FI_DEV_FB_USED / DCGM_FI_DEV_FB_TOTAL) * 100 > 95
+        for: 5m
+        labels:
+          severity: warning
+          module: gpu
+        annotations:
+          summary: "显存使用率 > 95%"
+
+      - alert: GPUDriverVersion
+        expr: DCGM_FI_DEV_DRIVER_VERSION{driver!~"550.*"} > 0
+        for: 1h
+        labels:
+          severity: info
+          module: gpu
+        annotations:
+          summary: "GPU 驱动版本不在推荐范围 (推荐 550.x)"
