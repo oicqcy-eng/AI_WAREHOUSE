@@ -1,0 +1,19 @@
+version: "3.9"
+networks: { master-net: { driver: bridge } }
+services:
+  master-data-service:
+    image: master-data-service:latest
+    container_name: aiw-master-data
+    restart: unless-stopped
+    networks: [master-net]
+    ports: ["8071:8071"]
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: master_db
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8071/health"]
+      interval: 30s; timeout: 5s; retries: 3; start_period: 30s

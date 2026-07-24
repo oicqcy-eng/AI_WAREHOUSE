@@ -1,0 +1,16 @@
+version: "3.9"
+networks: { mould-net: { driver: bridge } }
+services:
+  mould-service:
+    image: mould-service:latest
+    container_name: aiw-mould
+    restart: unless-stopped
+    networks: [mould-net]
+    ports: ["8075:8075"]
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}; DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: mould_db; DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8075/health"]
+      interval: 30s; timeout: 5s; retries: 3; start_period: 30s

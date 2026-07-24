@@ -1,0 +1,12 @@
+groups:
+  - name: warehouse
+    interval: 30s
+    rules:
+      - alert: WarehouseDown
+        expr: up{service="warehouse-service"} == 0
+        for: 1m; labels: { severity: critical, module: warehouse }
+        annotations: { summary: "仓库管理服务宕机" }
+      - alert: StockBelowSafety
+        expr: warehouse_stock_safety_ratio < 1
+        for: 1h; labels: { severity: warning, module: warehouse }
+        annotations: { summary: "物料 {{ $labels.material_code }} 库存低于安全库存" }

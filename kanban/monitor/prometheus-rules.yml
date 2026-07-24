@@ -1,0 +1,12 @@
+groups:
+  - name: kanban
+    interval: 30s
+    rules:
+      - alert: KanbanDown
+        expr: up{service="kanban-service"} == 0
+        for: 1m; labels: { severity: critical, module: kanban }
+        annotations: { summary: "看板服务宕机" }
+      - alert: KanbanDataStale
+        expr: time() - kanban_last_update_timestamp > 60
+        for: 5m; labels: { severity: warning, module: kanban }
+        annotations: { summary: "看板数据超过 60 秒未更新" }

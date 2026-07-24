@@ -1,0 +1,18 @@
+version: "3.9"
+networks: { barcode-net: { driver: bridge } }
+services:
+  barcode-service:
+    image: barcode-service:latest
+    container_name: aiw-barcode
+    restart: unless-stopped
+    networks: [barcode-net]
+    ports: ["8076:8076"]
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}; DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: barcode_db; DB_USER: ${DB_USER:-app_user}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me}
+    volumes:
+      - ./config/printers:/etc/barcode/printers
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8076/health"]
+      interval: 30s; timeout: 5s; retries: 3; start_period: 30s

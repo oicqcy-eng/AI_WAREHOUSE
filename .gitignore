@@ -1,74 +1,27 @@
-# AI-WAREHOUSE — 运维实施仓库 .gitignore
+# AI-WAREHOUSE v3 - 运维实施仓库
 
-# 密钥/证书/凭证
-*.key
-*.pem
-*.p12
-*.pfx
-*.cert
-*.crt
-*.csr
-**/secrets/*
-!**/secrets/*.example.*
-!**/secrets/*.template.*
-**/kubeconfig*
-!**/kubeconfig.example
+# 密钥/证书
+*.key *.pem *.p12 *.pfx *.cert *.crt *.csr
+**/secrets/*.yaml !**/secrets/*.example.*
+kubeconfig* !kubeconfig.example
 
 # 环境变量
-.env
-.env.*
-!.env.example
-!.env.template
+.env .env.* !.env.example !.env.template
 
-# Terraform
-**/.terraform/
-*.tfstate
-*.tfstate.backup
-*.tfvars
-!*.example.tfvars
-crash.log
-
-# Ansible
-ansible-vault-password
-*.vault
+# Terraform/Ansible
+.terraform/ *.tfstate *.tfvars !*.example.tfvars
+*vault* *.vault
 
 # 日志
-*.log
-/var/log/
-logs/
+*.log /var/log/ logs/
 
-# 操作系统/IDE
-Thumbs.db
-.DS_Store
-*.swp
-*.swo
-*~
-.vscode/
-.idea/
-*.iml
+# IDE/OS
+.DS_Store Thumbs.db *.swp *~ .vscode/ .idea/ *.iml
 
-# 临时文件
-tmp/
-temp/
-*.bak
-*.old
+# 临时
+tmp/ temp/ *.bak *.old
 
-# 大文件/模型权重
-*.iso
-*.dmg
-*.pkg
-*.bin
-model-weights/
-*.pt
-*.pth
-*.onnx
-*.gguf
+# 大文件/模型
+*.iso *.dmg *.bin model-weights/ *.pt *.pth *.onnx *.gguf
 !**/config/*
-
-# Docker 持久数据
-**/docker/data/
-**/docker/volumes/
-
-# 证书
-certbot/
-acme-challenge/
+**/docker/data/ **/docker/volumes/
