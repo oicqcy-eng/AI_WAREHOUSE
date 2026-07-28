@@ -3,3 +3,4 @@
 - [鼎华SMES对照表](memory/smes-coverage.md) — 鼎华SMES功能模块与仓库目录的映射关系
 - [使用指南](memory/usage-guide.md) — 仓库日常使用场景与操作方法
 - [后续任务](memory/next-steps.md) — 仓库创建完成后的推荐任务清单
+- [重庆SMES项目汇报](docs/changelogs/chongqing-smes-report.md) — 鼎华SMES建设情况汇报（给老板看的完整报告）
