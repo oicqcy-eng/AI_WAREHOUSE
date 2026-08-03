@@ -1,0 +1,45 @@
+# MES实施专家 Agent 配置模板
+# 说明: 复制本文件为 agent.local.yaml 后按实际填写；agent.yaml 为版本基线
+# 不存放真实密钥，密钥通过环境变量/密钥管理注入
+
+agent:
+  name: mes-implement-expert
+  version: "0.2.0"
+
+# 模型与推理参数 (对应 ai/serving/)
+model:
+  # 推理服务地址，按环境替换
+  base_url: "{{ENV.AI_SERVING_URL}}"
+  # 主模型: 复杂推理/方案生成
+  primary: "claude-sonnet-5"
+  # 轻量模型: 分类/抽取/标题生成
+  light: "claude-haiku-4-5"
+  temperature: 0.3          # 咨询输出要求稳定，温度偏低
+  max_tokens: 8192
+  timeout_sec: 120
+
+# 知识检索 (对应 ai/vector-db/)
+retrieval:
+  collection: "mes-knowledge"
+  top_k: 8
+  score_threshold: 0.6      # 低于阈值不注入上下文，避免幻觉
+
+# 工具白名单 (对应 tools/)
+tools_enabled:
+  - mes_query              # 查询鼎华SMES业务数据(只读)
+  - sql_query              # 只读 SQL 查询
+  - report_generate        # 方案/蓝图文档生成
+  - excel_export           # 交付物导出
+
+# 输出与行为约束
+behavior:
+  language: "zh-CN"
+  # 咨询类输出要求专业严谨，不确定时须说明，禁止编造客户数据
+  no_hallucination: true
+  citation_required: true  # 引用知识/数据须标注来源
+  max_steps: 8             # 单次对话最大工具步数
+
+# 评估关联 (对应 evaluation/)
+evaluation:
+  test_suite: "evaluation/test-cases.md"
+  min_score: 0.85          # 发布门槛: 综合准确率
