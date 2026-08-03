@@ -77,6 +77,16 @@ shared/          共享基础设施 ← 最先部署
 3. **依赖方向清晰**: base ← manufacturing ← operations，ai 和 shared 横切
 4. **README 全覆盖**: 每个目录都有 README 说明定位
 
+## v4.1 — 新增 Agent 业务层（按 Agent 自包含）
+
+**思路**: 在 v4 五层之上增加 `agent/`（AI Agent 业务层），与 `ai/`（基础设施层）解耦。
+
+**决策**: 曾尝试按「12 阶段流水线」组织（01_Project…11_Operation…99_Common），
+与 v1「按能力组织」犯同类错误 —— 找一个 Agent 的物料要跨 6+ 目录。
+最终改为**一个 Agent = 一个自包含目录**，延续 v4 模块内聚哲学：
+`mes-implement-expert/`、`mes-report-agent/`、`industrial-consultant/`，跨 Agent 资产放 `_shared/`。
+生命周期（规划→运营闭环）作为**过程文档**写入 `docs/agent-lifecycle.md`，不用目录表达。
+
 ## 经验总结
 
 - 运维实施仓库 ≠ DevOps仓库：应按业务功能组织，而非按运维能力

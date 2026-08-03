@@ -7,17 +7,19 @@ metadata:
 
 # 仓库结构规范
 
-## 5 层架构
+## 6 层架构
 
 ```
 base/              基础层 — 所有模块依赖的基础服务
 manufacturing/     制造执行层 — MES 核心业务
 operations/        运营管理层 — 基于制造数据的可视化
 ai/                AI智能层 — 独立 AI 能力
+agent/             AI Agent 业务层 — 一个 Agent 一个自包含目录
 shared/            共享基础设施 — 横切所有层
 ```
 
-依赖顺序：shared → base → manufacturing → operations，ai 可独立部署。
+依赖顺序：shared → base → manufacturing → operations，ai 可独立部署；
+agent/ 使用 ai/ 的推理与向量库 + 业务层数据，横切于上。
 
 ## 模块模板
 
@@ -42,6 +44,24 @@ module/
 └── tests/          运维验证
     └── smoke-test.sh        冒烟测试
 ```
+
+## Agent 模块模板（agent/ 下）
+
+```
+agent/<agent-name>/
+├── README.md       能力定义 / 依赖 / 使用入口
+├── config/         Agent配置(模型/参数/路由)
+├── prompt/         system/role/task prompt + few-shot + 优化记录
+├── knowledge/      知识引用清单 / FAQ / SOP / 案例
+├── tools/          接口定义 / SQL 模板 / 脚本
+├── workflow/       多步流程定义
+├── data/           数据字典 / 样本数据
+├── evaluation/     测试问题库 / 标准答案 / 准确率记录
+└── runbooks/       使用 / 维护 / 故障手册
+```
+
+对应关系：`deploy→config`、`database→data`、`monitor→evaluation`、`runbooks→runbooks`、`tests→evaluation`。
+跨 Agent 公共资产放 `agent/_shared/`。生命周期过程见 `docs/agent-lifecycle.md`。
 
 ## 命名规范
 

@@ -2,7 +2,7 @@
 
 > **复合AI平台 · 运维实施仓库**
 >
-> 覆盖鼎华SMES全功能 + AI智能层，按业务层级组织，模块自包含。
+> 覆盖鼎华SMES全功能 + AI智能层 + AI Agent业务层，按业务层级组织，模块自包含。
 
 ---
 
@@ -39,6 +39,12 @@ ai/                 ← AI智能层：差异化优势
 ├── gpu/            GPU资源 (DCGM/调度)
 ├── vector-db/      向量数据库
 └── training/       模型训练
+
+agent/              ← AI Agent 业务层：一个 Agent 一个自包含目录
+├── mes-implement-expert/   MES实施专家
+├── mes-report-agent/       MES项目汇报
+├── industrial-consultant/  工业数字化顾问
+└── _shared/                跨 Agent 公共资产
 
 shared/             ← 共享基础设施 (横切所有层)
     database/       PostgreSQL / Redis
