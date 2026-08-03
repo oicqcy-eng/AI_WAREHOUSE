@@ -50,18 +50,20 @@ module/
 ```
 agent/<agent-name>/
 ├── README.md       能力定义 / 依赖 / 使用入口
+├── CHANGELOG.md    版本变更记录(语义化版本+git tag，不做目录快照)
 ├── config/         Agent配置(模型/参数/路由)
 ├── prompt/         system/role/task prompt + few-shot + 优化记录
 ├── knowledge/      知识引用清单 / FAQ / SOP / 案例
 ├── tools/          接口定义 / SQL 模板 / 脚本
 ├── workflow/       多步流程定义
 ├── data/           数据字典 / 样本数据
-├── evaluation/     测试问题库 / 标准答案 / 准确率记录
+├── evaluation/     测试问题库 / 标准答案 / 评分(准确率/专业度/稳定性)
 └── runbooks/       使用 / 维护 / 故障手册
 ```
 
 对应关系：`deploy→config`、`database→data`、`monitor→evaluation`、`runbooks→runbooks`、`tests→evaluation`。
-跨 Agent 公共资产放 `agent/_shared/`。生命周期过程见 `docs/agent-lifecycle.md`。
+知识分级：L1 行业知识 `docs/industry-knowledge/` → L2 通用 `agent/_shared/` → L3 Agent 专属 `knowledge/`。
+版本发布：`git tag agent/<agent-name>/vX.Y.Z`。生命周期过程见 `docs/agent-lifecycle.md`。
 
 ## 命名规范
 

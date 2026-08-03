@@ -40,11 +40,14 @@ ai/                 ← AI智能层：差异化优势
 ├── vector-db/      向量数据库
 └── training/       模型训练
 
-agent/              ← AI Agent 业务层：一个 Agent 一个自包含目录
+agent/              ← AI Agent 能力资产库：一个 Agent 一个自包含目录，可版本化/可评估/可运营
 ├── mes-implement-expert/   MES实施专家
 ├── mes-report-agent/       MES项目汇报
 ├── industrial-consultant/  工业数字化顾问
-└── _shared/                跨 Agent 公共资产
+└── _shared/                跨 Agent 公共资产(模板/通用Prompt/工具)
+
+知识分级: 行业知识 docs/industry-knowledge/ · 通用知识 _shared/ · Agent 专属 knowledge/
+工程化:   语义化版本+git tag · 每 Agent CHANGELOG · evaluation 质量体系
 
 shared/             ← 共享基础设施 (横切所有层)
     database/       PostgreSQL / Redis

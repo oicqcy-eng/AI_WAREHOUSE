@@ -87,6 +87,40 @@ shared/          共享基础设施 ← 最先部署
 `mes-implement-expert/`、`mes-report-agent/`、`industrial-consultant/`，跨 Agent 资产放 `_shared/`。
 生命周期（规划→运营闭环）作为**过程文档**写入 `docs/agent-lifecycle.md`，不用目录表达。
 
+## v4.2 — Agent 工程化增强（批判吸收外部建议）
+
+**来源**: 参考 ChatGPT 对 v4.1 架构的评审建议。
+
+**采纳**（工程化思想，不破坏自包含）:
+1. Agent 作为一级资产（v4.1 已实现）
+2. **版本管理**：语义化版本 + git tag，每 Agent `CHANGELOG.md`；拒绝"复制 versions/ 目录"（Git 本身即版本管理）
+3. **质量体系**：evaluation/ 强化为 测试集 + 标准答案 + 评分（准确率/专业度/稳定性）
+4. **知识资产分级**：L1 行业知识(`docs/industry-knowledge/`) → L2 通用(`_shared/`) → L3 Agent 专属(`knowledge/`)，向量在 `ai/vector-db/`
+5. 生命周期文档补"版本发布"环节
+
+**拒绝**（否则退回 v1 老路）:
+1. 全局能力层结构（business/knowledge/tools/data/evaluation/operation 全部提到顶层）—— 正是 v1"按能力组织"的翻版，一个 Agent 的物料会散落 6+ 处
+2. 大写下划线命名（`MES_Expert_Agent`）—— 违反仓库 kebab-case 规范
+3. `agents/` 复数命名 —— 与其他单数层名(base/ ai/ shared/)不一致
+
+**经验**: 外部建议常"批评与方案自相矛盾"——批判吸收其指出的**问题**，验证其推荐的**方案**是否自洽，再落地。
+
+## v4.3 — 外部建议二次评审（交付物与边界明确）
+
+**来源**: 第二轮 ChatGPT 架构评审。
+
+**采纳**:
+1. **交付物归档**：新建 `docs/deliverables/`（按客户/项目），明确"能力与成品分离"——agent/ 存可复用能力，deliverables/ 存一次性成品
+2. **memory 边界**：`memory/README.md` 明确"存项目设计记忆，不存业务知识/运行时记忆"；Agent 运行时记忆(对话/画像)=动态数据不入库，由运行层承载
+
+**拒绝**（破坏 v4 结构）:
+1. **新增顶层 `applications/`**：交付物是一性成品应归档，生成能力已在 agent/workflow；顶层再加层会形成第三处"产出物"家，归属混乱
+2. **`base` → `foundation` 改名**：纯重命名零新增价值，破坏全部引用；`base/` 语境语义清晰
+3. **`manufacturing` 改知识库**：误解定位——manufacturing/ 是部署运维模块(deploy/monitor/runbooks)，非文档库；行业知识已由 `docs/industry-knowledge/` 承接
+4. **`ai` 层改 llm/rag/embedding**：现状 serving/gpu/vector-db/training 已覆盖推理/GPU/向量/训练
+
+**经验**: 外部评审常混淆"运维实施仓库"与"知识笔记仓库"——先确认对方对仓库定位的理解，再判断其建议是否适用。
+
 ## 经验总结
 
 - 运维实施仓库 ≠ DevOps仓库：应按业务功能组织，而非按运维能力
