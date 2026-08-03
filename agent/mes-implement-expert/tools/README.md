@@ -8,13 +8,13 @@
 |--------|------|------|-----------|
 | `mes_query` | 只读查询 | 查询鼎华SMES业务数据（工单/报工/质量） | MES 数据库只读账号 |
 | `sql_query` | 只读SQL | 通用只读 SQL 查询 | `shared/database/` 只读连接 |
-| `report_generate` | 文档生成 | 生成方案/蓝图/差距分析文档 | `docs/deliverables/` 输出 |
-| `excel_export` | 导出 | 交付物导出 Excel | 生成后落 `docs/deliverables/` |
+| `report_generate` | 文档生成 | 生成方案/蓝图/差距分析文档 | `delivery/projects/<项目>/output/` 输出 |
+| `excel_export` | 导出 | 交付物导出 Excel | 生成后落 `delivery/projects/<项目>/output/` |
 | `checklist_check` | 内部 | 实施就绪度清单校验 | 关联 `knowledge/sop.md` |
 
 ## 权限与审计
 
-- **最小权限**: 默认全部只读；写操作（生成/导出）只落 `docs/deliverables/`
+- **最小权限**: 默认全部只读；写操作（生成/导出）只落 `delivery/projects/<项目>/output/`
 - **审计**: 每次工具调用记录 工具ID + 入参摘要 + 时间（入运营日志 `docs/` 或运行层）
 - **禁止**: 不提供删除/覆盖线上数据能力；不接触客户密钥
 

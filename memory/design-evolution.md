@@ -121,6 +121,24 @@ shared/          共享基础设施 ← 最先部署
 
 **经验**: 外部评审常混淆"运维实施仓库"与"知识笔记仓库"——先确认对方对仓库定位的理解，再判断其建议是否适用。
 
+## v4.4 — 融合交付执行构想（delivery/ + skills/）
+
+**来源**: 用户最初的"agent-delivery-repo"构想，经讨论确认**不新建仓库**，直接融合进 AI_WAREHOUSE。
+
+**采纳**（构想亮点）:
+1. **新增顶层 `delivery/`**：客户交付执行区（inbox 统一收件箱 + projects 项目自包含）。
+   项目结构 `projects/<name>/{input/{requirements,sql,report_ui,interfaces}, knowledge, output}`
+   继承了构想的"input 分类法 + 项目自包含"，但**顶层不再有 input/output 阶段目录**，避免阶段化陷阱
+2. **新增顶层 `skills/`**：可复用 Claude Skills（SKILL.md 格式），示例 `delivery-review`
+3. **`docs/deliverables/` 并入 `delivery/projects/<name>/output/`**：交付物跟项目走，消除全局交付物"第三处家"
+
+**坚持的原则**:
+1. 客户端专属数据 → 只进 `delivery/`（脱敏）；可复用经验 → 交付后回哺 knowledge/skills
+2. 生命周期(规划→运营闭环)仍是过程文档，不做阶段式目录
+3. `inbox` 是唯一通用入口，先落后转，保持接近清空
+
+**经验**: 用户初始构想常常"方向对、结构错"——保留其资产分类思想(inbox/project自包含/input分类)，套用已验证的结构原则(自包含/去阶段化/命名规范)落地。
+
 ## 经验总结
 
 - 运维实施仓库 ≠ DevOps仓库：应按业务功能组织，而非按运维能力

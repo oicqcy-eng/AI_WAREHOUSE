@@ -17,7 +17,7 @@
 | 模型推理 | 主模型/轻量模型 | `ai/serving/` |
 | 知识检索 | 向量库 collection: mes-knowledge | `ai/vector-db/` |
 | 业务数据 | 只读查询 | `shared/database/` |
-| 交付物输出 | 生成成品 | `docs/deliverables/` |
+| 交付物输出 | 生成成品 | `delivery/projects/<项目>/output/` |
 
 ## 维护清单（定期）
 

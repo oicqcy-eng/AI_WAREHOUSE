@@ -16,7 +16,7 @@
 |------|----------|
 | 业务知识 / 行业方法论 | `docs/industry-knowledge/` 或对应业务模块 |
 | Agent 专属知识引用 | 各 Agent 的 `knowledge/` |
-| 客户交付物 / 成品 | `docs/deliverables/` |
+| 客户交付物 / 成品 | `delivery/projects/<项目>/output/` |
 | 客户现场数据 / 密钥 | 不入库（脱敏或外部存储） |
 
 ## 与 Agent "记忆"概念的区别 ⚠️

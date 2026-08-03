@@ -2,7 +2,7 @@
 
 > **复合AI平台 · 运维实施仓库**
 >
-> 覆盖鼎华SMES全功能 + AI智能层 + AI Agent业务层，按业务层级组织，模块自包含。
+> 覆盖鼎华SMES全功能 + AI智能层 + AI Agent业务层 + 客户交付执行，按业务层级组织，模块自包含。
 
 ---
 
@@ -48,6 +48,14 @@ agent/              ← AI Agent 能力资产库：一个 Agent 一个自包含�
 
 知识分级: 行业知识 docs/industry-knowledge/ · 通用知识 _shared/ · Agent 专属 knowledge/
 工程化:   语义化版本+git tag · 每 Agent CHANGELOG · evaluation 质量体系
+
+delivery/           ← 客户交付执行区：项目自包含，客户端数据只进这里(脱敏)
+├── inbox/            统一收件箱：新资料先进再归类
+└── projects/         客户交付项目
+    └── hw-spring-mes/  示例项目(input/{requirements,sql,report_ui,interfaces}, knowledge, output)
+
+skills/             ← 可复用 Claude Skills (SKILL.md 格式)
+└── delivery-review/   交付物质量复核示例
 
 shared/             ← 共享基础设施 (横切所有层)
     database/       PostgreSQL / Redis

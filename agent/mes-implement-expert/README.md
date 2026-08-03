@@ -29,7 +29,7 @@
 | 业务数据 | `base/master-data/`、`manufacturing/*/`、`operations/*/` |
 | 模型推理 | `ai/serving/` |
 | 知识检索 | `ai/vector-db/`（collection: mes-knowledge），`knowledge/` 存引用清单 |
-| 交付物输出 | `docs/deliverables/`（成品归档） |
+| 交付物输出 | `delivery/projects/<项目>/output/`（成品归档） |
 
 ## 目录说明
 

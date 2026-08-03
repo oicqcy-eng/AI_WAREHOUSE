@@ -27,7 +27,7 @@
 | 12 运营优化 | 反馈/问题统计/prompt 迭代 | 回流到 `evaluation/` 与 `prompt/` |
 
 **交付物归属**: Agent 生成的成品（方案/汇报/PPT/SOP）= 一次性交付物，
-归档到 `docs/deliverables/<客户或项目>/`，**不散落在 agent 内**；agent 内只保留生成能力(workflow/tools)。
+归档到 `delivery/projects/<项目>/output/`，**不散落在 agent 内**；agent 内只保留生成能力(workflow/tools)。
 
 ## 关键原则
 
@@ -35,5 +35,5 @@
 2. **评估驱动迭代**：运营阶段产生的反馈，回流到 09 评估与 08 Prompt
 3. **知识单一来源 + 分级**：L1 行业知识(`docs/industry-knowledge/`) → L2 通用知识(`_shared/`) → L3 Agent 专属(`knowledge/`)；向量数据在 `ai/vector-db/`
 4. **版本可回溯**：每次发布 = git tag + CHANGELOG + 评估基准存档；evaluation/ 保留历史，支撑模型与 Prompt 的版本对比
-5. **能力与成品分离**：agent/ 存可复用能力，`docs/deliverables/` 存一次性成品
+5. **能力与成品分离**：agent/ 存可复用能力，`delivery/projects/<项目>/output/` 存一次性成品
 6. **生命周期是过程**：本文档描述过程，目录结构始终按 Agent 内聚，不做阶段式目录
