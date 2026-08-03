@@ -17,10 +17,14 @@
 ```
 skills/
 ├── README.md           ← 本文件
+├── archive-learning/   ⭐ 归档学习(进口)：inbox → 判断归属 → 归档 → 提炼知识
+├── delivery-review/    交付物复核(出口)：交付物 → 质量/合规/完整性检查
 └── <skill-name>/       ← kebab-case
     ├── README.md        说明：用途/用法
     └── SKILL.md         标准 Skill 定义(frontmatter + 指令)
 ```
+
+`archive-learning` 与 `delivery-review` 构成 delivery 区"进口/出口"闭环。
 
 ## 加载方式
 

@@ -45,5 +45,5 @@ delivery/
 
 ## 生命周期
 
-`inbox 接收 → 归类到 projects/<name>/input → 交付 → output 产出 → 经验回哺 → 项目归档`
-详见 `docs/delivery-lifecycle.md`
+`inbox 接收 → 归档学习(archive-learning) → 归类到 projects/<name>/input → 交付 → output 产出 → 交付复核(delivery-review) → 经验回哺 → 项目归档`
+详见 `docs/delivery-lifecycle.md`，归档与复核由 `skills/` 下的 Skill 驱动。
