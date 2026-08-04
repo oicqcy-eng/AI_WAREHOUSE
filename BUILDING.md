@@ -307,6 +307,43 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 
 ## 🗒️ 自动会话日志
 
-> 由 Stop hook 自动追加（兜底记录，深度决策见上方阶段叙述）。
-> 本区由 `.claude/hooks/append-session-log.sh` 在每次会话结束时自动追加，无需手动维护。
+### 2026-08-04 19:53 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    6c77029 🧠 archive-learning 新增沉淀判断清单(6.5)
+    4be7999 📖 BUILDING 沉淀原则补四件套与经验回哺
+    47be075 🧩 四件套优化: 新增 delivery_notes + 提炼 L1 编码规范
+    827689b 🧠 三厂小簧: 提炼 7 份资料为知识卡片(K-001~007)
+    3c551d3 📖 BUILDING 补全阶段7~12 + Stop hook 自动记录 + 底稿索引
+```
+
+### 2026-08-04 19:49 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    6c77029 🧠 archive-learning 新增沉淀判断清单(6.5)
+    4be7999 📖 BUILDING 沉淀原则补四件套与经验回哺
+    47be075 🧩 四件套优化: 新增 delivery_notes + 提炼 L1 编码规范
+    827689b 🧠 三厂小簧: 提炼 7 份资料为知识卡片(K-001~007)
+    3c551d3 📖 BUILDING 补全阶段7~12 + Stop hook 自动记录 + 底稿索引
+```
+
+### 2026-08-04 16:31 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    6c77029 🧠 archive-learning 新增沉淀判断清单(6.5)
+    4be7999 📖 BUILDING 沉淀原则补四件套与经验回哺
+    47be075 🧩 四件套优化: 新增 delivery_notes + 提炼 L1 编码规范
+    827689b 🧠 三厂小簧: 提炼 7 份资料为知识卡片(K-001~007)
+    3c551d3 📖 BUILDING 补全阶段7~12 + Stop hook 自动记录 + 底稿索引
+```
+
+### 2026-08-04 16:26 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    6c77029 🧠 archive-learning 新增沉淀判断清单(6.5)
+    4be7999 📖 BUILDING 沉淀原则补四件套与经验回哺
+    47be075 🧩 四件套优化: 新增 delivery_notes + 提炼 L1 编码规范
+    827689b 🧠 三厂小簧: 提炼 7 份资料为知识卡片(K-001~007)
+    3c551d3 📖 BUILDING 补全阶段7~12 + Stop hook 自动记录 + 底稿索引
+```
 

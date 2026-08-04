@@ -12,6 +12,12 @@
 | L3 Agent专属 | 本项目 FAQ / SOP / 案例 | 本目录 `faq.md` `sop.md` `cases.md` | `[K-101]` |
 | 向量数据 | 检索用知识片段 | `ai/vector-db/`（collection: mes-knowledge） | 检索注入 |
 
+## 数据资产引用
+
+| 资产 | 存放位置 | 引用方式 |
+|------|----------|----------|
+| SMES 通用数据字典（sMES_Production_61100，189表/12866字段） | `data/smes-621/`（8 模块 MD + 卡片） | 回答表/字段口径问题时查 `[smes-621]`，详见 `data/smes-621/README.md` |
+
 ## L3 专属知识条目
 
 ### FAQ — 高频问题

@@ -8,6 +8,16 @@
 |------|------|
 | `dictionary.md` | 数据字典：Agent 会引用的业务数据字段定义 |
 | `samples.md` | 脱敏样本数据：few-shot/评估用 |
+| `smes-621/` | 通用 SMES 数据字典（sMES_Production_61100，189表）解析库，见下方说明 |
+
+## smes-621 数据字典（通用）
+
+> `smes-621/` 是从客户数据字典《SMES_621数据库设计文档20250313.html》解析的**通用 MES 数据字典**（数据库 sMES_Production_61100，189 表 / 12,866 字段）。原件存 `delivery/inbox/`。
+
+- 入口: `smes-621/README.md`（模块地图）
+- 8 个模块文件: `01-wip-workorder.md` … `08-andon-system-erp.md`（字段级全量）
+- 领域提炼: `smes-621/knowledge-cards.md`（K-621 系列）
+- 引用方式: 回答字段/表结构问题时可查 `[smes-621]`
 
 ## 与业务模块数据的关系
 

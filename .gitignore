@@ -25,3 +25,5 @@ tmp/ temp/ *.bak *.old
 *.doc
 *.docx
 *.pdf
+# 客户数据字典/设计文档等大体积 html 原件不入库（仅存本地 inbox/，仓库只沉淀解析 MD）
+delivery/inbox/*.html
