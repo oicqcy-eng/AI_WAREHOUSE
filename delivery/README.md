@@ -14,11 +14,12 @@
 ```
 delivery/
 ├── README.md           ← 本文件
-├── inbox/              统一收件箱：所有新客户资料先进这里，归类后转走
+├── inbox/              全局总入口：所有新客户资料先进这里，归类后转走
 └── projects/           客户交付项目(自包含)
     └── hw-spring-mes/  示例项目
         ├── README.md   项目背景/目标/状态
         ├── input/      项目输入
+        │   ├── inbox/         项目收件箱(已明确属本项目的待归类资料)
         │   ├── requirements/  需求文档
         │   ├── sql/           数据/查询脚本(脱敏)
         │   ├── report_ui/     报表/看板界面规格
@@ -27,6 +28,8 @@ delivery/
         ├── output/     交付物(方案/PPT/SOP/报表)
         └── CHANGELOG.md 交付记录
 ```
+
+`archive-learning` 同时扫描 `delivery/inbox/` 与各项目 `input/inbox/`。
 
 ## 边界规则（硬性）
 
