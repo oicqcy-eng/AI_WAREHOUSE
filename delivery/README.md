@@ -15,16 +15,16 @@
 delivery/
 ├── README.md           ← 本文件
 ├── inbox/              全局总入口：所有新客户资料先进这里，归类后转走
-└── projects/           客户交付项目(自包含, 按需创建)
-    └── <客户项目>/      项目结构见 projects/README.md
+└── projects/           客户交付项目(自包含)
+    └── hw-spring-mes/  示例项目
         ├── README.md   项目背景/目标/状态
-        ├── input/      项目输入(脱敏)
+        ├── input/      项目输入
         │   ├── inbox/         项目收件箱(已明确属本项目的待归类资料)
         │   ├── requirements/  需求文档
         │   ├── sql/           数据/查询脚本(脱敏)
         │   ├── report_ui/     报表/看板界面规格
         │   └── interfaces/    接口/集成规格
-        ├── knowledge/  项目专属知识(三件套)
+        ├── knowledge/  项目专属知识/决策
         ├── output/     交付物(方案/PPT/SOP/报表)
         └── CHANGELOG.md 交付记录
 ```

@@ -53,7 +53,8 @@ agent/              ← AI Agent 能力资产库：一个 Agent 一个自包含�
 
 delivery/           ← 客户交付执行区：项目自包含，客户端数据只进这里(脱敏)
 ├── inbox/            统一收件箱：新资料先进再归类
-└── projects/         客户交付项目(按需创建,含 input/knowledge/output)
+└── projects/         客户交付项目
+    └── hw-spring-mes/  示例项目(input/{requirements,sql,report_ui,interfaces}, knowledge, output)
 
 skills/             ← 可复用 Claude Skills (SKILL.md 格式)
 └── delivery-review/   交付物质量复核示例
