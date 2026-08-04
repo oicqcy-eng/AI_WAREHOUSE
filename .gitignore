@@ -1,14 +1,58 @@
 # AI-WAREHOUSE v4
-*.key *.pem *.p12 *.pfx *.cert *.crt *.csr
-kubeconfig* !kubeconfig.example
-.env .env.* !.env.example
-.terraform/ *.tfstate *.tfvars !*.example.tfvars
-*vault* *.vault
-*.log /var/log/ logs/
-.DS_Store Thumbs.db *.swp *~ .vscode/ .idea/ *.iml
-tmp/ temp/ *.bak *.old
-*.iso *.dmg *.bin model-weights/ *.pt *.pth *.onnx *.gguf
-**/docker/data/ **/docker/volumes/
+
+# ── 敏感文件/凭据（每行一条规则）──
+*.key
+*.pem
+*.p12
+*.pfx
+*.cert
+*.crt
+*.csr
+kubeconfig*
+!kubeconfig.example
+.env
+.env.*
+!.env.example
+
+# ── 基础设施 / 云 ──
+.terraform/
+*.tfstate
+*.tfvars
+!*.example.tfvars
+*vault*
+*.vault
+
+# ── 日志 / 编辑器 / 系统 ──
+*.log
+/var/log/
+logs/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+*.iml
+
+# ── 临时 / 备份 ──
+tmp/
+temp/
+*.bak
+*.old
+
+# ── 大文件 / 模型权重 ──
+*.iso
+*.dmg
+*.bin
+model-weights/
+*.pt
+*.pth
+*.onnx
+*.gguf
+
+# ── Docker 数据卷 ──
+**/docker/data/
+**/docker/volumes/
 
 # 客户原始资料不入库（大文件+敏感数据，仅存本地 inbox/ 与项目 input/）
 # 仓库只沉淀整理成果(MD 文档)，原件保留在本地
