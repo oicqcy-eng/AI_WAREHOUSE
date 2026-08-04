@@ -9,3 +9,19 @@ kubeconfig* !kubeconfig.example
 tmp/ temp/ *.bak *.old
 *.iso *.dmg *.bin model-weights/ *.pt *.pth *.onnx *.gguf
 **/docker/data/ **/docker/volumes/
+
+# 客户原始资料不入库（大文件+敏感数据，仅存本地 inbox/ 与项目 input/）
+# 仓库只沉淀整理成果(MD 文档)，原件保留在本地
+*.xlsx
+*.xls
+*.pptx
+*.ppt
+*.jpeg
+*.jpg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.doc
+*.docx
+*.pdf
