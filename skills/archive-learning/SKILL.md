@@ -57,19 +57,21 @@ description: 处理 inbox 新资料——判断归属、分门归类、提炼知
 - **页面要求**: 报表/看板的结构、字段、更新频率
 - **待确认项**: 资料中不明确、需向客户确认的内容
 
-### 6. 更新知识库（写入三件套）
+### 6. 更新知识库（写入四件套）
 
 **通用经验** → `docs/industry-knowledge/` 或 `agent/_shared/`（可复用才放）
 
-**项目独有** → 写入 `delivery/projects/<项目>/knowledge/` 三件套：
+**项目独有** → 写入 `delivery/projects/<项目>/knowledge/` 四件套：
 
 | 文件 | 写入内容 |
 |------|----------|
 | `file_index.md` | 归档资料登记一行（编号/文件/类型/来源/日期/状态） |
 | `knowledge_cards.md` | 提炼的知识卡片（五要素 + 来源） |
 | `pending_questions.md` | 待确认问题登记（编号/问题/涉及资料/日期/状态） |
+| `delivery_notes.md` | 交付建议、注意事项、后续可复用标签（经验沉淀） |
 
 - 边界不清楚 → 标记 **待确认**，登记到 `pending_questions.md`，不猜测归属
+- **经验不滞留**: 可复用的跨项目经验（工序编码/群组体系等）→ 提炼到 `docs/industry-knowledge/`，不只留在项目内
 
 ### 7. 标注来源与防幻觉
 

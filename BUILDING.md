@@ -25,6 +25,7 @@
 | 08-04 | 阶段11 | 三厂小簧项目：确立"只提交 MD 文档"原则 |
 | 08-04 | 阶段12 | .gitignore 踩坑修复（同一行多 pattern 无效） |
 | 08-04 | 收尾 | BUILDING 动态更新(Stop hook) + create_History 底稿索引 |
+| 08-04 | 阶段13 | 四件套优化(新增 delivery_notes) + 提炼 L1 编码规范 |
 
 ---
 
@@ -241,6 +242,22 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 - 新建 `delivery/projects/san-chang-xiao-huang/` 项目，登记 7 份资料索引（file_index）
 - **确立硬性原则：客户原始文件不入库，只提交 MD 文档**（原件留本地 inbox）
 - 人员名单经你确认入库，但遵循"原件不入库、索引入库"原则
+
+---
+
+## 阶段 13：四件套优化 —— 对齐规划师 Knowledge Output
+
+**触发**：规划师"Knowledge Output"一节提出第四件套 `delivery_notes.md`（交付建议/注意事项/可复用标签），以及"结论不要停在聊天窗口，能写回 knowledge 才方便复用"。
+
+**我的判断**：我们有 file_index/knowledge_cards/pending_questions 三件套，但缺 **delivery_notes**（沉淀"经验"而非"事实/知识"）；且跨项目可复用知识（工序编码/群组体系）还没提炼到 L1 共享层。
+
+**决策**（在模板/规范层做，不动真实数据与历史）：
+- 项目 knowledge 三件套 → **四件套**（新增 delivery_notes.md）
+- 更新 archive-learning SKILL.md / structure-conventions / projects 模板
+- 提炼三厂小簧 K-004 工序编码、K-005 群组体系 → `docs/industry-knowledge/mes-coding-standards.md`（L1 跨项目复用）
+- 打新标签 `v-four-sets` 作为四件套基准
+
+**原则**：结构规范独立于具体客户数据演进；真实项目数据（三厂小簧）只是模板的实例，不参与结构演进。
 
 ---
 

@@ -74,16 +74,22 @@ agent/<agent-name>/
 delivery/projects/<客户项目>/
 ├── README.md         项目背景/目标/状态
 ├── input/            项目输入(脱敏)
+│   ├── inbox/         项目收件箱
 │   ├── requirements/  需求文档
 │   ├── sql/           数据/查询脚本(脱敏)
 │   ├── report_ui/     报表/看板规格
 │   └── interfaces/    接口/集成规格
-├── knowledge/        项目专属知识/决策
+├── knowledge/        项目专属知识(四件套)
+│   ├── file_index.md        资料索引(来源/去向/要点)
+│   ├── knowledge_cards.md   知识卡片(业务对象/字段口径/接口规则/页面/待确认)
+│   ├── pending_questions.md 待确认问题
+│   └── delivery_notes.md    交付建议/注意事项/可复用标签
 ├── output/           交付物(方案/PPT/SOP/报表)
 └── CHANGELOG.md      交付记录
 ```
 
-核心规则：客户端数据只进 delivery/（脱敏）；新资料先落 inbox/；可复用经验交付后回哺。
+核心规则：客户端数据只进 delivery/（脱敏）；新资料先落 inbox/；可复用经验交付后回哺；
+四件套中 delivery_notes 沉淀"经验"，可复用跨项目知识提炼到 `docs/industry-knowledge/`。
 
 ## 命名规范
 
