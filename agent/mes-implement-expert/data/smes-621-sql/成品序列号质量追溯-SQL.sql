@@ -1,0 +1,72 @@
+/*成品序列号质量追溯*/
+
+SELECT DISTINCT A.MONO /*工单编号*/
+                     , B.BASELOTNO /*生产批号*/
+                     , E.PCSNO /*成品序号*/
+                     , C.OPSEQ /*流程顺序*/
+                     , C.NODENO OPNO /*作业站编号*/
+                     , D.OPNAME /*作业站名称*/
+                     , P.MATERIALUNITNO /*部件序号*/
+                     , ISNULL(CONVERT(NVARCHAR, F.EVENTTIME), N'查无资料') STARTTIME /*进站时间*/
+                     , ISNULL(CONVERT(NVARCHAR, G.EVENTTIME), N'查无资料') ENDTIME /*出站时间*/
+                     , ISNULL(OU.USERNO, N'查无资料') USERNO /*加工人*/
+                     , ISNULL(U.USERNAME, N'查无资料') USERNAME /*加工人名称*/
+                     , ISNULL(G.EQUIPMENTNO, N'查无资料') EQUIPMENTNO /*机台/产线编号*/
+                     , ISNULL(H.EQUIPMENTNAME, N'查无资料') EQUIPMENTNAME /*机台/产线名称*/
+                     , ISNULL(CASE WHEN O.FUNCTIONKEY IS NOT NULL THEN 
+	                 (SELECT TOP 1 QCFORMNO FROM 
+		             (
+			           SELECT TOP 1 QCFORMNO, CHECKTIME FROM TBLWIPFIRSTCHECK WHERE LOTNO = B.BASELOTNO AND OPNO = D.OPNO AND EQUIPMENTNO = F.EQUIPMENTNO ORDER BY CHECKTIME DESC
+			           UNION ALL
+			           SELECT TOP 1 QCFORMNO, EVENTTIME CHECKTIME FROM TBLWIPCONT_PARTIALOUT WHERE LOTNO = B.BASELOTNO AND OPNO = D.OPNO AND EQUIPMENTNO = F.EQUIPMENTNO ORDER BY EVENTTIME DESC
+		               ) X
+		             ORDER BY CHECKTIME DESC
+	                 ) /*SQMS检验历程的检验单号*/
+                     ELSE
+	                 (SELECT TOP 1 QCFORMNO FROM TBLWIPFIRSTCHECK WHERE LOTNO = B.BASELOTNO AND OPNO = D.OPNO AND EQUIPMENTNO = F.EQUIPMENTNO ORDER BY CHECKTIME DESC) /*SMES送检资料查询的检验单号*/
+                     END, N'查无资料') QCFORMNO, /*检验单号*/
+                     ISNULL(CASE WHEN O.FUNCTIONKEY IS NOT NULL THEN 
+	                 (SELECT TOP 1 USERNO FROM
+		             (
+			          SELECT TOP 1 USERNO, CHECKTIME FROM TBLWIPFIRSTCHECK WHERE LOTNO = B.BASELOTNO AND OPNO = D.OPNO AND EQUIPMENTNO = F.EQUIPMENTNO ORDER BY CHECKTIME DESC
+			          UNION ALL
+			          SELECT TOP 1 USERNO, EVENTTIME CHECKTIME FROM TBLWIPCONT_PARTIALOUT WHERE LOTNO = B.BASELOTNO AND OPNO = D.OPNO AND EQUIPMENTNO = F.EQUIPMENTNO ORDER BY EVENTTIME DESC
+		             ) X
+		             ORDER BY CHECKTIME DESC
+	                 ) /*SQMS检验历程的检验人*/
+                     ELSE
+	                 (SELECT TOP 1 USERNO FROM TBLWIPFIRSTCHECK WHERE LOTNO = B.BASELOTNO AND OPNO = D.OPNO AND EQUIPMENTNO = F.EQUIPMENTNO ORDER BY CHECKTIME DESC) /*SMES送检资料查询的检验人*/
+                     END, N'查无资料') EMPLOYEENO /*检验人 */
+                     , CASE WHEN K.EQUIPMENTNO IS NOT NULL OR L.LOTNO IS NOT NULL OR M.EQUIPMENTNO IS NOT NULL OR N.LOTNO IS NOT NULL THEN N'是' ELSE N'否' END HAVEERRORLOG /*是否存在过生产异常*/
+                     FROM TBLOEMOBASIS A
+                     JOIN TBLWIPLOTBASIS B
+                     ON B.MONO = A.MONO
+                     JOIN TBLPRSNODEBASIS C
+                     ON C.PROCESSNO = B.BASEPROCESSNO AND C.PROCESSVERSION = B.BASEPROCESSVERSION
+                     JOIN TBLOPBASIS D
+                     ON D.OPNO = C.NODENO
+                     JOIN TBLWIPCONT_PCSNO E
+                     ON E.LOTNO = B.BASELOTNO AND E.OPNO = D.OPNO
+                     LEFT JOIN TBLWIPCONT_PARTIALIN_PCSNO F
+                     ON F.LOTNO = B.BASELOTNO AND F.OPNO = D.OPNO AND F.PCSNO = E.PCSNO
+                     LEFT JOIN TBLWIPCONT_PARTIALOUT_PCSNO G
+                     ON G.LOTNO = B.BASELOTNO AND G.OPNO = D.OPNO AND G.PCSNO = E.PCSNO
+                     LEFT JOIN TBLEQPEQUIPMENTBASIS H
+                     ON H.EQUIPMENTNO = G.EQUIPMENTNO
+                     LEFT JOIN TBLWIPCONT_PARTIALOUT OU
+					 ON OU.LOTNO = B.BASELOTNO AND OU.OPNO = D.OPNO AND OU.EQUIPMENTNO =G.EQUIPMENTNO AND OU.EVENTTIME =G.EVENTTIME
+                     LEFT JOIN TBLWIPCONT_ACCESSORY K /*存在过生产异常1: 异常下模*/
+                     ON K.EQUIPMENTNO = F.EQUIPMENTNO AND K.LOGGROUPSERIAL LIKE B.BASELOTNO + '%' AND STATE = 1
+                     LEFT JOIN TBLWIPWAITBASIS L /*存在过生产异常2: 生产暂停*/
+                     ON L.LOTNO = B.BASELOTNO AND L.OPNO = D.OPNO AND L.EQUIPMENTNO = F.EQUIPMENTNO
+                     LEFT JOIN TBLEMSEQUIPMENTSTATELOG M /*存在过生产异常3: 设备稼动-故障*/
+                     ON M.EQUIPMENTNO = F.EQUIPMENTNO AND M.EQUIPMENTSTATE = 2
+                     LEFT JOIN TBLWIPLOTEQPCHANGELOG N /*存在过生产异常4: 设备/产线变更*/
+                     ON N.LOTNO = B.BASELOTNO AND N.OPNO = D.OPNO AND N.FROMEQUIPMENTNO = F.EQUIPMENTNO
+                     LEFT JOIN TBLSYSFUNCTION O
+                     ON O.FUNCTIONKEY = 'QCI05010' /*以此代号判断是否有SQMS集成*/
+                     LEFT JOIN TBLWIPCONT_PCSMATERIAL P
+                     ON P.LOTNO = B.BASELOTNO AND P.OPNO = D.OPNO AND P.PCSNO = E.PCSNO
+                     LEFT JOIN TBLUSRUSERBASIS U
+                     ON U.USERNO = OU.USERNO
+                     WHERE A.MOSTATE IN (3,99) AND C.NODENO != 'START' AND C.NODENO != 'END' 
