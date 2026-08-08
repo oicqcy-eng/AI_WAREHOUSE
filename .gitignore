@@ -73,3 +73,7 @@ model-weights/
 # 覆盖飞书多维表格 .base 原件、SQL 查询脚本、html 大体积文档等
 delivery/inbox/*
 !delivery/inbox/README.md
+# 日常工作数据输入窗口：会议纪要等敏感原始材料不入库，仅放行目录说明 README
+!delivery/inbox/日常工作数据输入窗口/
+delivery/inbox/日常工作数据输入窗口/*
+!delivery/inbox/日常工作数据输入窗口/README.md
