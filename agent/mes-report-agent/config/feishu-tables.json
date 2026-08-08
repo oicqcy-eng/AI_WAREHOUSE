@@ -1,0 +1,28 @@
+{
+  "note": "AI-WAREHOUSE 飞书多维表活动表配置（2026-08-08 更新）",
+  "active": "copy",
+  "tables": {
+    "copy": {
+      "label": "MES项目-工作记录表 副本（用户可编辑）",
+      "app_token": "UhPtbS5HHamJxesbrW4c9SBonyh",
+      "link": "https://my.feishu.cn/base/UhPtbS5HHamJxesbrW4c9SBonyh",
+      "link_password": "279r116#",
+      "table_worklog_id": "tbluwuQAiAUmmXjE",
+      "table_worklog_name": "原始工作日志",
+      "table_taskpool_id": "tbl6nHpJxPd9cqpd",
+      "table_taskpool_name": "任务问题归集池",
+      "status": "active",
+      "note": "用户创建的副本，应用可读写，用户可编辑。当前所有写入目标。"
+    },
+    "production": {
+      "label": "原生产表（应用创建，用户只读）",
+      "app_token": "EWbrbxkfJagHK6srQamcUAisnAe",
+      "table_worklog_id": "tblNuoVLEoFIPCwI",
+      "table_worklog_name": "原始工作日志",
+      "table_taskpool_id": "tblsuU7JVMevuLr5",
+      "table_taskpool_name": "任务问题归集池",
+      "status": "retired",
+      "note": "已弃用，保留作为数据源参照。数据已迁移至副本。"
+    }
+  }
+}
