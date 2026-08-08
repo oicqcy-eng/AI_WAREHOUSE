@@ -18,9 +18,19 @@
 | knowledge/ | 汇报规范 / 模板 / 案例 |
 | tools/ | 报表查询 / 图表生成 / 文档导出脚本 |
 | workflow/ | 汇报生成流程定义 |
-| data/ | 汇报数据字典 / 样例 |
+| data/ | 汇报数据字典 / 样例 / 数据治理成果 |
 | evaluation/ | 汇报质量测试集 / 标准答案 |
 | runbooks/ | 使用 / 维护 / 故障手册 |
+
+## 数据资产（data/）
+
+| 文件 | 内容 |
+|------|------|
+| `report-bitable-spec.md` | 飞书多维表格结构规范（表1日志 + 表2任务池 + 仪表盘 + 填报规则）|
+| `history-log-governance.md` | 历史日志归属校验清单（266 条治理，71 条变更）|
+| `history-log-governance.csv` | 266 行记录ID→目标项目映射（可导入飞书核对）|
+| `task-pool-supplement.md` | 任务池补充清单（18 条 MES 主要问题）|
+| `task-pool-supplement.csv` | 18 条任务池补充字段表（含 option ID，可导入）|
 
 ## 使用
 （待填充：启动方式、调用示例）
