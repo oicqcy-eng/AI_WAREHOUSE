@@ -69,5 +69,7 @@ model-weights/
 *.doc
 *.docx
 *.pdf
-# 客户数据字典/设计文档等大体积 html 原件不入库（仅存本地 inbox/，仓库只沉淀解析 MD）
-delivery/inbox/*.html
+# 客户原始资料不入库（仅存本地 inbox/，仓库只沉淀整理成果 MD；README.md 除外）
+# 覆盖飞书多维表格 .base 原件、SQL 查询脚本、html 大体积文档等
+delivery/inbox/*
+!delivery/inbox/README.md
