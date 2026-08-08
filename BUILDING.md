@@ -307,6 +307,26 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 
 ## 🗒️ 自动会话日志
 
+### 2026-08-08 12:27 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+    4dea060 data: complete historical log governance and task pool supplement
+```
+
+### 2026-08-08 12:25 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+    4dea060 data: complete historical log governance and task pool supplement
+```
+
 ### 2026-08-08 12:19 (session: unknown)
 本次会话相关提交（最近5条）:
 ```
