@@ -32,5 +32,31 @@
 | `task-pool-supplement.md` | 任务池补充清单（18 条 MES 主要问题）|
 | `task-pool-supplement.csv` | 18 条任务池补充字段表（含 option ID，可导入）|
 
+## 周报生成闭环（V1）
+
+> 完整流程见 `workflow/weekly-report-v1.md`。
+
+```
+输入「生成2026年第XX周MES项目周报」
+   ↓ ① 数据提取
+tools/weekly-extract.js --year 2026 --week 32 [--project 三厂小簧sMES]
+   ↓ 输出 tmp/weekly-input-2026-W32.md（四模块预分组素材）
+   ↓ ② AI 润色成稿（读素材 + prompt/weekly-report-v1.md）
+输出：全项目汇总 或 单项目周报（本周完成/核心问题及风险/待办事项/下周重点计划）
+```
+
+| 文件 | 作用 |
+|------|------|
+| `tools/weekly-extract.js` | 周次解析 + 任务池/日志按周/项目过滤，输出四模块素材 |
+| `prompt/weekly-report-v1.md` | 周报生成 Prompt 模板（四模块 + 两种输出模式）|
+| `workflow/weekly-report-v1.md` | 周报生成闭环流程文档 + 样例验证 |
+
 ## 使用
-（待填充：启动方式、调用示例）
+
+```bash
+# 1. 生成素材（全项目汇总）
+node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32
+# 2. 单项目
+node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --project 三厂小簧sMES
+# 3. 把素材 + prompt/weekly-report-v1.md 交给 Claude 生成周报
+```
