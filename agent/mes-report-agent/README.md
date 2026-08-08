@@ -60,3 +60,15 @@ node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32
 node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --project 三厂小簧sMES
 # 3. 把素材 + prompt/weekly-report-v1.md 交给 Claude 生成周报
 ```
+
+### 输出 docx（WPS 打开用）
+
+汇报成稿后，md → docx 转换（排版样式见 `data/report-bitable-spec.md` §9）：
+
+```bash
+# 依赖：npm install docx（在脚本同目录或全局）
+node agent/mes-report-agent/tools/md-to-docx.js [输出目录]
+# 默认输出到 delivery/projects/hw-spring-mes/output/reports/
+```
+
+输出 md + docx 双份，docx 供 WPS/Office 打开。

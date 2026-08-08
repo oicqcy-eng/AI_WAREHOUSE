@@ -5,9 +5,26 @@
 ## 存放内容
 
 - 方案文档、蓝图
-- 汇报材料（PPT/周报/月报）
+- 汇报材料（PPT/周报/月报）→ 历史汇报归档在 `reports/` 子目录
 - SOP、培训资料
 - 报表模板
+
+## 汇报归档（reports/）
+
+`reports/` 存放华纬 MES 项目实施汇报（周报/月报/简报），由飞书多维表格数据生成、**md + docx 双份**存档：
+
+```
+reports/
+├── 2026-08-08_周报_W32.md/.docx      ← 项目经理周报（全项目汇总）
+├── 2026-08-08_月报_7月.md/.docx      ← 月度项目复盘
+└── 2026-08-08_简报.md/.docx          ← 高层一页纸简报
+```
+
+- **md**：留档、进 git、便于对比
+- **docx**：WPS/Office 打开用，排版样式（微软雅黑/8pt表格/实黑框线/彩色状态）见 `agent/mes-report-agent/data/report-bitable-spec.md` §9
+- 转换：`agent/mes-report-agent/tools/md-to-docx.js`
+- 命名：`<YYYY-MM-DD>_<周报|月报|简报>_<口径>.md/.docx`，不改名覆盖
+- **不写来源信息**：汇报内不标注生成日期/数据源等内部字样
 
 ## 命名规范
 
