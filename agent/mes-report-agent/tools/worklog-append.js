@@ -16,6 +16,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const WORKLOG = path.join(__dirname, '..', 'data', 'worklog');
+const WORKLOG_DIR = WORKLOG; // 供 server 静态服务附件用
 const LOGS_DIR = path.join(WORKLOG, 'logs');
 const TASK_FILE = path.join(WORKLOG, 'task-pool.json');
 
@@ -172,7 +173,7 @@ function findTask(id) {
 }
 
 // ---------- 导出（供 worklog-server.js / Claude 工具复用） ----------
-module.exports = { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, saveJson, makeId, LOG_DEFAULTS, TASK_DEFAULTS, LOGS_DIR, TASK_FILE, TODAY };
+module.exports = { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, saveJson, makeId, LOG_DEFAULTS, TASK_DEFAULTS, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY };
 
 // ---------- CLI 入口 ----------
 if (require.main === module) {

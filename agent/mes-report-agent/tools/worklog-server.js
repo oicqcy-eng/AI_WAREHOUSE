@@ -14,13 +14,15 @@
  *   POST /api/tasks/update    更新任务 {_id, record:{完整记录}} → 返回 {file, total}
  *   GET  /api/logs/get?id=    按 id 取单条日志（编辑回填）
  *   GET  /api/tasks/get?id=   按 id 取单条任务（编辑回填）
+ *   GET  /attachments/<文件名> 附件静态服务（打开/下载 worklog/attachments 下文件）
  *   GET  /api/tasks/recent?n= 最近 n 条任务
  */
 'use strict';
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, LOGS_DIR, TASK_FILE, TODAY } = require('./worklog-append.js');
+const { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY } = require('./worklog-append.js');
+const ATTACH_DIR = path.join(WORKLOG_DIR, 'attachments');
 
 const PORT = process.env.WORKLOG_PORT || 8787;
 const UI_FILE = path.join(__dirname, 'worklog-ui.html');
@@ -72,6 +74,17 @@ const server = http.createServer(async (req, res) => {
       const html = fs.readFileSync(UI_FILE, 'utf8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(html);
+      return;
+    }
+    // 附件静态服务（worklog/attachments/<文件名>）
+    if (p.startsWith('/attachments/') && req.method === 'GET') {
+      const name = decodeURIComponent(path.basename(p)); // 只允许文件名，防路径穿越
+      const f = path.join(ATTACH_DIR, name);
+      if (!fs.existsSync(f) || !fs.statSync(f).isFile()) { send(res, 404, { code: 404, msg: '附件不存在: ' + name }); return; }
+      const ext = path.extname(name).toLowerCase();
+      const mime = { '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', '.doc': 'application/msword', '.md': 'text/markdown; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '.pdf': 'application/pdf', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg' }[ext] || 'application/octet-stream';
+      res.writeHead(200, { 'Content-Type': mime, 'Content-Disposition': "attachment; filename*=UTF-8''" + encodeURIComponent(name) });
+      fs.createReadStream(f).pipe(res);
       return;
     }
     // 选项

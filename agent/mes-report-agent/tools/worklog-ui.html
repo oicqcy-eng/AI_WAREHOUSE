@@ -78,6 +78,12 @@ header .today{color:var(--gray);font-size:13px}
       <div class="row"><label>责任人</label><input type="text" id="f-owner" placeholder="默认陈宇"></div>
       <div class="row"><label>协作人</label><input type="text" id="f-coworker" placeholder="如：张三、李四"></div>
       <div class="row"><label>交付产出</label><input type="text" id="f-deliver" placeholder="如：模板清单、配置表、方案文档"></div>
+      <div class="row"><label>附件</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="text" id="f-attach" placeholder="文件名，放 worklog/attachments/ 下（可留空）">
+          <a href="#" id="f-attach-link" target="_blank" style="display:none;font-size:12px;color:var(--blue)">打开</a>
+        </div>
+      </div>
       <div class="row"><label>工作内容 *</label><textarea id="f-content" placeholder="今天做了什么？如：处理X项目Y问题，完成Z配置"></textarea></div>
       <div class="actions">
         <button class="btn" id="save-log" onclick="saveLog()">保存</button>
@@ -98,6 +104,12 @@ header .today{color:var(--gray);font-size:13px}
       <div class="row"><label>周报归集分类</label><select id="t-week"></select></div>
       <div class="row"><label>协调资源需求</label><input type="text" id="t-coord" placeholder="需领导/跨部门支持事项"></div>
       <div class="row"><label>闭环判定标准</label><input type="text" id="t-done" placeholder="什么算完成"></div>
+      <div class="row"><label>附件</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="text" id="t-attach" placeholder="文件名，放 worklog/attachments/ 下（可留空）">
+          <a href="#" id="t-attach-link" target="_blank" style="display:none;font-size:12px;color:var(--blue)">打开</a>
+        </div>
+      </div>
       <div class="row"><label>卡点 &amp; 问题描述</label><textarea id="t-desc" placeholder="背景 / 卡点"></textarea></div>
       <div class="actions">
         <button class="btn" id="save-task" onclick="saveTask()">保存</button>
@@ -124,6 +136,18 @@ function fillSelect(id, arr, defaultVal){
   var el = document.getElementById(id);
   el.innerHTML = '<option value="">（未选）</option>' + arr.map(function(x){ return '<option'+(x===defaultVal?' selected':'')+'>'+x+'</option>'; }).join('');
 }
+function updateAttachLink(inpId, linkId){
+  var inp = document.getElementById(inpId);
+  var link = document.getElementById(linkId);
+  var v = (inp.value || '').trim();
+  if (v){ link.style.display = ''; link.href = '/attachments/' + encodeURIComponent(v); }
+  else { link.style.display = 'none'; link.href = '#'; }
+}
+['f-attach','t-attach'].forEach(function(id){
+  document.addEventListener('DOMContentLoaded', function(){});
+});
+// 输入时实时更新打开链接
+function bindAttach(id, link){ document.getElementById(id).addEventListener('input', function(){ updateAttachLink(id, link); }); }
 function switchTab(t){
   document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active', x.dataset.tab===t); });
   document.getElementById('form-log').style.display = t==='log' ? '' : 'none';
@@ -152,6 +176,8 @@ async function init(){
   fillSelect('t-pri', O.priority, 'P4');
   fillSelect('t-status', O.taskStatus, '待启动');
   fillSelect('t-week', O.weekCat);
+  bindAttach('f-attach', 'f-attach-link');
+  bindAttach('t-attach', 't-attach-link');
   loadRecent('log');
   // 今日统计
   var t = await api('/api/logs/today');
@@ -167,7 +193,8 @@ async function loadRecent(tab){
       var tag = x['所属项目'] ? '<span class="tag">'+shortProj(x['所属项目'])+'</span>' : '';
       var rt = x['结果类型'] ? '<span class="tag">'+x['结果类型']+'</span>' : '';
       var tf = x['是否形成任务']==='是' ? '<span class="tag" style="background:#FDE9E9;color:#C00000">形成任务</span>' : '';
-      return '<li><div class="meta">'+x['记录日期']+tag+rt+tf
+      var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
+      return '<li><div class="meta">'+x['记录日期']+tag+rt+tf+at
         +'<button class="edit-btn" onclick="startEditLog(\''+x['_id']+'\')">编辑</button></div>'
         +'<div class="content">'+(x['工作内容']||'')+'</div></li>';
     }).join('');
@@ -178,7 +205,8 @@ async function loadRecent(tab){
       var tag = '<span class="tag">'+shortProj(x['对应项目'])+'</span>';
       var p = x['优先级'] ? '<span class="tag" style="background:'+(x['优先级']==='P1'?'#FDE9E9;color:#C00000':x['优先级']==='P2'?'#FDF3E0;color:#B26B00':'#EFF3F8;color:#6B7280')+'">'+x['优先级']+'</span>' : '';
       var st = x['任务状态'] ? '<span class="tag">'+x['任务状态']+'</span>' : '';
-      return '<li><div class="meta">'+x['发现日期']+tag+p+st
+      var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
+      return '<li><div class="meta">'+x['发现日期']+tag+p+st+at
         +'<button class="edit-btn" onclick="startEditTask(\''+x['_id']+'\')">编辑</button></div>'
         +'<div class="content">'+(x['归集标题']||'')+'</div></li>';
     }).join('');
@@ -211,6 +239,8 @@ function clearLogForm(){
   document.getElementById('f-owner').value = '';
   document.getElementById('f-coworker').value = '';
   document.getElementById('f-deliver').value = '';
+  document.getElementById('f-attach').value = '';
+  updateAttachLink('f-attach', 'f-attach-link');
   document.querySelector('input[name="f-task"][value="否"]').checked = true;
 }
 function clearTaskForm(){
@@ -220,6 +250,8 @@ function clearTaskForm(){
   document.getElementById('t-due').value = '';
   document.getElementById('t-coord').value = '';
   document.getElementById('t-done').value = '';
+  document.getElementById('t-attach').value = '';
+  updateAttachLink('t-attach', 't-attach-link');
   document.getElementById('t-desc').value = '';
 }
 
@@ -239,6 +271,8 @@ async function startEditLog(id){
   document.getElementById('f-owner').value = x['责任人'] || '';
   document.getElementById('f-coworker').value = x['协作人'] || '';
   document.getElementById('f-deliver').value = x['交付产出'] || '';
+  document.getElementById('f-attach').value = x['附件'] || '';
+  updateAttachLink('f-attach', 'f-attach-link');
   document.getElementById('f-content').value = x['工作内容'] || '';
   setEditing('log', x['_id'], x['记录日期'] + ' ' + (x['工作内容']||'').slice(0,18) + '…');
 }
@@ -259,6 +293,8 @@ async function startEditTask(id){
   document.getElementById('t-week').value = x['周报归集分类'] || '';
   document.getElementById('t-coord').value = x['协调资源需求'] || '';
   document.getElementById('t-done').value = x['闭环判定标准'] || '';
+  document.getElementById('t-attach').value = x['附件'] || '';
+  updateAttachLink('t-attach', 't-attach-link');
   document.getElementById('t-desc').value = x['卡点&问题描述'] || '';
   setEditing('task', x['_id'], x['发现日期'] + ' ' + (x['归集标题']||'').slice(0,18) + '…');
 }
@@ -275,6 +311,7 @@ async function saveLog(){
     '责任人': document.getElementById('f-owner').value.trim(),
     '协作人': document.getElementById('f-coworker').value.trim(),
     '交付产出': document.getElementById('f-deliver').value.trim(),
+    '附件': document.getElementById('f-attach').value.trim(),
     '工作内容': document.getElementById('f-content').value.trim(),
   };
   if (!record['所属项目']) return showToast(toast, '请选择所属项目', true);
@@ -311,6 +348,7 @@ async function saveTask(){
     '周报归集分类': document.getElementById('t-week').value,
     '协调资源需求': document.getElementById('t-coord').value.trim(),
     '闭环判定标准': document.getElementById('t-done').value.trim(),
+    '附件': document.getElementById('t-attach').value.trim(),
     '卡点&问题描述': document.getElementById('t-desc').value.trim(),
   };
   if (!record['归集标题']) return showToast(toast, '请填写归集标题', true);

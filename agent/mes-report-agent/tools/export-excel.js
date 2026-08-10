@@ -28,8 +28,8 @@ const LOGS_DIR = path.join(WORKLOG, 'logs');
 const TASK_FILE = path.join(WORKLOG, 'task-pool.json');
 const OUT_DIR = path.join(__dirname, '..', '..', '..', 'delivery', 'projects', 'hw-spring-mes', 'output');
 
-const LOG_HEADERS = ['记录日期', '所属项目', '工作内容', '结果类型', '是否形成任务', '业务模块', '项目阶段', '责任人', '协作人', '交付产出'];
-const TASK_HEADERS = ['归集标题', '对应项目', '问题来源', '优先级', '发现日期', '计划完成日期', '实际闭环日期', '任务状态', '进度百分比', '闭环判定标准', '周报归集分类', '协调资源需求', '卡点&问题描述'];
+const LOG_HEADERS = ['记录日期', '所属项目', '工作内容', '结果类型', '是否形成任务', '业务模块', '项目阶段', '责任人', '协作人', '交付产出', '附件'];
+const TASK_HEADERS = ['归集标题', '对应项目', '问题来源', '优先级', '发现日期', '计划完成日期', '实际闭环日期', '任务状态', '进度百分比', '闭环判定标准', '周报归集分类', '协调资源需求', '附件', '卡点&问题描述'];
 
 function parseArgs() {
   const mode = process.argv[2];
