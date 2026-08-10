@@ -1,9 +1,9 @@
 {
-  "note": "AI-WAREHOUSE 飞书多维表活动表配置（2026-08-08 更新）",
-  "active": "copy",
+  "note": "飞书多维表配置（2026-08-09 更新）：权威数据源已本地化，飞书表全部归档为历史只读。本地数据见 data/worklog/。",
+  "active": "local",
   "tables": {
     "copy": {
-      "label": "MES项目-工作记录表 副本（用户可编辑）",
+      "label": "MES项目-工作记录表 副本（历史归档）",
       "app_token": "UhPtbS5HHamJxesbrW4c9SBonyh",
       "link": "https://my.feishu.cn/base/UhPtbS5HHamJxesbrW4c9SBonyh",
       "link_password": "279r116#",
@@ -11,8 +11,8 @@
       "table_worklog_name": "原始工作日志",
       "table_taskpool_id": "tbl6nHpJxPd9cqpd",
       "table_taskpool_name": "任务问题归集池",
-      "status": "active",
-      "note": "用户创建的副本，应用可读写，用户可编辑。当前所有写入目标。"
+      "status": "archived",
+      "note": "2026-08-09 已迁移至本地 worklog（291 日志 + 40 任务），保留为历史只读归档，不再更新。"
     },
     "production": {
       "label": "原生产表（应用创建，用户只读）",
@@ -22,7 +22,7 @@
       "table_taskpool_id": "tblsuU7JVMevuLr5",
       "table_taskpool_name": "任务问题归集池",
       "status": "retired",
-      "note": "已弃用，保留作为数据源参照。数据已迁移至副本。"
+      "note": "已弃用，保留作为数据源参照。数据已迁移至副本再迁本地。"
     }
   }
 }
