@@ -307,6 +307,46 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 
 ## 🗒️ 自动会话日志
 
+### 2026-08-10 11:22 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    f8520d8 📝 BUILDING自动会话日志追加
+    5b9e994 📅 输入窗口纪要归档(7月3份+8月4份) + W32周报按最新本地数据重写
+    c926d8b 📐 本地化规范定版: worklog-local规范 + spec补§10本地化 + 飞书表标local归档 + 输入窗口README改指本地
+    bc09487 📊 本地配套工具: export-range区间提取 / export-excel导出xlsx / generate-dashboard仪表盘(8 KPI+5图表)
+    00c1601 🗄️ 工作日志完全本地化: 权威数据源落盘 worklog/ (291日志+40任务, 补稳定_id) + 录入页服务含编辑覆盖功能
+```
+
+### 2026-08-10 11:21 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    f8520d8 📝 BUILDING自动会话日志追加
+    5b9e994 📅 输入窗口纪要归档(7月3份+8月4份) + W32周报按最新本地数据重写
+    c926d8b 📐 本地化规范定版: worklog-local规范 + spec补§10本地化 + 飞书表标local归档 + 输入窗口README改指本地
+    bc09487 📊 本地配套工具: export-range区间提取 / export-excel导出xlsx / generate-dashboard仪表盘(8 KPI+5图表)
+    00c1601 🗄️ 工作日志完全本地化: 权威数据源落盘 worklog/ (291日志+40任务, 补稳定_id) + 录入页服务含编辑覆盖功能
+```
+
+### 2026-08-10 08:21 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    f8520d8 📝 BUILDING自动会话日志追加
+    5b9e994 📅 输入窗口纪要归档(7月3份+8月4份) + W32周报按最新本地数据重写
+    c926d8b 📐 本地化规范定版: worklog-local规范 + spec补§10本地化 + 飞书表标local归档 + 输入窗口README改指本地
+    bc09487 📊 本地配套工具: export-range区间提取 / export-excel导出xlsx / generate-dashboard仪表盘(8 KPI+5图表)
+    00c1601 🗄️ 工作日志完全本地化: 权威数据源落盘 worklog/ (291日志+40任务, 补稳定_id) + 录入页服务含编辑覆盖功能
+```
+
+### 2026-08-10 08:13 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    f8520d8 📝 BUILDING自动会话日志追加
+    5b9e994 📅 输入窗口纪要归档(7月3份+8月4份) + W32周报按最新本地数据重写
+    c926d8b 📐 本地化规范定版: worklog-local规范 + spec补§10本地化 + 飞书表标local归档 + 输入窗口README改指本地
+    bc09487 📊 本地配套工具: export-range区间提取 / export-excel导出xlsx / generate-dashboard仪表盘(8 KPI+5图表)
+    00c1601 🗄️ 工作日志完全本地化: 权威数据源落盘 worklog/ (291日志+40任务, 补稳定_id) + 录入页服务含编辑覆盖功能
+```
+
 ### 2026-08-10 08:11 (session: unknown)
 本次会话相关提交（最近5条）:
 ```
