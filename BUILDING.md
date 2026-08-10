@@ -307,6 +307,396 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 
 ## 🗒️ 自动会话日志
 
+### 2026-08-10 08:11 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-10 08:06 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-10 07:51 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-10 07:50 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-10 07:47 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-09 19:58 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-09 10:19 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-09 10:12 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-09 10:09 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-09 10:07 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-09 10:06 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-08 16:53 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-08 16:52 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-08 15:15 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    40facc1 @ 🔁 活动表切换为副本: 用户可编辑+应用可写, 权威token入config
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+```
+
+### 2026-08-08 15:04 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+```
+
+### 2026-08-08 14:58 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    8ad3ae9 @ 📊 汇报输出定版: md+docx双份/WPS友好排版/归档规范入库
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+```
+
+### 2026-08-08 14:53 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:50 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:42 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:34 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:32 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:32 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:26 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:13 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 14:09 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:31 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:31 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:31 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:31 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:31 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:24 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:24 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:22 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:21 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:21 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 13:21 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 12:32 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 12:29 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
+### 2026-08-08 12:27 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    d74f3d3 🧠 沉淀知识修订机制: 过时知识修订留痕而非抹掉(规则变更/认知修正/新法替代三情况)
+    f7a5721 🧠 沉淀API操作教训: 选项名非ID写值/字段PUT/排序分组不支持 + 输入窗口任务池准入规则
+    7dd772b 📋 汇报表格流程定版: API建表规范/缺省取最低档/输入窗口纪要读取 + gitignore放行输入窗口README
+    c768b2a 📘 周报表格操作说明入库: 团队填报规则/视图建议/收口SOP + .base补全结果类型字段 + .gitignore兜底inbox客户数据
+    611f46c workflow: weekly report generation V1 (extract + prompt + flow doc)
+```
+
 ### 2026-08-08 12:27 (session: unknown)
 本次会话相关提交（最近5条）:
 ```
