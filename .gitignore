@@ -77,3 +77,10 @@ delivery/inbox/*
 !delivery/inbox/日常工作数据输入窗口/
 delivery/inbox/日常工作数据输入窗口/*
 !delivery/inbox/日常工作数据输入窗口/README.md
+
+# ── worklog 日志与附件入库（覆盖上面的 logs/ 与 *.docx 全局规则）──
+# 工作日志是权威数据源，必须 git 可追溯；附件（聊天记录等）随记录入库
+!agent/mes-report-agent/data/worklog/logs/
+!agent/mes-report-agent/data/worklog/logs/*
+!agent/mes-report-agent/data/worklog/attachments/
+!agent/mes-report-agent/data/worklog/attachments/*
