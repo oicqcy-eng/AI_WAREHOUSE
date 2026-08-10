@@ -1,0 +1,162 @@
+#!/usr/bin/env node
+/** worklog-server.js — 本地工作日志录入服务（替代飞书多维表格的"打开直接录入"）
+ *
+ * 双击 start-worklog.bat 启动 → 浏览器自动打开录入页 → 下拉选择/填写 → 保存直接写入 worklog/
+ *
+ * API:
+ *   GET  /                    录入页 HTML
+ *   GET  /api/options         选项枚举（项目/结果类型/业务模块/阶段/优先级/状态/来源/周报分类）
+ *   GET  /api/logs/recent?n=  最近 n 条日志（跨月，日期倒序）
+ *   GET  /api/logs/today      今日日志（含 是否形成任务=是 计数）
+ *   POST /api/logs            追加日志 {record:{...}} → 返回 {total, file, _id}
+ *   POST /api/tasks           追加任务 {record:{...}} → 返回 {total, file, _id}
+ *   POST /api/logs/update     更新日志 {_id, record:{完整记录}} → 返回 {moved, file, total}
+ *   POST /api/tasks/update    更新任务 {_id, record:{完整记录}} → 返回 {file, total}
+ *   GET  /api/logs/get?id=    按 id 取单条日志（编辑回填）
+ *   GET  /api/tasks/get?id=   按 id 取单条任务（编辑回填）
+ *   GET  /api/tasks/recent?n= 最近 n 条任务
+ */
+'use strict';
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, LOGS_DIR, TASK_FILE, TODAY } = require('./worklog-append.js');
+
+const PORT = process.env.WORKLOG_PORT || 8787;
+const UI_FILE = path.join(__dirname, 'worklog-ui.html');
+
+// ===== 选项枚举（与 report-bitable-spec.md §1/§2 一致） =====
+const OPTIONS = {
+  projects: ['三厂小簧sMES', '一厂大簧sMES', '二厂大簧sMES', '重庆sMES项目', '实验室Lims项目', '无锡泽根sMES项目', '华纬其它项目'],
+  resultTypes: ['问题关闭', '方案确认', '配置完成', '培训完成', '数据完成', '上线验证', '风险暴露', '需求确认'],
+  modules: ['生产报工', '工单管理', '物料管控', '质量模块', '设备维保', '安灯异常', '设备数采', '系统接口', '报表看板', '系统管理'],
+  stages: ['需求调研', '方案设计', '基础资料收集', '培训上线', '现场实施', '运维优化'],
+  priority: ['P1', 'P2', 'P3', 'P4'],
+  taskStatus: ['待启动', '进行中', '暂缓', '已闭环'],
+  sources: ['现场反馈', '系统异常', '用户需求', '会议决策', '领导要求', '审厂要求'],
+  weekCat: ['本周完成', '本周推进', '重点问题', '下周计划', '长期跟踪'],
+};
+
+// ===== 读取全量日志（跨月） =====
+function allLogs() {
+  const arr = [];
+  if (fs.existsSync(LOGS_DIR)) {
+    for (const f of fs.readdirSync(LOGS_DIR)) {
+      if (!f.endsWith('.json')) continue;
+      arr.push(...loadJson(path.join(LOGS_DIR, f), []));
+    }
+  }
+  return arr;
+}
+
+function send(res, code, obj) {
+  const body = JSON.stringify(obj);
+  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body) });
+  res.end(body);
+}
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let d = '';
+    req.on('data', (c) => d += c);
+    req.on('end', () => { try { resolve(JSON.parse(d)); } catch (e) { reject(new Error('JSON 解析失败')); } });
+    req.on('error', reject);
+  });
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost');
+  const p = url.pathname;
+  try {
+    // 录入页
+    if (p === '/' && req.method === 'GET') {
+      const html = fs.readFileSync(UI_FILE, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(html);
+      return;
+    }
+    // 选项
+    if (p === '/api/options' && req.method === 'GET') {
+      send(res, 200, { code: 0, data: OPTIONS, today: TODAY });
+      return;
+    }
+    // 最近日志
+    if (p === '/api/logs/recent' && req.method === 'GET') {
+      const n = Number(url.searchParams.get('n') || 10);
+      const logs = allLogs().sort((a, b) => (b['记录日期'] || '').localeCompare(a['记录日期'] || '')).slice(0, n);
+      send(res, 200, { code: 0, data: logs });
+      return;
+    }
+    // 今日日志 + 统计
+    if (p === '/api/logs/today' && req.method === 'GET') {
+      const todayLogs = allLogs().filter(l => (l['记录日期'] || '') === TODAY).sort((a, b) => (a['工作内容'] || '').localeCompare(b['工作内容'] || ''));
+      send(res, 200, { code: 0, data: { date: TODAY, count: todayLogs.length, formTask: todayLogs.filter(l => l['是否形成任务'] === '是').length, items: todayLogs } });
+      return;
+    }
+    // 追加日志
+    if (p === '/api/logs' && req.method === 'POST') {
+      const body = await readBody(req);
+      const rec = appendLog(body.record || {});
+      send(res, 200, { code: 0, data: rec });
+      return;
+    }
+    // 追加任务
+    if (p === '/api/tasks' && req.method === 'POST') {
+      const body = await readBody(req);
+      const rec = appendTask(body.record || {});
+      send(res, 200, { code: 0, data: rec });
+      return;
+    }
+    // 更新日志（按 _id 覆盖；支持跨月移动）
+    if (p === '/api/logs/update' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
+      const rec = updateLog(body._id, body.record || {});
+      send(res, 200, { code: 0, data: rec });
+      return;
+    }
+    // 更新任务（按 _id 覆盖）
+    if (p === '/api/tasks/update' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
+      const rec = updateTask(body._id, body.record || {});
+      send(res, 200, { code: 0, data: rec });
+      return;
+    }
+    // 按 id 取单条日志
+    if (p === '/api/logs/get' && req.method === 'GET') {
+      const id = url.searchParams.get('id');
+      const found = findLog(id);
+      if (!found) { send(res, 404, { code: 404, msg: '未找到日志 ' + id }); return; }
+      send(res, 200, { code: 0, data: found.rec });
+      return;
+    }
+    // 按 id 取单条任务
+    if (p === '/api/tasks/get' && req.method === 'GET') {
+      const id = url.searchParams.get('id');
+      const found = findTask(id);
+      if (!found) { send(res, 404, { code: 404, msg: '未找到任务 ' + id }); return; }
+      send(res, 200, { code: 0, data: found.rec });
+      return;
+    }
+    // 最近任务
+    if (p === '/api/tasks/recent' && req.method === 'GET') {
+      const n = Number(url.searchParams.get('n') || 10);
+      const tasks = loadJson(TASK_FILE, []).sort((a, b) => (b['发现日期'] || '').localeCompare(a['发现日期'] || '')).slice(0, n);
+      send(res, 200, { code: 0, data: tasks });
+      return;
+    }
+    send(res, 404, { code: 404, msg: 'Not Found: ' + p });
+  } catch (e) {
+    send(res, 500, { code: 500, msg: e.message });
+  }
+});
+
+server.listen(PORT, () => {
+  console.log('✅ 工作日志录入服务已启动');
+  console.log('   打开浏览器: http://localhost:' + PORT);
+  console.log('   数据源: agent/mes-report-agent/data/worklog/');
+  console.log('   （关闭本窗口即停止服务）');
+  // 自动打开浏览器（Windows）
+  const { execSync } = require('child_process');
+  try { execSync('start "" http://localhost:' + PORT, { shell: 'cmd.exe' }); } catch (e) { /* 忽略 */ }
+});

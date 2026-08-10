@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作日志 · 录入</title>
+<style>
+:root{--navy:#1F4E79;--blue:#2E75B6;--light:#F2F7FC;--line:#D9E2EC;--red:#C00000;--green:#2E7D32;--gray:#6B7280}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:#EFF3F8;color:#1F2937;padding:20px}
+header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+header h1{color:var(--navy);font-size:20px}
+header .today{color:var(--gray);font-size:13px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{padding:8px 18px;border-radius:8px 8px 0 0;background:#E1E8F0;color:#4B5563;cursor:pointer;font-size:14px;border:1px solid var(--line);border-bottom:none}
+.tab.active{background:#fff;color:var(--navy);font-weight:700}
+.wrap{display:grid;grid-template-columns:minmax(420px,520px) 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.form{background:#fff;border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.row{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;margin-bottom:12px;align-items:center}
+.row label{font-size:13px;color:#4B5563;text-align:right}
+.row input,.row select,.row textarea{font-size:14px;padding:7px 9px;border:1px solid #C9D4E0;border-radius:6px;font-family:inherit;background:#fff}
+.row input:focus,.row select:focus,.row textarea:focus{outline:2px solid var(--blue);border-color:var(--blue)}
+.row textarea{min-height:84px;resize:vertical}
+.radio-row{display:flex;gap:18px;align-items:center}
+.radio-row label{display:flex;align-items:center;gap:5px;cursor:pointer}
+.actions{margin-top:6px;display:flex;gap:10px;align-items:center}
+.btn{background:var(--navy);color:#fff;border:none;padding:9px 26px;border-radius:6px;font-size:14px;cursor:pointer}
+.btn:hover{background:#173E62}
+#toast{font-size:13px;color:var(--green);min-height:18px}
+#toast.err{color:var(--red)}
+.recent{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.recent h3{font-size:14px;color:var(--navy);border-left:3px solid var(--blue);padding-left:8px;margin-bottom:10px}
+.recent ul{list-style:none;max-height:520px;overflow:auto}
+.recent li{font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)}
+.recent li:last-child{border-bottom:none}
+.recent .meta{color:var(--gray);font-size:12px;margin-bottom:2px}
+.recent .content{color:#1F2937}
+.recent .tag{display:inline-block;background:var(--light);color:var(--navy);border-radius:4px;padding:0 6px;font-size:11px;margin-right:6px}
+.legend{font-size:12px;color:var(--gray);margin-top:8px}
+.edit-btn{margin-left:8px;font-size:11px;color:var(--blue);background:none;border:1px solid var(--blue);border-radius:4px;padding:1px 7px;cursor:pointer}
+.edit-btn:hover{background:var(--light)}
+.edit-btn.cancel{color:var(--gray);border-color:var(--gray)}
+#editing-banner{display:none;margin-bottom:10px;padding:7px 12px;background:#FDF6E3;border:1px solid #E8D9A0;border-radius:6px;font-size:13px;color:#7A5B00}
+#editing-banner b{color:#B26B00}
+</style>
+</head>
+<body>
+<header>
+  <h1>📝 工作日志 · 录入</h1>
+  <div class="today" id="todayInfo">加载中…</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="log" onclick="switchTab('log')">📋 日志录入</div>
+  <div class="tab" data-tab="task" onclick="switchTab('task')">🎯 任务录入</div>
+</div>
+
+<div class="wrap">
+  <!-- ===== 表单 ===== -->
+  <div class="form">
+    <div id="editing-banner">✏️ 正在编辑记录 <b id="editing-target"></b> — 保存将覆盖原记录
+      <button class="edit-btn cancel" onclick="cancelEdit()">取消编辑</button>
+    </div>
+    <!-- 日志表单 -->
+    <div id="form-log">
+      <div class="row"><label>记录日期</label><input type="date" id="f-date"></div>
+      <div class="row"><label>所属项目 *</label><select id="f-project"></select></div>
+      <div class="row"><label>业务模块</label><select id="f-module"></select></div>
+      <div class="row"><label>项目阶段</label><select id="f-stage"></select></div>
+      <div class="row"><label>结果类型 *</label><select id="f-result"></select></div>
+      <div class="row"><label>是否形成任务 *</label>
+        <div class="radio-row">
+          <label><input type="radio" name="f-task" value="是"> 是</label>
+          <label><input type="radio" name="f-task" value="否" checked> 否</label>
+        </div>
+      </div>
+      <div class="row"><label>责任人</label><input type="text" id="f-owner" placeholder="默认陈宇"></div>
+      <div class="row"><label>协作人</label><input type="text" id="f-coworker" placeholder="如：张三、李四"></div>
+      <div class="row"><label>交付产出</label><input type="text" id="f-deliver" placeholder="如：模板清单、配置表、方案文档"></div>
+      <div class="row"><label>工作内容 *</label><textarea id="f-content" placeholder="今天做了什么？如：处理X项目Y问题，完成Z配置"></textarea></div>
+      <div class="actions">
+        <button class="btn" id="save-log" onclick="saveLog()">保存</button>
+        <div id="toast-log"></div>
+      </div>
+    </div>
+    <!-- 任务表单 -->
+    <div id="form-task" style="display:none">
+      <div class="row"><label>归集标题 *</label><input type="text" id="t-title" placeholder="【项目-业务模块-核心问题】"></div>
+      <div class="row"><label>对应项目 *</label><select id="t-project"></select></div>
+      <div class="row"><label>问题来源 *</label><select id="t-source"></select></div>
+      <div class="row"><label>优先级 *</label><select id="t-pri"></select></div>
+      <div class="row"><label>任务状态</label><select id="t-status"></select></div>
+      <div class="row"><label>发现日期</label><input type="date" id="t-found"></div>
+      <div class="row"><label>计划完成日期</label><input type="date" id="t-due"></div>
+      <div class="row"><label>实际闭环日期</label><input type="date" id="t-closed"></div>
+      <div class="row"><label>进度百分比</label><input type="number" id="t-progress" min="0" max="100" step="5" placeholder="如 50 表示 50%"></div>
+      <div class="row"><label>周报归集分类</label><select id="t-week"></select></div>
+      <div class="row"><label>协调资源需求</label><input type="text" id="t-coord" placeholder="需领导/跨部门支持事项"></div>
+      <div class="row"><label>闭环判定标准</label><input type="text" id="t-done" placeholder="什么算完成"></div>
+      <div class="row"><label>卡点 &amp; 问题描述</label><textarea id="t-desc" placeholder="背景 / 卡点"></textarea></div>
+      <div class="actions">
+        <button class="btn" id="save-task" onclick="saveTask()">保存</button>
+        <div id="toast-task"></div>
+      </div>
+    </div>
+    <div class="legend">* 为必填；未填字段按规范取最低档（结果类型=需求确认、优先级=P4 等）</div>
+  </div>
+
+  <!-- ===== 最近记录 ===== -->
+  <div class="recent">
+    <h3 id="recent-title">最近日志</h3>
+    <ul id="recent-list"><li style="color:var(--gray)">加载中…</li></ul>
+  </div>
+</div>
+
+<script>
+var O = null;
+var TODAY = '';
+var PROJ_SHORT = { '三厂小簧sMES':'三厂小簧', '一厂大簧sMES':'一厂大簧', '二厂大簧sMES':'二厂大簧', '重庆sMES项目':'重庆', '实验室Lims项目':'实验室Lims', '无锡泽根sMES项目':'无锡泽根', '华纬其它项目':'华纬其它' };
+function shortProj(p){ return PROJ_SHORT[p] || p; }
+
+function fillSelect(id, arr, defaultVal){
+  var el = document.getElementById(id);
+  el.innerHTML = '<option value="">（未选）</option>' + arr.map(function(x){ return '<option'+(x===defaultVal?' selected':'')+'>'+x+'</option>'; }).join('');
+}
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active', x.dataset.tab===t); });
+  document.getElementById('form-log').style.display = t==='log' ? '' : 'none';
+  document.getElementById('form-task').style.display = t==='task' ? '' : 'none';
+  document.getElementById('recent-title').textContent = t==='log' ? '最近日志' : '最近任务';
+  loadRecent(t);
+}
+
+async function api(path, opts){
+  var r = await fetch(path, opts);
+  return r.json();
+}
+
+async function init(){
+  var r = await api('/api/options');
+  O = r.data; TODAY = r.today;
+  document.getElementById('todayInfo').textContent = '今日 ' + TODAY;
+  document.getElementById('f-date').value = TODAY;
+  document.getElementById('t-found').value = TODAY;
+  fillSelect('f-project', O.projects);
+  fillSelect('f-module', O.modules);
+  fillSelect('f-stage', O.stages);
+  fillSelect('f-result', O.resultTypes);
+  fillSelect('t-project', O.projects);
+  fillSelect('t-source', O.sources);
+  fillSelect('t-pri', O.priority, 'P4');
+  fillSelect('t-status', O.taskStatus, '待启动');
+  fillSelect('t-week', O.weekCat);
+  loadRecent('log');
+  // 今日统计
+  var t = await api('/api/logs/today');
+  document.getElementById('todayInfo').textContent = '今日 ' + TODAY + ' · 已录 ' + t.data.count + ' 条（形成任务 ' + t.data.formTask + '）';
+}
+
+async function loadRecent(tab){
+  var ul = document.getElementById('recent-list');
+  if (tab==='log'){
+    var r = await api('/api/logs/recent?n=12');
+    if (!r.data.length){ ul.innerHTML = '<li style="color:var(--gray)">暂无日志</li>'; return; }
+    ul.innerHTML = r.data.map(function(x){
+      var tag = x['所属项目'] ? '<span class="tag">'+shortProj(x['所属项目'])+'</span>' : '';
+      var rt = x['结果类型'] ? '<span class="tag">'+x['结果类型']+'</span>' : '';
+      var tf = x['是否形成任务']==='是' ? '<span class="tag" style="background:#FDE9E9;color:#C00000">形成任务</span>' : '';
+      return '<li><div class="meta">'+x['记录日期']+tag+rt+tf
+        +'<button class="edit-btn" onclick="startEditLog(\''+x['_id']+'\')">编辑</button></div>'
+        +'<div class="content">'+(x['工作内容']||'')+'</div></li>';
+    }).join('');
+  } else {
+    var r2 = await api('/api/tasks/recent?n=12');
+    if (!r2.data.length){ ul.innerHTML = '<li style="color:var(--gray)">暂无任务</li>'; return; }
+    ul.innerHTML = r2.data.map(function(x){
+      var tag = '<span class="tag">'+shortProj(x['对应项目'])+'</span>';
+      var p = x['优先级'] ? '<span class="tag" style="background:'+(x['优先级']==='P1'?'#FDE9E9;color:#C00000':x['优先级']==='P2'?'#FDF3E0;color:#B26B00':'#EFF3F8;color:#6B7280')+'">'+x['优先级']+'</span>' : '';
+      var st = x['任务状态'] ? '<span class="tag">'+x['任务状态']+'</span>' : '';
+      return '<li><div class="meta">'+x['发现日期']+tag+p+st
+        +'<button class="edit-btn" onclick="startEditTask(\''+x['_id']+'\')">编辑</button></div>'
+        +'<div class="content">'+(x['归集标题']||'')+'</div></li>';
+    }).join('');
+  }
+}
+
+function showToast(el, msg, isErr){ el.textContent = msg; el.className = isErr ? 'err' : ''; }
+
+// ---- 编辑状态（空 = 正常录入；非空 = 正在编辑某条） ----
+var EDITING = { kind:null, id:null };
+function setEditing(kind, id, label){
+  EDITING = { kind:kind, id:id };
+  var banner = document.getElementById('editing-banner');
+  document.getElementById('editing-target').textContent = label;
+  banner.style.display = (kind && id) ? '' : 'none';
+  // 保存按钮文案
+  var btn = kind==='log' ? document.getElementById('save-log') : document.getElementById('save-task');
+  if (btn) btn.textContent = kind ? '保存修改' : '保存';
+  var toast = document.getElementById(kind==='log' ? 'toast-log' : 'toast-task');
+  if (toast) { toast.textContent = ''; toast.className = ''; }
+}
+function cancelEdit(){
+  setEditing(null, null, '');
+  clearLogForm(); clearTaskForm();
+}
+
+function clearLogForm(){
+  document.getElementById('f-date').value = TODAY;
+  document.getElementById('f-content').value = '';
+  document.getElementById('f-owner').value = '';
+  document.getElementById('f-coworker').value = '';
+  document.getElementById('f-deliver').value = '';
+  document.querySelector('input[name="f-task"][value="否"]').checked = true;
+}
+function clearTaskForm(){
+  document.getElementById('t-title').value = '';
+  document.getElementById('t-closed').value = '';
+  document.getElementById('t-progress').value = '';
+  document.getElementById('t-due').value = '';
+  document.getElementById('t-coord').value = '';
+  document.getElementById('t-done').value = '';
+  document.getElementById('t-desc').value = '';
+}
+
+async function startEditLog(id){
+  var r = await api('/api/logs/get?id=' + encodeURIComponent(id));
+  if (r.code!==0) return alert(r.msg || '加载记录失败');
+  var x = r.data;
+  // 切到日志 tab
+  switchTab('log');
+  document.getElementById('f-date').value = x['记录日期'] || '';
+  document.getElementById('f-project').value = x['所属项目'] || '';
+  document.getElementById('f-module').value = x['业务模块'] || '';
+  document.getElementById('f-stage').value = x['项目阶段'] || '';
+  document.getElementById('f-result').value = x['结果类型'] || '';
+  var rb = document.querySelector('input[name="f-task"][value="'+(x['是否形成任务']==='是'?'是':'否')+'"]');
+  if (rb) rb.checked = true;
+  document.getElementById('f-owner').value = x['责任人'] || '';
+  document.getElementById('f-coworker').value = x['协作人'] || '';
+  document.getElementById('f-deliver').value = x['交付产出'] || '';
+  document.getElementById('f-content').value = x['工作内容'] || '';
+  setEditing('log', x['_id'], x['记录日期'] + ' ' + (x['工作内容']||'').slice(0,18) + '…');
+}
+async function startEditTask(id){
+  var r = await api('/api/tasks/get?id=' + encodeURIComponent(id));
+  if (r.code!==0) return alert(r.msg || '加载记录失败');
+  var x = r.data;
+  switchTab('task');
+  document.getElementById('t-title').value = x['归集标题'] || '';
+  document.getElementById('t-project').value = x['对应项目'] || '';
+  document.getElementById('t-source').value = x['问题来源'] || '';
+  document.getElementById('t-pri').value = x['优先级'] || '';
+  document.getElementById('t-status').value = x['任务状态'] || '';
+  document.getElementById('t-found').value = x['发现日期'] || '';
+  document.getElementById('t-due').value = x['计划完成日期'] || '';
+  document.getElementById('t-closed').value = x['实际闭环日期'] || '';
+  document.getElementById('t-progress').value = (x['进度百分比'] || '').toString();
+  document.getElementById('t-week').value = x['周报归集分类'] || '';
+  document.getElementById('t-coord').value = x['协调资源需求'] || '';
+  document.getElementById('t-done').value = x['闭环判定标准'] || '';
+  document.getElementById('t-desc').value = x['卡点&问题描述'] || '';
+  setEditing('task', x['_id'], x['发现日期'] + ' ' + (x['归集标题']||'').slice(0,18) + '…');
+}
+
+async function saveLog(){
+  var toast = document.getElementById('toast-log');
+  var record = {
+    '记录日期': document.getElementById('f-date').value,
+    '所属项目': document.getElementById('f-project').value,
+    '业务模块': document.getElementById('f-module').value,
+    '项目阶段': document.getElementById('f-stage').value,
+    '结果类型': document.getElementById('f-result').value,
+    '是否形成任务': document.querySelector('input[name="f-task"]:checked').value,
+    '责任人': document.getElementById('f-owner').value.trim(),
+    '协作人': document.getElementById('f-coworker').value.trim(),
+    '交付产出': document.getElementById('f-deliver').value.trim(),
+    '工作内容': document.getElementById('f-content').value.trim(),
+  };
+  if (!record['所属项目']) return showToast(toast, '请选择所属项目', true);
+  if (!record['结果类型']) return showToast(toast, '请选择结果类型', true);
+  if (!record['工作内容']) return showToast(toast, '请填写工作内容', true);
+  if (!record['记录日期']) return showToast(toast, '请选择日期', true);
+  var isEdit = EDITING.kind==='log';
+  var r = await api(isEdit ? '/api/logs/update' : '/api/logs', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(isEdit ? {_id: EDITING.id, record: record} : {record: record})
+  });
+  if (r.code===0){
+    showToast(toast, isEdit ? '✅ 已更新（覆盖原记录）' : '✅ 已保存（今日共 ' + r.data.total + ' 条）');
+    document.getElementById('f-content').value = '';
+    setEditing(null, null, '');
+    loadRecent('log');
+    var t = await api('/api/logs/today');
+    document.getElementById('todayInfo').textContent = '今日 ' + TODAY + ' · 已录 ' + t.data.count + ' 条（形成任务 ' + t.data.formTask + '）';
+  } else showToast(toast, '❌ ' + r.msg, true);
+}
+
+async function saveTask(){
+  var toast = document.getElementById('toast-task');
+  var record = {
+    '归集标题': document.getElementById('t-title').value.trim(),
+    '对应项目': document.getElementById('t-project').value,
+    '问题来源': document.getElementById('t-source').value,
+    '优先级': document.getElementById('t-pri').value,
+    '任务状态': document.getElementById('t-status').value,
+    '发现日期': document.getElementById('t-found').value,
+    '计划完成日期': document.getElementById('t-due').value,
+    '实际闭环日期': document.getElementById('t-closed').value,
+    '进度百分比': document.getElementById('t-progress').value,
+    '周报归集分类': document.getElementById('t-week').value,
+    '协调资源需求': document.getElementById('t-coord').value.trim(),
+    '闭环判定标准': document.getElementById('t-done').value.trim(),
+    '卡点&问题描述': document.getElementById('t-desc').value.trim(),
+  };
+  if (!record['归集标题']) return showToast(toast, '请填写归集标题', true);
+  if (!record['对应项目']) return showToast(toast, '请选择对应项目', true);
+  if (!record['问题来源']) return showToast(toast, '请选择问题来源', true);
+  if (!record['优先级']) return showToast(toast, '请选择优先级', true);
+  var isEdit = EDITING.kind==='task';
+  var r = await api(isEdit ? '/api/tasks/update' : '/api/tasks', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(isEdit ? {_id: EDITING.id, record: record} : {record: record})
+  });
+  if (r.code===0){
+    showToast(toast, isEdit ? '✅ 已更新（覆盖原记录）' : '✅ 已保存（任务池共 ' + r.data.total + ' 条）');
+    document.getElementById('t-title').value = '';
+    document.getElementById('t-desc').value = '';
+    document.getElementById('t-coord').value = '';
+    document.getElementById('t-done').value = '';
+    setEditing(null, null, '');
+    loadRecent('task');
+  } else showToast(toast, '❌ ' + r.msg, true);
+}
+
+init();
+</script>
+</body>
+</html>
