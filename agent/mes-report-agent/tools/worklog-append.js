@@ -112,8 +112,8 @@ function updateLog(id, patch) {
   }
   if (!found) throw new Error('未找到 _id=' + id + ' 的日志记录');
 
-  // 合并 patch（patch 是完整新记录，覆盖除 _id 外所有字段）
-  const merged = Object.assign({}, patch);
+  // 合并 patch：保留原记录字段，patch 覆盖（部分字段更新也安全，不会抹掉未传字段）
+  const merged = Object.assign({}, found, patch);
   merged['_id'] = found['_id'];
   // 若 _id 缺失则保留旧 _id（patch 里可能不带）
   // 补缺省（与 append 一致，避免编辑后必填项意外被清空）
@@ -146,7 +146,7 @@ function updateTask(id, patch) {
   const arr = loadJson(TASK_FILE, []);
   const i = findTaskIndex(arr, id);
   if (i === -1) throw new Error('未找到 _id=' + id + ' 的任务记录');
-  const merged = Object.assign({}, patch);
+  const merged = Object.assign({}, arr[i], patch); // 保留原字段，patch 覆盖（不抹掉未传字段）
   merged['_id'] = arr[i]['_id'];
   for (const k of Object.keys(TASK_DEFAULTS)) if (!(k in merged) || merged[k] === '') merged[k] = TASK_DEFAULTS[k];
   arr[i] = merged;
