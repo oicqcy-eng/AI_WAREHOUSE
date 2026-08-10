@@ -23,8 +23,8 @@ worklog/
 | **打开录入页**（日常直接录入/编辑） | **双击 `start-worklog.bat`** → 浏览器自动打开 → 保存直接写 worklog；最近记录【编辑】可覆盖修改 |
 | 追加日志 | `node agent/mes-report-agent/tools/worklog-append.js log '<json>'` |
 | 追加任务 | `node agent/mes-report-agent/tools/worklog-append.js task '<json>'` |
-| 更新日志 | `node agent/mes-report-agent/tools/worklog-append.js update-log '{"_id":"L-xxx",...完整记录}'` |
-| 更新任务 | `node agent/mes-report-agent/tools/worklog-append.js update-task '{"_id":"T-xxx",...完整记录}'` |
+| 更新日志 | `node agent/mes-report-agent/tools/worklog-append.js update-log '{"_id":"L-xxx",...要改的字段}'` |
+| 更新任务 | `node agent/mes-report-agent/tools/worklog-append.js update-task '{"_id":"T-xxx",...要改的字段}'` |
 | 提取区间数据 | `node agent/mes-report-agent/tools/export-range.js <起> <止>`（如 `2026-08-03 2026-08-09`）|
 | 生成仪表盘 | `node agent/mes-report-agent/tools/generate-dashboard.js` → 浏览器打开 `delivery/projects/hw-spring-mes/output/dashboard.html` |
 | 导出 Excel | `node agent/mes-report-agent/tools/export-excel.js log\|task\|all [--project=X] [--month=YYYY-MM]` |
@@ -46,5 +46,6 @@ worklog/
 
 - **任务池准入**：停线风险/跨部门协调/系统BUG/需求变更/领导关注/审厂要求 → 进 task-pool；普通会议/日常测试/简单配置 → 只记日志
 - **稳定 `_id`**：每条记录带 `_id`（`L-xxx` 日志 / `T-xxx` 任务，基于日期+内容+序号哈希，确定性生成）。录入页编辑、update-log/update-task 都按它精确匹配；修改日期跨月时自动移到新月份文件
+- **update-log/update-task 是部分字段更新**：只传要改的字段，未传字段保留原值（原记录+patch 合并）。踩坑清单见 `data/worklog-local.md` §10
 - 输入来源：`delivery/inbox/日常工作数据输入窗口/` 纪要文件 + 对话框口述
 - 汇报生成：export-range.js 提取 → Claude 组织 md → md-to-docx.js 出 docx

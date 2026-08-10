@@ -65,7 +65,7 @@
 **追加时的纪律**：
 - 日志按 `记录日期` 的月份自动写入对应 `logs/YYYY-MM.json`；任务追加到 `task-pool.json`
 - 追加前**先读对应文件**确认不重复（同一件事不重复入库）
-- 修改记录：录入页【编辑】或 CLI `update-log/update-task`（按 `_id` 覆盖）；数据无稳定主键时用日期+内容定位
+- 修改记录：录入页【编辑】或 CLI `update-log/update-task`（按 `_id` 定位）；**部分字段更新即可，未传字段保留原值**（实现为原记录+patch 合并，见 §10 坑1）
 - 删除记录：直接 Edit 对应 json（保留合理的修订留痕，见 always-settle-knowledge 原则）
 - **数据源是本地**：生成汇报前用 export-range.js 取数，不再调飞书 API
 
@@ -120,3 +120,32 @@ export-range.js 提取区间日志+任务池 → Claude 按 `report-bitable-spec
 - 筛选：`--project=实验室Lims项目 --month=2026-08 --out=自定义路径.xlsx`
 
 **默认输出**：`delivery/projects/hw-spring-mes/output/`。
+
+## 10. 常见踩坑清单（2026-08-10 教训沉淀）
+
+> 每次改数据/工具出问题先查这里，避免重复踩坑。相关工具：`tools/worklog-append.js`、`worklog-server.js`。
+
+1. **update-log/update-task 是「原记录 + patch 合并」，不是整体替换**
+   - 只传要改的字段，**未传字段保留原值**（实现 `Object.assign({}, found, patch)`）
+   - 曾因用 patch 整体替换，导致 `归集标题/对应项目/优先级/协调资源` 被抹掉、`发现日期` 被误覆盖成处理当天——数据被破坏后才从 git HEAD 找回
+   - **改前先看原记录**（读当前 json 或 `git show HEAD:<file>` 对拍），避免漏字段
+
+2. **日期加减不要用 `toISOString()`**（UTC 时区，中国 +8 会少一天）
+   - `new Date(d+'T00:00:00'); t.setDate(t.getDate()+N);` 后**用 getFullYear/getMonth/getDate 拼** `YYYY-MM-DD`
+   - 曾因此把「发现日期+2天」算成 +1 天
+
+3. **findTask/findLog 返回 `{ rec, file }` 结构**，不是记录本身
+   - 取值用 `res.rec['字段名']`；曾直接当记录用返回 undefined
+
+4. **服务进程运行期间不要直接 CLI 改 worklog 文件**（并发写会丢记录）
+   - 改数据前 `taskkill //F //IM node.exe` 停服务 → 改完 → 重启服务验证
+
+5. **Git Bash `/tmp` 与 Windows node 的 `D:\tmp` 路径不一致**
+   - Bash 写 `/tmp/x.json` 后 node 读 `tmp/x.json` 报 ENOENT
+   - 临时文件放**工作区内** `tmp/` 目录（两边都能解析），写完即删
+
+6. **改数据后同步刷新三处输出**（避免数据源与汇报不一致）
+   - 数据源 `worklog/` → 周报 md → `md-to-docx.js` 出 docx → `generate-dashboard.js` 出仪表盘
+   - 改任务状态/日期后，本周报的「进行中/待启动」计数、P1 未闭环数都要核对
+
+7. **跨系统认知勿混**：鼎捷 sMES vs 老MES（玖坤）vs U9 ERP 是三套体系——SQL/数据字典是 sMES，玖坤只涉设备点检表，U9 是发料接口（详见 memory smes-vs-jiukun-system-boundary）
