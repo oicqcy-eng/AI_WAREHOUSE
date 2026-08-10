@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MES 项目管理驾驶舱</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<style>
+:root{
+  --navy:#1F4E79; --blue:#2E75B6; --light:#F2F7FC; --line:#D9E2EC;
+  --red:#C00000; --yellow:#B26B00; --green:#2E7D32; --gray:#6B7280;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei","微软雅黑",sans-serif;background:#EFF3F8;color:#1F2937;padding:20px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+header h1{color:var(--navy);font-size:22px;font-weight:700}
+header .meta{color:var(--gray);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:4px solid var(--blue)}
+.kpi .num{font-size:26px;font-weight:700;color:var(--navy);line-height:1.2}
+.kpi .lbl{font-size:12px;color:var(--gray);margin-top:2px}
+.kpi.red{border-left-color:var(--red)} .kpi.red .num{color:var(--red)}
+.kpi.green{border-left-color:var(--green)} .kpi.green .num{color:var(--green)}
+.kpi.yellow{border-left-color:var(--yellow)} .kpi.yellow .num{color:var(--yellow)}
+.p1-banner{background:#FDE9E9;border:1px solid #F5C6C6;border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.p1-banner .t{color:var(--red);font-weight:700;font-size:14px;margin-bottom:6px}
+.p1-banner ul{list-style:none}
+.p1-banner li{font-size:13px;color:#7A1F1F;padding:3px 0;border-bottom:1px dashed #F0C9C9}
+.p1-banner li:last-child{border-bottom:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:14px;margin-bottom:16px}
+.card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card h3{font-size:14px;color:var(--navy);margin-bottom:8px;border-left:3px solid var(--blue);padding-left:8px}
+.chart{width:100%;height:300px}
+.list{list-style:none}
+.list li{font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.list li:last-child{border-bottom:none}
+.pill{font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;color:#fff}
+.pill.P1{background:var(--red)} .pill.P2{background:var(--yellow)} .pill.P3{background:var(--gray)} .pill.P4{background:#9CA3AF}
+.pill.due{background:var(--blue)}
+.title{font-weight:600;color:#1F2937}
+.sub{color:var(--gray);font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>📊 MES 项目管理驾驶舱</h1>
+  <div class="meta">数据截至 2026-08-09 · 本地工作日志生成（worklog/）</div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="num">40</div><div class="lbl">任务池总数</div></div>
+  <div class="kpi"><div class="num">19</div><div class="lbl">进行中</div></div>
+  <div class="kpi green"><div class="num">1</div><div class="lbl">已闭环</div></div>
+  <div class="kpi"><div class="num">19</div><div class="lbl">待启动</div></div>
+  <div class="kpi red"><div class="num">11</div><div class="lbl">P1 未闭环</div></div>
+  <div class="kpi yellow"><div class="num">14</div><div class="lbl">已延期</div></div>
+  <div class="kpi"><div class="num">291</div><div class="lbl">日志总量</div></div>
+  <div class="kpi"><div class="num">23</div><div class="lbl">本周日志</div></div>
+</div>
+
+<div class="p1-banner">
+  <div class="t">⚠ P1 高风险（11 项未闭环）</div>
+  <ul>
+    <li>【重庆sMES项目】重庆sMES-系统环境-服务器部署(SQL/IIOT/ESB/AP/DB)（2026-04-30） · 需协调：鼎捷实施+IT</li><li>【实验室Lims项目】实验室Lims-设备数采-温湿度传感器网络与数据采集（2026-05-31） · 需协调：硬网/赛印</li><li>【无锡泽根sMES项目】无锡泽根-项目启动-启动会筹备与实施进场（2026-06-30） · 需协调：鼎捷实施</li><li>【重庆sMES项目】重庆sMES-U9接口-工单/物料/仓库接口调测（2026-07-31） · 需协调：U9与SMES接口团队</li><li>【实验室Lims项目】【实验室Lims-系统管理-34份核心模板筛选清单整理】（2026-08-10） · 需协调：王燕春（陈宇跟进）</li><li>【重庆sMES项目】重庆sMES-设备数采-工控点位盘点与整改（2026-08-31） · 需协调：电工/网络公司</li><li>【重庆sMES项目】重庆sMES-设备数采-5处网络缺失点位协调（2026-08-31） · 需协调：协调网络公司</li><li>【一厂大簧sMES】一厂大簧-系统管理-账号权限与班组权限配置（2026-08-31）</li><li>【三厂小簧sMES】三厂小簧-设备数采-数采部署与设备参数提供（2026-08-31） · 需协调：数采实施方</li><li>【无锡泽根sMES项目】无锡泽根-实施协调-出货单阻塞(孙佳迅未提供)（无期限） · 需协调：孙佳迅提供出货单</li><li>【一厂大簧sMES】一厂大簧（无期限）</li>
+  </ul>
+</div>
+
+<div class="grid">
+  <div class="card"><h3>各项目健康度</h3><div class="chart" id="c-health"></div></div>
+  <div class="card"><h3>优先级风险分布（未闭环）</h3><div class="chart" id="c-pri"></div></div>
+  <div class="card"><h3>业务模块工作分布</h3><div class="chart" id="c-module"></div></div>
+  <div class="card"><h3>月度日志趋势</h3><div class="chart" id="c-trend"></div></div>
+  <div class="card"><h3>项目 × 任务状态</h3><div class="chart" id="c-status"></div></div>
+  <div class="card"><h3>本周重点待协调</h3><ul class="list" id="coord"></ul></div>
+</div>
+
+<div class="grid">
+  <div class="card"><h3>近 7 天到期任务</h3><ul class="list" id="soon"></ul></div>
+</div>
+
+<script>
+var DATA = {"generated":"2026-08-09","kpi":{"totalTask":40,"doing":19,"done":1,"pending":19,"p1Open":11,"overdue":14,"totalLog":291,"weekLogs":23},"health":[{"name":"三厂小簧","total":9,"doing":4,"done":1},{"name":"一厂大簧","total":17,"doing":5,"done":0},{"name":"二厂大簧","total":1,"doing":1,"done":0},{"name":"重庆","total":6,"doing":5,"done":0},{"name":"实验室Lims","total":5,"doing":3,"done":0},{"name":"无锡泽根","total":2,"doing":1,"done":0}],"priDist":[{"name":"P1","value":11},{"name":"P2","value":14},{"name":"P3","value":11},{"name":"P4","value":3}],"moduleDist":[{"name":"未分类","value":262},{"name":"系统管理","value":9},{"name":"生产报工","value":7},{"name":"物料管控","value":4},{"name":"设备数采","value":3},{"name":"工单管理","value":2},{"name":"设备维保","value":2},{"name":"安灯异常","value":1},{"name":"质量模块","value":1}],"trend":{"months":["2026-01","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08"],"values":[1,49,62,31,59,66,23]},"projStatus":{"names":["三厂小簧","一厂大簧","二厂大簧","重庆","实验室Lims","无锡泽根"],"statuses":["进行中","待启动","暂缓","已闭环"],"rows":[{"name":"三厂小簧","data":[4,4,0,1]},{"name":"一厂大簧","data":[5,12,0,0]},{"name":"二厂大簧","data":[1,0,0,0]},{"name":"重庆","data":[5,1,0,0]},{"name":"实验室Lims","data":[3,2,0,0]},{"name":"无锡泽根","data":[1,0,1,0]}]},"needCoord":[{"title":"重庆sMES-系统环境-服务器部署(SQL/IIOT/ESB/AP/DB)","need":"鼎捷实施+IT","due":"2026-04-30","pri":"P1"},{"title":"实验室Lims-设备数采-温湿度传感器网络与数据采集","need":"硬网/赛印","due":"2026-05-31","pri":"P1"},{"title":"无锡泽根-实施协调-出货单阻塞(孙佳迅未提供)","need":"孙佳迅提供出货单","due":"","pri":"P1"},{"title":"无锡泽根-项目启动-启动会筹备与实施进场","need":"鼎捷实施","due":"2026-06-30","pri":"P1"},{"title":"重庆sMES-设备数采-工控点位盘点与整改","need":"电工/网络公司","due":"2026-08-31","pri":"P1"},{"title":"实验室Lims-系统管理-用户需求与系统更改优化","need":"赛印/开发","due":"2026-08-31","pri":"P2"},{"title":"重庆sMES-U9接口-工单/物料/仓库接口调测","need":"U9与SMES接口团队","due":"2026-07-31","pri":"P1"},{"title":"重庆sMES-设备数采-5处网络缺失点位协调","need":"协调网络公司","due":"2026-08-31","pri":"P1"},{"title":"一厂大簧-报表看板-车间大屏安装与点位确认","need":"电工","due":"2026-08-31","pri":"P2"},{"title":"三厂小簧-设备数采-数采部署与设备参数提供","need":"数采实施方","due":"2026-08-31","pri":"P1"},{"title":"一厂大簧-系统管理-信息箱接电协调","need":"电工指派","due":"2026-08-31","pri":"P2"},{"title":"三厂小簧-系统管理-展示大屏安装与电源布线","need":"电工","due":"2026-08-31","pri":"P3"},{"title":"【一厂大簧-生产报工-增加子作业报工人员操作权限】","need":"鼎捷姜皓翊（姜楠协助）","due":"2026-07-17","pri":"P3"},{"title":"【一厂大簧-生产报工-培训子作业报工】","need":"鼎捷姜楠","due":"2026-07-17","pri":"P3"},{"title":"【一厂大簧-系统管理-维护AY42绑定错误产品工艺路线】","need":"华纬陈佳宇","due":"2026-07-20","pri":"P3"},{"title":"【一厂大簧-生产报工-子作业报工审批功能新增】","need":"鼎捷姜楠","due":"2026-08-05","pri":"P2"},{"title":"【一厂大簧-安灯异常-安灯模块改手机端培训】","need":"鼎捷姜楠","due":"2026-07-24","pri":"P3"},{"title":"【一厂大簧-工单管理-流转卡二维码修改】","need":"鼎捷姜楠","due":"2026-07-27","pri":"P3"},{"title":"【一厂大簧-物料管控-计划下放后改物料/外来条码上料卡控】","need":"计划部（程振）重新下工单","due":"2026-07-29","pri":"P2"},{"title":"【一厂大簧-物料管控-物料和单号不匹配问题商讨】","need":"程振（陈佳宇、蒋佳腾协助）","due":"2026-08-05","pri":"P2"},{"title":"【一厂大簧-质量模块-基础资料收集对接人确认】","need":"陆忠华","due":"2026-07-30","pri":"P4"},{"title":"【实验室Lims-系统管理-Excel模板结构化导入可行性评估】","need":"软件方于经理（姜玲协调）","due":"","pri":"P2"},{"title":"【一厂大簧-物料管控-内部调拨物料条码无法同步识别】","need":"鼎捷、U9、IT","due":"","pri":"P2"},{"title":"【一厂大簧-生产报工-MES上料重量容差参数调整】","need":"鼎捷姜楠","due":"2026-08-16","pri":"P3"},{"title":"【一厂大簧-工单管理-工单料号变更作废重开流程落地】","need":"计划、仓库、生产三方协同","due":"","pri":"P3"},{"title":"【三厂小簧-设备数采-现场硬件采购方案待明确】","need":"IT 或 厂内自购","due":"2026-08-13","pri":"P2"},{"title":"【三厂小簧-设备维保-老MES设备点检表导出验证】","need":"老MES服务器用户名密码","due":"2026-08-13","pri":"P3"},{"title":"【实验室Lims-系统管理-34份核心模板筛选清单整理】","need":"王燕春（陈宇跟进）","due":"2026-08-10","pri":"P1"},{"title":"【实验室Lims-系统管理-超出34份模板增项处理机制】","need":"郑少青与软件公司沟通","due":"","pri":"P3"}],"soon":[{"title":"【实验室Lims-系统管理-34份核心模板筛选清单整理】","due":"2026-08-10","pri":"P1"},{"title":"【三厂小簧-设备数采-现场硬件采购方案待明确】","due":"2026-08-13","pri":"P2"},{"title":"【三厂小簧-设备维保-老MES设备点检表导出验证】","due":"2026-08-13","pri":"P3"},{"title":"【一厂大簧-生产报工-MES上料重量容差参数调整】","due":"2026-08-16","pri":"P3"}],"p1":[{"title":"重庆sMES-系统环境-服务器部署(SQL/IIOT/ESB/AP/DB)","proj":"重庆sMES项目","due":"2026-04-30","need":"鼎捷实施+IT"},{"title":"实验室Lims-设备数采-温湿度传感器网络与数据采集","proj":"实验室Lims项目","due":"2026-05-31","need":"硬网/赛印"},{"title":"无锡泽根-项目启动-启动会筹备与实施进场","proj":"无锡泽根sMES项目","due":"2026-06-30","need":"鼎捷实施"},{"title":"重庆sMES-U9接口-工单/物料/仓库接口调测","proj":"重庆sMES项目","due":"2026-07-31","need":"U9与SMES接口团队"},{"title":"【实验室Lims-系统管理-34份核心模板筛选清单整理】","proj":"实验室Lims项目","due":"2026-08-10","need":"王燕春（陈宇跟进）"},{"title":"重庆sMES-设备数采-工控点位盘点与整改","proj":"重庆sMES项目","due":"2026-08-31","need":"电工/网络公司"},{"title":"重庆sMES-设备数采-5处网络缺失点位协调","proj":"重庆sMES项目","due":"2026-08-31","need":"协调网络公司"},{"title":"一厂大簧-系统管理-账号权限与班组权限配置","proj":"一厂大簧sMES","due":"2026-08-31","need":""},{"title":"三厂小簧-设备数采-数采部署与设备参数提供","proj":"三厂小簧sMES","due":"2026-08-31","need":"数采实施方"},{"title":"无锡泽根-实施协调-出货单阻塞(孙佳迅未提供)","proj":"无锡泽根sMES项目","due":"无期限","need":"孙佳迅提供出货单"},{"title":"一厂大簧","proj":"一厂大簧sMES","due":"无期限","need":""}]};
+var COLORS = { navy:'#1F4E79', blue:'#2E75B6', red:'#C00000', yellow:'#B26B00', green:'#2E7D32', gray:'#9CA3AF' };
+
+// ① 各项目健康度
+var ch1 = echarts.init(document.getElementById('c-health'));
+ch1.setOption({
+  tooltip:{trigger:'axis'},
+  legend:{bottom:0, data:['总任务','进行中','已闭环']},
+  grid:{left:10,right:10,top:30,bottom:40,containLabel:true},
+  xAxis:{type:'category', data:DATA.health.map(d=>d.name)},
+  yAxis:{type:'value', minInterval:1},
+  series:[
+    {name:'总任务', type:'bar', data:DATA.health.map(d=>d.total), itemStyle:{color:COLORS.blue}},
+    {name:'进行中', type:'bar', data:DATA.health.map(d=>d.doing), itemStyle:{color:COLORS.yellow}},
+    {name:'已闭环', type:'bar', data:DATA.health.map(d=>d.done), itemStyle:{color:COLORS.green}},
+  ]
+});
+
+// ② 优先级分布
+var ch2 = echarts.init(document.getElementById('c-pri'));
+ch2.setOption({
+  tooltip:{trigger:'item', formatter:'{b}: {c} 项 ({d}%)'},
+  legend:{bottom:0},
+  series:[{
+    type:'pie', radius:['45%','70%'], center:['50%','46%'],
+    label:{formatter:'{b}\n{c} 项'},
+    data:DATA.priDist.map(function(x){
+      var c = x.name==='P1'?COLORS.red : x.name==='P2'?COLORS.yellow : x.name==='P3'?COLORS.blue : '#C7CBCF';
+      return {name:x.name, value:x.value, itemStyle:{color:c}};
+    })
+  }]
+});
+
+// ③ 业务模块分布
+var ch3 = echarts.init(document.getElementById('c-module'));
+ch3.setOption({
+  tooltip:{trigger:'axis'},
+  grid:{left:10,right:40,top:10,bottom:10,containLabel:true},
+  xAxis:{type:'value', minInterval:1},
+  yAxis:{type:'category', data:DATA.moduleDist.map(d=>d.name).reverse()},
+  series:[{type:'bar', data:DATA.moduleDist.map(d=>d.value).reverse(), itemStyle:{color:COLORS.blue}, barWidth:'55%'}]
+});
+
+// ④ 月度日志趋势
+var ch4 = echarts.init(document.getElementById('c-trend'));
+ch4.setOption({
+  tooltip:{trigger:'axis'},
+  grid:{left:10,right:20,top:20,bottom:20,containLabel:true},
+  xAxis:{type:'category', data:DATA.trend.months},
+  yAxis:{type:'value', minInterval:1},
+  series:[{name:'日志量', type:'line', smooth:true, data:DATA.trend.values,
+    itemStyle:{color:COLORS.navy}, lineStyle:{color:COLORS.navy,width:3},
+    areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(46,117,182,.35)'},{offset:1,color:'rgba(46,117,182,.02)'}]}}}]
+});
+
+// ⑤ 项目×状态
+var ch5 = echarts.init(document.getElementById('c-status'));
+ch5.setOption({
+  tooltip:{trigger:'axis'},
+  legend:{bottom:0, data:DATA.projStatus.statuses},
+  grid:{left:10,right:10,top:30,bottom:40,containLabel:true},
+  xAxis:{type:'category', data:DATA.projStatus.names},
+  yAxis:{type:'value', minInterval:1},
+  series:[
+    {name:'进行中', type:'bar', stack:'t', data:DATA.projStatus.rows.map(r=>r.data[0]), itemStyle:{color:COLORS.blue}},
+    {name:'待启动', type:'bar', stack:'t', data:DATA.projStatus.rows.map(r=>r.data[1]), itemStyle:{color:'#B7C9DB'}},
+    {name:'暂缓',   type:'bar', stack:'t', data:DATA.projStatus.rows.map(r=>r.data[2]), itemStyle:{color:'#E0A58C'}},
+    {name:'已闭环', type:'bar', stack:'t', data:DATA.projStatus.rows.map(r=>r.data[3]), itemStyle:{color:COLORS.green}},
+  ]
+});
+
+// ⑥ 本周重点待协调
+var coordEl = document.getElementById('coord');
+if (DATA.needCoord.length === 0) coordEl.innerHTML = '<li class="sub">无待协调事项</li>';
+else coordEl.innerHTML = DATA.needCoord.map(function(x){
+  return '<li><span class="pill '+x.pri+'">'+x.pri+'</span><span class="title">'+x.title+'</span><span class="sub">需协调：'+x.need+'</span>'+(x.due?'<span class="pill due">'+x.due+'</span>':'')+'</li>';
+}).join('');
+
+// ⑦ 近7天到期
+var soonEl = document.getElementById('soon');
+if (DATA.soon.length === 0) soonEl.innerHTML = '<li class="sub">未来 7 天无到期任务</li>';
+else soonEl.innerHTML = DATA.soon.map(function(x){
+  return '<li><span class="pill '+x.pri+'">'+x.pri+'</span><span class="title">'+x.title+'</span><span class="pill due">'+x.due+'</span></li>';
+}).join('');
+
+window.addEventListener('resize', function(){
+  [ch1,ch2,ch3,ch4,ch5].forEach(function(c){c.resize();});
+});
+</script>
+</body>
+</html>
