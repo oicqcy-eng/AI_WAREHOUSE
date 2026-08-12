@@ -39,11 +39,12 @@ hw-spring-mes/
 
 | 厂区 | 输入资料位置 | 交付物位置 |
 |------|------------|-----------|
-| 三厂小簧 | `input/san-chang-xiao-huang/`（知识卡+SQL） | `output/san-chang-xiao-huang/`（整体汇报） |
-| 一厂大簧 | 未来新增 → `input/yi-chang-da-huang/` | 跨厂区周报统一在 `output/reports/` |
-| 重庆 | 未来新增 → `input/chongqing/` | 同上 |
+| 三厂小簧 | `input/san-chang-xiao-huang/`（知识卡 K-001~007 + 厂区限定 SQL） | `output/san-chang-xiao-huang/`（整体汇报） |
+| 一厂大簧 | `input/yi_chang_da_huang/`（空目录，待归档） | 跨厂区周报统一在 `output/reports/` |
+| 重庆 | `input/c_q_mes/`（空目录，待归档） | 同上 |
+| 实验室 Lims | `input/lims_system/`（空目录，待归档） | 同上 |
 
-> 未来厂区新增专属资料时，在 `input/` 下按厂区建子目录（kebab-case），不另建项目目录。
+> 厂区目录统一**全小写下划线**命名（如 `yi_chang_da_huang`、`c_q_mes`）。未来厂区新增专属资料时，在 `input/` 下按厂区建子目录，不另建项目目录。
 
 ## 关联能力
 
