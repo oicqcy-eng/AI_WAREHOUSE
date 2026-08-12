@@ -1,7 +1,7 @@
 # U9 ERP（用友）接口查询 SQL 资产库
 
 > 华纬 **U9 ERP**（用友）相关接口查询 —— MES 从 U9 取数（发料/领料）的接口契约，与 `data/smes-621-sql/`（鼎捷 sMES 数据库内查询）是**两套不同体系**。
-> 来源: `delivery/inbox/SQL/U9_ERP发料查询SQL.docx`（2026-07-06 归档）。原件保留在 inbox 供追溯。
+> 来源: `delivery/inbox/SQL/U9_ERP发料查询SQL.docx`（2026-07-06 归档）。原件保留在本地 `raw/` 原件区供追溯。
 
 ## 说明
 

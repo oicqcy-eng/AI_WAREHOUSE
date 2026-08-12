@@ -14,7 +14,10 @@
 | 具体项目的需求/数据 | `delivery/projects/<项目>/input/requirements` 或 `sql` 等 |
 | 可复用的行业知识/方法论 | `docs/industry-knowledge/` |
 | 跨项目可复用能力/技能 | `agent/_shared/`、`skills/` |
+| 客户原始文件（xlsx/pptx/html/sql 等） | 各归属目录 `raw/` 原件区（仅本地，不入 git） |
 | 无价值/过时 | 删除 |
+
+> **raw/ 原件区**：客户原始文件按归属归入对应目录的 `raw/`（如 `input/san-chang-xiao-huang/raw/`、`data/smes-621/raw/`），由 `.gitignore` `**/raw/` 排除，仅存本地供追溯；git 只沉淀提炼成果 MD。
 
 ## 规范
 
