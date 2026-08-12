@@ -22,5 +22,12 @@
 每个 Agent 模块(agent/ 下): config/ prompt/ knowledge/ tools/ workflow/ data/ evaluation/ runbooks/
 每个项目模块(delivery/projects/ 下): input/ knowledge/ output/
 
+## 交付项目组织规则（2026-08-12 定版）
+**一个客户一个项目目录**（`delivery/projects/<客户>/`），如 `hw-spring-mes` = 华纬科技 MES 项目。
+- 客户下的**厂区/子域**（如三厂小簧/一厂大簧/重庆/LIMS）不另建项目目录，靠 worklog「所属项目」字段区分
+- 厂区专属**输入资料**（客户提供：知识卡/SQL/基础资料/纪要）→ `input/<厂区>/` 子目录
+- 跨厂区**产出**（周报/月报/整体汇报/dashboard）→ `output/` 统一放总目录根级
+- 厂区子目录用 kebab-case 命名（如 `input/san-chang-xiao-huang/`），新厂区在 input/ 下按厂区建子目录
+
 ## 命名规范
 - 目录: kebab-case; 脚本: 动词开头; 不存放真实密钥
