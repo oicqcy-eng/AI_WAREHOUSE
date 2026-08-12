@@ -26,6 +26,7 @@ hw-spring-mes/
 │   ├── report_ui/             报表/看板规格
 │   ├── interfaces/            接口/集成规格
 │   ├── meeting-minutes/       会议纪要(按 年-月 归档)
+│   ├── devices/               设备基础资料(跨厂区共用,752台,设备编号前缀→厂区映射)
 │   └── san-chang-xiao-huang/  三厂小簧厂区专属资料(知识卡 K-001~007 + 厂区限定SQL)
 ├── knowledge/                 项目专属知识/决策
 ├── output/
