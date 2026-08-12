@@ -307,6 +307,46 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 
 ## 🗒️ 自动会话日志
 
+### 2026-08-12 09:49 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    63a7936 🗑️ 消除数采任务重复: 删除T-2689c6d7be(三厂小簧数采专项,旧盘点项状态自相矛盾) 保留T-8bf07fdaa8(P1数采部署进行中60%) 三厂任务16→15
+    20b13f4 📖 mes-report-agent README 更新: 数据资产改本地worklog权威源 + 周报闭环改用export-range
+    d1e9a33 🔄 周报数据流更新: workflow/prompt从飞书CSV改为本地worklog(export-range.js为主/weekly-extract兼容保留)
+    279c806 🔧 沉淀审查修正(第一批): smes-621-sql标题17→16 / 日志字段口径可选7(补附件) / 枚举定义处改worklog-server / bitable-fill-guide标历史归档
+    77dec88 🏭 系统体系分层定版: LIMS独立资产库data/lims/建骨架 + sMES三厂区共库通用资产共享规则固化CLAUDE.md + README标注LIMS为独立系统 + 边界记忆
+```
+
+### 2026-08-12 09:40 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    77dec88 🏭 系统体系分层定版: LIMS独立资产库data/lims/建骨架 + sMES三厂区共库通用资产共享规则固化CLAUDE.md + README标注LIMS为独立系统 + 边界记忆
+    e5cdd0d 📖 BUILDING 会话日志段(09:32): 厂区目录命名统一提交
+    84b2ccb 🗂️ 厂区目录命名统一: 全小写下划线(三厂已有/新增一厂大簧、重庆c_q_mes、Lims) + README厂区对照表更新 + .gitkeep占位
+    a895f18 📁 三厂小簧项目并入hw-spring-mes: 知识卡+SQL迁input/san-chang-xiao-huang/ + 整体汇报挪output/ + 删旧目录 + README改真实 + md-to-docx支持子目录 + 修SQL资产数字
+    8b26abd 📐 沉淀交付项目组织规则: 一个客户一个项目目录(hw-spring-mes=华纬MES) + 厂区input子目录/跨厂区output统一 + CLAUDE.md固化 + 记忆
+```
+
+### 2026-08-12 09:38 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    77dec88 🏭 系统体系分层定版: LIMS独立资产库data/lims/建骨架 + sMES三厂区共库通用资产共享规则固化CLAUDE.md + README标注LIMS为独立系统 + 边界记忆
+    e5cdd0d 📖 BUILDING 会话日志段(09:32): 厂区目录命名统一提交
+    84b2ccb 🗂️ 厂区目录命名统一: 全小写下划线(三厂已有/新增一厂大簧、重庆c_q_mes、Lims) + README厂区对照表更新 + .gitkeep占位
+    a895f18 📁 三厂小簧项目并入hw-spring-mes: 知识卡+SQL迁input/san-chang-xiao-huang/ + 整体汇报挪output/ + 删旧目录 + README改真实 + md-to-docx支持子目录 + 修SQL资产数字
+    8b26abd 📐 沉淀交付项目组织规则: 一个客户一个项目目录(hw-spring-mes=华纬MES) + 厂区input子目录/跨厂区output统一 + CLAUDE.md固化 + 记忆
+```
+
+### 2026-08-12 09:32 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    e5cdd0d 📖 BUILDING 会话日志段(09:32): 厂区目录命名统一提交
+    84b2ccb 🗂️ 厂区目录命名统一: 全小写下划线(三厂已有/新增一厂大簧、重庆c_q_mes、Lims) + README厂区对照表更新 + .gitkeep占位
+    a895f18 📁 三厂小簧项目并入hw-spring-mes: 知识卡+SQL迁input/san-chang-xiao-huang/ + 整体汇报挪output/ + 删旧目录 + README改真实 + md-to-docx支持子目录 + 修SQL资产数字
+    8b26abd 📐 沉淀交付项目组织规则: 一个客户一个项目目录(hw-spring-mes=华纬MES) + 厂区input子目录/跨厂区output统一 + CLAUDE.md固化 + 记忆
+    b3c90fb 📋 数采逐日明细补录: 8-06/8-07/8-10各装5个(累计55/60/65) + 8-05累计口径修正为50 + 模块进程/任务卡点补明细
+```
+
 ### 2026-08-12 09:32 (session: unknown)
 本次会话相关提交（最近5条）:
 ```
