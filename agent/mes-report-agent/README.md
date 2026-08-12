@@ -26,11 +26,13 @@
 
 | 文件 | 内容 |
 |------|------|
-| `report-bitable-spec.md` | 飞书多维表格结构规范（表1日志 + 表2任务池 + 仪表盘 + 填报规则）|
-| `history-log-governance.md` | 历史日志归属校验清单（266 条治理，71 条变更）|
-| `history-log-governance.csv` | 266 行记录ID→目标项目映射（可导入飞书核对）|
-| `task-pool-supplement.md` | 任务池补充清单（18 条 MES 主要问题）|
-| `task-pool-supplement.csv` | 18 条任务池补充字段表（含 option ID，可导入）|
+| `worklog/` | **权威数据源（本地）**：任务池 `task-pool.json` + 日志按月 `logs/YYYY-MM.json` |
+| `worklog-local.md` | 本地化工作日志规范（字段口径/缺省值/操作/踩坑）|
+| `report-bitable-spec.md` | 汇报结构规范（字段口径/周报月报输出规范/本地化说明 §10）|
+| `history-log-governance.md` | 历史日志归属校验清单（266 条治理，71 条变更，归档参考）|
+| `task-pool-supplement.md` | 任务池补充清单（18 条 MES 主要问题，归档参考）|
+
+> **2026-08-09 本地化**：飞书多维表已归档（config `feishu-tables.json` active=local），数据读写全走 `data/worklog/`。CSV（history-log-governance/task-pool-supplement）为飞书时代治理产物，仅作历史参考。
 
 ## 周报生成闭环（V1）
 
@@ -38,27 +40,26 @@
 
 ```
 输入「生成2026年第XX周MES项目周报」
-   ↓ ① 数据提取
-tools/weekly-extract.js --year 2026 --week 32 [--project 三厂小簧sMES]
-   ↓ 输出 tmp/weekly-input-2026-W32.md（四模块预分组素材）
+   ↓ ① 数据提取（本地权威源）
+tools/export-range.js 2026-08-03 2026-08-09   （或 weekly-extract.js 预分组）
+   ↓ 输出：区间日志 + 任务池全量 + P1/P2 未闭环风险
    ↓ ② AI 润色成稿（读素材 + prompt/weekly-report-v1.md）
 输出：全项目汇总 或 单项目周报（本周完成/核心问题及风险/待办事项/下周重点计划）
 ```
 
 | 文件 | 作用 |
 |------|------|
-| `tools/weekly-extract.js` | 周次解析 + 任务池/日志按周/项目过滤，输出四模块素材 |
+| `tools/export-range.js` | 从本地 worklog 提取区间日志+任务池+风险（主数据流）|
+| `tools/weekly-extract.js` | 周次解析 + 四模块预分组（兼容保留，需 CSV 输入）|
 | `prompt/weekly-report-v1.md` | 周报生成 Prompt 模板（四模块 + 两种输出模式）|
 | `workflow/weekly-report-v1.md` | 周报生成闭环流程文档 + 样例验证 |
 
 ## 使用
 
 ```bash
-# 1. 生成素材（全项目汇总）
-node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32
-# 2. 单项目
-node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --project 三厂小簧sMES
-# 3. 把素材 + prompt/weekly-report-v1.md 交给 Claude 生成周报
+# 1. 提取数据（本地权威源，全项目；单项目在输出里按「所属项目」分组筛）
+node agent/mes-report-agent/tools/export-range.js 2026-08-03 2026-08-09
+# 2. 把数据 + prompt/weekly-report-v1.md 交给 Claude 生成周报
 ```
 
 ### 输出 docx（WPS 打开用）
