@@ -23,13 +23,13 @@
 | 15 | 设备-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
 | 16 | 设备生产查询-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
 
-## 厂区限定（3 个）→ `delivery/projects/san-chang-xiao-huang/input/sql/`
+## 厂区限定（3 个）→ `delivery/projects/hw-spring-mes/input/san-chang-xiao-huang/sql/`
 
 | # | 文件 | 类型 | 限定厂区 | 归档位置 | 状态 |
 |---|------|------|---------|----------|:----:|
-| 17 | 大簧生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬一厂大簧（设备前缀 101-01-DH / PROCESSTYPE=弹簧流程） | `projects/san-chang-xiao-huang/input/sql/` | ✓ |
-| 18 | 稳定杆生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬稳定杆厂（PROCESSTYPE=稳定杆流程） | `projects/san-chang-xiao-huang/input/sql/` | ✓ |
-| 19 | 金晟-生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬金晟厂（主要产品稳定杆 / PROCESSTYPE=金晟流程） | `projects/san-chang-xiao-huang/input/sql/` | ✓ |
+| 17 | 大簧生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬一厂大簧（设备前缀 101-01-DH / PROCESSTYPE=弹簧流程） | `projects/hw-spring-mes/input/san-chang-xiao-huang/sql/` | ✓ |
+| 18 | 稳定杆生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬稳定杆厂（PROCESSTYPE=稳定杆流程） | `projects/hw-spring-mes/input/san-chang-xiao-huang/sql/` | ✓ |
+| 19 | 金晟-生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬金晟厂（主要产品稳定杆 / PROCESSTYPE=金晟流程） | `projects/hw-spring-mes/input/san-chang-xiao-huang/sql/` | ✓ |
 
 ## 备注
 

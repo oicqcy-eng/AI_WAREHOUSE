@@ -227,14 +227,15 @@ function buildTable(rows) {
 
 (async () => {
   const files = [
-    { md: '2026-08-11_三厂小簧项目整体汇报.md', docx: '2026-08-11_三厂小簧项目整体汇报.docx', title: '华纬三厂小簧 MES 项目整体汇报' },
+    { md: '2026-08-11_三厂小簧项目整体汇报.md', docx: '2026-08-11_三厂小簧项目整体汇报.docx', title: '华纬三厂小簧 MES 项目整体汇报', dir: '../san-chang-xiao-huang' },
     { md: '2026-08-08_周报_W32.md', docx: '2026-08-08_周报_W32.docx', title: '华纬科技 MES 项目周报（2026年第32周，08-03 ~ 08-09）' },
     { md: '2026-08-10_周报_W33.md', docx: '2026-08-10_周报_W33.docx', title: '华纬科技 MES 项目周报（2026年第33周，08-10 ~ 08-16）' },
     { md: '2026-08-08_月报_7月.md', docx: '2026-08-08_月报_7月.docx', title: '华纬科技 MES 项目月报（2026年7月复盘）' },
     { md: '2026-08-08_简报.md', docx: '2026-08-08_简报.docx', title: '华纬科技 MES 项目简报（2026-08-08）' },
   ];
   for (const f of files) {
-    const mdPath = path.join(REPORTS_DIR, f.md);
+    const dir = f.dir ? path.join(REPORTS_DIR, f.dir) : REPORTS_DIR;
+    const mdPath = path.join(dir, f.md);
     if (!fs.existsSync(mdPath)) { console.log('⚠️ 跳过（不存在）: ' + f.md); continue; }
     const md = fs.readFileSync(mdPath, 'utf8');
     const blocks = parseMd(md);
@@ -243,7 +244,7 @@ function buildTable(rows) {
       numbering: { config: [{ reference: 'list-num', levels: [{ level: 0, format: 'decimal', text: '%1.', alignment: AlignmentType.LEFT }] }] },
       sections: [{ children: makeDoc(blocks, f.title), properties: { page: { margin: { top: 1000, bottom: 1000, left: 1100, right: 1100 } } } }],
     });
-    const outPath = path.join(REPORTS_DIR, f.docx);
+    const outPath = path.join(dir, f.docx);
     const buffer = await Packer.toBuffer(doc);
     fs.writeFileSync(outPath, buffer);
     console.log('✅ ' + f.docx + ' (' + (buffer.length / 1024).toFixed(1) + ' KB)');
