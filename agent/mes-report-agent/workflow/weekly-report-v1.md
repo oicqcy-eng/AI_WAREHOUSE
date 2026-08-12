@@ -10,31 +10,34 @@
 
 ```
 你输入：生成2026年第XX周MES项目周报 [可选：某某项目]
-   ↓ ① 数据准备（自动）
-tools/weekly-extract.js --year YYYY --week NN [--project X]
-   ↓ 从 data/ 两个 CSV 提取
-tmp/weekly-input-YYYY-WNN.md   ← 四模块预分组素材 + 本周日志佐证
+   ↓ ① 数据准备（自动，本地权威数据源）
+tools/export-range.js <周起> <周止>   ← 从 data/worklog/ 提取
+   ↓ 输出：区间日志（按项目分组）+ 任务池全量 + P1/P2未闭环风险
+（或 tools/weekly-extract.js --year YYYY --week NN 做四模块预分组，见下）
    ↓ ② 生成（读素材 + prompt 模板）
 prompt/weekly-report-v1.md
    ↓ ③ 成稿
 项目经理周报（全项目汇总 或 单项目）
 ```
 
+> **数据源变更（2026-08-09 本地化后）**：任务池/日志已迁至本地 `data/worklog/`（task-pool.json + logs/YYYY-MM.json），不再从飞书导出 CSV。优先用 `export-range.js` 取原始数据；`weekly-extract.js` 保留四模块预分组能力，但需先把 worklog 导出为它认的 CSV 才能用（见 §1 备注）。
+
 ---
 
 ## 使用方法
 
-### 1. 准备数据源（data/ 目录）
+### 1. 准备数据源（本地 worklog/，2026-08-09 起）
 
-| 文件 | 内容 | 数据源 |
-|------|------|--------|
-| `data/task-pool-supplement.csv` | 任务问题归集池（主数据源） | 飞书多维表格表2 导出 |
-| `data/history-log-governance.csv` | 原始工作日志（过程佐证） | 飞书多维表格表1 导出 |
+**权威数据源 = `data/worklog/`**（task-pool.json + logs/YYYY-MM.json），直接读取，**不再从飞书导出**。
 
-> **真实使用时**：从飞书多维表格导出最新任务池 + 日志，覆盖这两个 CSV 即可。字段须与 `report-bitable-spec.md` 对齐。
-> **字段约定**（脚本读取的列名）：
-> - 任务池：`title, project, priority, status, source, discover_date, plan_date, close_criteria, weekly_category, resource_needed`
-> - 日志：`date, target_project, content_preview`
+| 数据 | 位置 | 读取方式 |
+|------|------|----------|
+| 任务池（主数据源） | `data/worklog/task-pool.json` | `export-range.js` 直接读 |
+| 原始工作日志（过程佐证） | `data/worklog/logs/YYYY-MM.json` | `export-range.js` 直接读 |
+
+> **默认方式**：`export-range.js <周起> <周止>` 输出日志+任务池+P1/P2 风险，Claude 按四模块组织成稿（见 §2）。
+>
+> **若要用 weekly-extract.js 的四模块预分组**：需先 `export-excel.js task --out=tmp/tasks.csv` / `log --out=tmp/logs.csv` 转 CSV，再跑 `weekly-extract.js --year --week --tasks tmp/tasks.csv --logs tmp/logs.csv`（列名须匹配脚本约定）。此路径为兼容保留，新流程推荐 export-range.js。
 
 ### 2. 生成数据素材（一条命令）
 
