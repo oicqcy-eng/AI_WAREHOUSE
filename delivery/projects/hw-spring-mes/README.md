@@ -35,16 +35,17 @@ hw-spring-mes/
 └── CHANGELOG.md               交付记录
 ```
 
-## 厂区专属资料归属
+## 厂区/系统专属资料归属
 
-| 厂区 | 输入资料位置 | 交付物位置 |
-|------|------------|-----------|
-| 三厂小簧 | `input/san-chang-xiao-huang/`（知识卡 K-001~007 + 厂区限定 SQL） | `output/san-chang-xiao-huang/`（整体汇报） |
-| 一厂大簧 | `input/yi_chang_da_huang/`（空目录，待归档） | 跨厂区周报统一在 `output/reports/` |
-| 重庆 | `input/c_q_mes/`（空目录，待归档） | 同上 |
-| 实验室 Lims | `input/lims_system/`（空目录，待归档） | 同上 |
+| 厂区/系统 | 输入资料位置 | 交付物位置 |
+|-----------|------------|-----------|
+| 三厂小簧（sMES） | `input/san-chang-xiao-huang/`（知识卡 K-001~007 + 厂区限定 SQL） | `output/san-chang-xiao-huang/`（整体汇报） |
+| 一厂大簧（sMES） | `input/yi_chang_da_huang/`（空目录，待归档） | 跨厂区周报统一在 `output/reports/` |
+| 重庆（sMES） | `input/c_q_mes/`（空目录，待归档） | 同上 |
+| 实验室 **LIMS**（独立系统） | `input/lims_system/`（空目录，待归档）→ 提炼沉淀到 `agent/mes-implement-expert/data/lims/` | 同上 |
 
-> 厂区目录统一**全小写下划线**命名（如 `yi_chang_da_huang`、`c_q_mes`）。未来厂区新增专属资料时，在 `input/` 下按厂区建子目录，不另建项目目录。
+> **共库规则**：MES 三厂区共用一个鼎捷 sMES 库，通用资产（数据字典/通用查询）一份共享于 `agent/mes-implement-expert/data/smes-621*`，各厂区不复制；厂区限定 SQL 才进 `input/<厂区>/sql/`。**LIMS 是独立系统独立库**，资产沉淀到 `data/lims/`，不混入 sMES。详见 CLAUDE.md「系统体系与共享资产」。
+> 厂区目录统一**全小写下划线**命名（如 `yi_chang_da_huang`、`c_q_mes`；`san-chang-xiao-huang` 为历史遗留）。未来新增厂区/系统在 `input/` 下建子目录，不另建项目目录。
 
 ## 关联能力
 
