@@ -226,6 +226,24 @@ function buildTable(rows) {
 }
 
 (async () => {
+  // CLI 单文件模式: node md-to-docx.js <md路径> <docx路径> "<标题>"
+  if (process.argv[3]) {
+    const mdPath = process.argv[2];
+    const docxPath = process.argv[3];
+    const title = process.argv[4] || path.basename(mdPath, '.md');
+    if (!fs.existsSync(mdPath)) { console.log('❌ 不存在: ' + mdPath); process.exit(1); }
+    const md = fs.readFileSync(mdPath, 'utf8');
+    const blocks = parseMd(md);
+    if (blocks[0] && blocks[0].type === 'heading' && blocks[0].level === 1) blocks.shift();
+    const doc = new Document({
+      numbering: { config: [{ reference: 'list-num', levels: [{ level: 0, format: 'decimal', text: '%1.', alignment: AlignmentType.LEFT }] }] },
+      sections: [{ children: makeDoc(blocks, title), properties: { page: { margin: { top: 1000, bottom: 1000, left: 1100, right: 1100 } } } }],
+    });
+    const buffer = await Packer.toBuffer(doc);
+    fs.writeFileSync(docxPath, buffer);
+    console.log('✅ ' + path.basename(docxPath) + ' (' + (buffer.length / 1024).toFixed(1) + ' KB)');
+    return;
+  }
   const files = [
     { md: '2026-08-11_三厂小簧项目整体汇报.md', docx: '2026-08-11_三厂小簧项目整体汇报.docx', title: '华纬三厂小簧 MES 项目整体汇报', dir: '../san-chang-xiao-huang' },
     { md: '2026-08-08_周报_W32.md', docx: '2026-08-08_周报_W32.docx', title: '华纬科技 MES 项目周报（2026年第32周，08-03 ~ 08-09）' },
