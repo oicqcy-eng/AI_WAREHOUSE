@@ -34,6 +34,7 @@ hw-spring-mes/
 │   ├── reports/               跨厂区汇报(周报 W32/W33、月报、简报) md+docx
 │   ├── san-chang-xiao-huang/  三厂小簧厂区交付物(整体汇报 md+docx)
 │   ├── lims/                  实验室 LIMS 专属产出(IT总监汇报大纲→md+docx)
+│   ├── c_q_mes/               重庆厂区交付物(重庆MES项目汇报 md+docx)
 │   └── dashboard.html         仪表盘(跨厂区)
 └── CHANGELOG.md               交付记录
 ```
@@ -44,7 +45,7 @@ hw-spring-mes/
 |-----------|------------|-----------|
 | 三厂小簧（sMES） | `input/san-chang-xiao-huang/`（知识卡 K-001~007 + 厂区限定 SQL） | `output/san-chang-xiao-huang/`（整体汇报） |
 | 一厂大簧（sMES） | `input/yi_chang_da_huang/`（空目录，待归档） | 跨厂区周报统一在 `output/reports/` |
-| 重庆（sMES） | `input/c_q_mes/`（空目录，待归档） | 同上 |
+| 重庆（sMES） | `input/c_q_mes/`（空目录，待归档） | `output/c_q_mes/`（重庆MES项目汇报 2026-08-13） |
 | 实验室 **LIMS**（独立系统） | `input/lims_system/`（2026-08-13 已归档 12 份原件 raw/ + 3 份提炼知识卡 knowledge/） | 同上 |
 
 > **共库规则**：MES 三厂区共用一个鼎捷 sMES 库，通用资产（数据字典/通用查询）一份共享于 `agent/mes-implement-expert/data/smes-621*`，各厂区不复制；厂区限定 SQL 才进 `input/<厂区>/sql/`。**LIMS 是独立系统独立库**，资产沉淀到 `data/lims/`，不混入 sMES。详见 CLAUDE.md「系统体系与共享资产」。
