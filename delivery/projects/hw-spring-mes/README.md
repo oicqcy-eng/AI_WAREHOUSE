@@ -33,6 +33,7 @@ hw-spring-mes/
 ├── output/
 │   ├── reports/               跨厂区汇报(周报 W32/W33、月报、简报) md+docx
 │   ├── san-chang-xiao-huang/  三厂小簧厂区交付物(整体汇报 md+docx)
+│   ├── lims/                  实验室 LIMS 专属产出(IT总监汇报大纲→md+docx)
 │   └── dashboard.html         仪表盘(跨厂区)
 └── CHANGELOG.md               交付记录
 ```
