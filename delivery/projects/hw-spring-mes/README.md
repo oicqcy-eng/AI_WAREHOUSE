@@ -27,7 +27,8 @@ hw-spring-mes/
 │   ├── interfaces/            接口/集成规格
 │   ├── meeting-minutes/       会议纪要(按 年-月 归档)
 │   ├── devices/               设备基础资料(跨厂区共用,752台,设备编号前缀→厂区映射)
-│   └── san-chang-xiao-huang/  三厂小簧厂区专属资料(知识卡 K-001~007 + 厂区限定SQL)
+│   ├── san-chang-xiao-huang/  三厂小簧厂区专属资料(知识卡 K-001~007 + 厂区限定SQL)
+│   └── lims_system/           LIMS 项目资料(独立系统: knowledge/提炼卡 + raw/原件区)
 ├── knowledge/                 项目专属知识/决策
 ├── output/
 │   ├── reports/               跨厂区汇报(周报 W32/W33、月报、简报) md+docx
@@ -43,7 +44,7 @@ hw-spring-mes/
 | 三厂小簧（sMES） | `input/san-chang-xiao-huang/`（知识卡 K-001~007 + 厂区限定 SQL） | `output/san-chang-xiao-huang/`（整体汇报） |
 | 一厂大簧（sMES） | `input/yi_chang_da_huang/`（空目录，待归档） | 跨厂区周报统一在 `output/reports/` |
 | 重庆（sMES） | `input/c_q_mes/`（空目录，待归档） | 同上 |
-| 实验室 **LIMS**（独立系统） | `input/lims_system/`（空目录，待归档）→ 提炼沉淀到 `agent/mes-implement-expert/data/lims/` | 同上 |
+| 实验室 **LIMS**（独立系统） | `input/lims_system/`（2026-08-13 已归档 12 份原件 raw/ + 3 份提炼知识卡 knowledge/） | 同上 |
 
 > **共库规则**：MES 三厂区共用一个鼎捷 sMES 库，通用资产（数据字典/通用查询）一份共享于 `agent/mes-implement-expert/data/smes-621*`，各厂区不复制；厂区限定 SQL 才进 `input/<厂区>/sql/`。**LIMS 是独立系统独立库**，资产沉淀到 `data/lims/`，不混入 sMES。详见 CLAUDE.md「系统体系与共享资产」。
 > 厂区目录统一**全小写下划线**命名（如 `yi_chang_da_huang`、`c_q_mes`；`san-chang-xiao-huang` 为历史遗留）。未来新增厂区/系统在 `input/` 下建子目录，不另建项目目录。
