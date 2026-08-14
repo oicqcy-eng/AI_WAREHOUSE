@@ -1,0 +1,7 @@
+SELECT a.ACCSERIALNO,a.ACCESSORYTYPE,a.ACCESSORYNO,a.ACCESSORYSTATE,b.STATENAME,a.STARTTIME,a.ENDTIME,a.USERNO,a.APPLYTIME,a.ACCUMULATEQTY,a.DESCRIPTION,
+  CASE WHEN d.CombineACC=0 THEN '否' WHEN d.CombineACC=1 THEN '是' END AS RT801_EXECUTESTATE 
+  ,a.LocatorNo,a.AddLifeType,a.AddLife,a.RealAddLife  FROM TBLEMSACCESSORYSTATELOG a  
+  left join TBLEQPACCSTATEBASIS b on  a.ACCESSORYSTATE = b.ACCESSORYSTATE  
+  left join tblEQPAccessoryBasis c on a.AccessoryNo=c.AccessoryNo and a.AccessoryVersion=c.AccessoryVersion  
+  left join tblEQPAccessoryCategory d on c.AccessoryCategory=d.ACCESSORYCATEGORY  
+  WHERE a.ACCSERIALNO Is NOT Null and a.ACCESSORYSTATE = b.ACCESSORYSTATE

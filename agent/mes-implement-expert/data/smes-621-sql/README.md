@@ -11,7 +11,7 @@
 - **厂区限定**查询（绑定华纬某厂区）已分流到 `delivery/projects/hw-spring-mes/input/san-chang-xiao-huang/sql/`
 - 每个 SQL 文件为独立查询，可直接复制执行；字段说明见文件内注释
 
-## 查询清单（16 个通用）
+## 查询清单（18 个通用）
 
 | 文件 | 查询内容 | 涉及核心表 |
 |------|---------|-----------|
@@ -31,6 +31,8 @@
 | [订单工单查询-SQL.sql](订单工单查询-SQL.sql) | 订单/工单(RO/MO) | TBLOEROBASIS, TBLOEMOBASIS, TBLWIPLOTBASIS |
 | [设备-SQL.sql](设备-SQL.sql) | 设备工时/数量统计 | tblWIPCont_Resource, TBLEQPEQUIPMENTBASIS |
 | [设备生产查询-SQL.sql](设备生产查询-SQL.sql) | 设备生产情况(含 SMT 区域) | TBLWIPCONT_EQUIPMENT, TBLSMDAREABASIS 等 |
+| [模治具寿命管理历程-SQL.sql](模治具寿命管理历程-SQL.sql) | 模治具寿命管理/状态历程(含寿命延长 AddLife/RealAddLife) | TBLEMSACCESSORYSTATELOG, TBLEQPACCSTATEBASIS, tblEQPAccessoryBasis, tblEQPAccessoryCategory |
+| [物料-生产批使用历程-SQL.sql](物料-生产批使用历程-SQL.sql) | 物料耗用明细(生产批+工序 OPNO/OPNAME) | TBLWIPCONT_MATERIAL, TBLWIPCONT_MATERIALLOT, TBLWIPLOTLOG_REPORT, TBLOPBASIS |
 
 ## 使用
 

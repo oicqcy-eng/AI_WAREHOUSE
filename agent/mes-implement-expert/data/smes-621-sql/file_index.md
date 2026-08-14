@@ -1,8 +1,8 @@
 # file_index — smes-621 通用查询 SQL
 
-> 归档来源: `delivery/inbox/SQL/` · 归档日期: 2026-08-06 · 状态: 已归档（复制，原件保留 inbox）
+> 归档来源: `delivery/inbox/SQL/` + `delivery/inbox/`（2026-08-14 追加 2 份）· 归档日期: 2026-08-06 · 状态: 已归档（复制，原件保留 inbox）
 
-## 通用查询（16 个）→ `data/smes-621-sql/`
+## 通用查询（18 个）→ `data/smes-621-sql/`
 
 | # | 文件 | 类型 | 归档位置 | 状态 |
 |---|------|------|----------|:----:|
@@ -22,6 +22,8 @@
 | 14 | 订单工单查询-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
 | 15 | 设备-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
 | 16 | 设备生产查询-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
+| 17 | 模治具寿命管理历程-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
+| 18 | 物料-生产批使用历程-SQL.sql | SQL-通用 | `data/smes-621-sql/` | ✓ |
 
 ## 厂区限定（3 个）→ `delivery/projects/hw-spring-mes/input/san-chang-xiao-huang/sql/`
 
@@ -34,4 +36,7 @@
 ## 备注
 
 - 判定依据：文件名/注释/`PROCESSTYPE` 限定条件（弹簧/稳定杆/金晟流程）→ 厂区专属；其余按业务维度查询 → 通用
-- 敏感信息检查：全部 20 个文件**无**连接串/账号/密码/IP/库名
+- 敏感信息检查：全部 22 个文件**无**连接串/账号/密码/IP/库名
+- 2026-08-14 追加 2 份（源 `delivery/inbox/`，原件保留 inbox + raw/）：
+  - `模治具寿命管理历程-SQL.sql` 查 `TBLEMSACCESSORYSTATELOG` 状态/寿命历程（含 AddLife/RealAddLife），与「模治具維修歷程查詢」（tblEMSACCLog_Repair 维修日志）**不同维度，新增**
+  - `物料-生产批使用历程-SQL.sql` 为「物料-SQL.sql」的**带工序变体**（多 TBLOPBASIS 出 OPNO/OPNAME，轻量版）
