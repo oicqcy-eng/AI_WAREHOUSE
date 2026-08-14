@@ -125,10 +125,11 @@ ORDER BY SUM(P.INPUTQTY) DESC;
 /* ============================================================
  * 口径与注意（重要）
  * ------------------------------------------------------------
- * 1. 本次报工投入/产出 = TBLWIPLOTLOG_REPORT 的
- *    INPUTQTY(投入) / GOODQTY(良品)+FAILQTY(不良)；
- *    TBLWIPCONT_EQUIPMENT 的 InputQty/OutputQty 是生产批累计值，
- *    同一生产批多次进出会变大，别拿它当"单次报工量"。
+ * 1. 本次报工投入/产出 = TBLWIPCONT_EQUIPMENT.InputQty/OutputQty
+ *    = TBLWIPLOTLOG_REPORT.INPUTQTY / GOODQTY(良品)+FAILQTY(不良)，
+ *    两表逐条核对完全一致（2026-08-14 实测 19 条全等），取哪个都行；
+ *    注意 TBLWIPCont_Resource.INPUTQTY 是资源加工量（≠本次报工投入），
+ *    不要拿它统计投入。
  * 2. 报工人员不在设备进出站表（Creator 为空），须从
  *    TBLWIPCont_Resource.USERNO 取（按 EVENTTIME 过滤）。
  * 3. 同一报工组（LOGGROUPSERIAL）可能多人协作 → 每人各计一次，

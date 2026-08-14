@@ -2,9 +2,10 @@
  * 库: 重庆独立 sMES 服务器（172.16.64.11/sMES_Home_Prod）
  * 用法: node query-mes.js 本文件 --profile cq --show N -p date=2026-08-14
  *   N=1 累计概览 / 2 产线拆分 / 3 按天分布 / 4 指定日明细(需 -p date) / 5 按工单汇总 / 6 按人员统计(需 -p date)
- * 核心链路: TBLWIPCONT_EQUIPMENT(设备进出站, InputQty/OutputQty=生产批累计, STARTTIME)
+ * 核心链路: TBLWIPCONT_EQUIPMENT(设备进出站, InputQty/OutputQty=本次报工投入/产出, STARTTIME)
  *          JOIN TBLWIPLOTLOG_REPORT(经 LOGGROUPSERIAL 拿 LOTNO/MONO/PRODUCTNO/OPNO,
- *             INPUTQTY/GOODQTY+FAILQTY=本次报工投入/产出; ENDTIME 为空=进行中未出站)
+ *             与 equipment 同量; ENDTIME 为空=进行中未出站)
+ *          注意: TBLWIPCont_Resource.INPUTQTY 为资源加工量(≠本次报工投入), 勿用于投入统计
  *          注意含 OPNO='LOTCREATE' 的开批记录(DEVICENO='Batch')，非报工，勿混淆
  * 人员: TBLWIPCont_Resource(资源使用, USERNO=报工人员, EVENTTIME=报工时间, INPUTQTY=资源加工量)
  *      姓名映射 TBLUSRUSERBASIS(USERNO→USERNAME, 重庆17人全映射成功)
@@ -12,9 +13,12 @@
  * 时区: 库内北京时间，日期直接 CONVERT(CHAR(10),时间,120) 过滤
  *
  * 口径变更日志（改模板必记；改后须同步 SSMS 运行版 + 知识卡速查 + 报表口径注意）:
+ *   2026-08-14 V2→V3: 口径再验证——equipment.InputQty/OutputQty 与 report.INPUTQTY/
+ *     GOODQTY+FAILQTY 完全一致(今日19条逐条核对), 均=本次报工量; 修正 V2 误判"equipment
+ *     为生产批累计"(实为 resource.INPUTQTY 资源加工量≠本次投入, 勿用于投入统计)
  *   2026-08-14 V1→V2: ①新增第6视角(按报工人员统计) ②口径澄清——本次投入/产出以
- *     TBLWIPLOTLOG_REPORT.INPUTQTY/GOODQTY+FAILQTY 为准(equipment 的 InputQty/OutputQty
- *     是生产批累计值,非单次报工量) ③报工人员取 TBLWIPCont_Resource.USERNO(设备表 Creator 为空)
+ *     TBLWIPLOTLOG_REPORT.INPUTQTY/GOODQTY+FAILQTY 为准 ③报工人员取
+ *     TBLWIPCont_Resource.USERNO(设备表 Creator 为空)
  *   2026-08-14 V1: 初版 5 视角(累计/产线/按天/明细/工单)
  */
 
