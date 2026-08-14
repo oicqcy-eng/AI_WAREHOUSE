@@ -33,4 +33,5 @@ docs/industry-knowledge/
 ## 现有关联
 
 - 汇报案例：[docs/changelogs/chongqing-smes-report.md](../changelogs/chongqing-smes-report.md)
+- **数据口径验证方法**：[数据口径验证方法.md](数据口径验证方法.md)——连库取数/口径审计的防坑清单（DISTINCT 合并漏算/跨期污染/字段语义实测/结论适用条件，跨 sMES/LIMS/U9 复用）
 - 业务模块数据源：`base/`、`manufacturing/`、`operations/`（此处为"经验/方法论"，非模块配置）
