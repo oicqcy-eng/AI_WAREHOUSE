@@ -53,11 +53,16 @@
 | [设备生产查询-SQL.sql](设备生产查询-SQL.sql) | 设备生产情况(含 SMT 区域) | TBLWIPCONT_EQUIPMENT, TBLSMDAREABASIS 等 |
 | [模治具寿命管理历程-SQL.sql](模治具寿命管理历程-SQL.sql) | 模治具寿命管理/状态历程(含寿命延长 AddLife/RealAddLife) | TBLEMSACCESSORYSTATELOG, TBLEQPACCSTATEBASIS, tblEQPAccessoryBasis, tblEQPAccessoryCategory |
 | [物料-生产批使用历程-SQL.sql](物料-生产批使用历程-SQL.sql) | 物料耗用明细(生产批+工序 OPNO/OPNAME) | TBLWIPCONT_MATERIAL, TBLWIPCONT_MATERIALLOT, TBLWIPLOTLOG_REPORT, TBLOPBASIS |
-| [今日设备报工查询-SQL.sql](今日设备报工查询-SQL.sql) | 按厂区设备前缀+日期查当日报工(汇总/明细/按工单3视角, `-p prefix=101-01-DH -p date=2026-08-14`) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLEQPEQUIPMENTBASIS, tblOPBasis, TBLPRDPRODUCTBASIS |
+| [今日设备报工查询-SQL.sql](今日设备报工查询-SQL.sql) | 按厂区设备前缀+日期查报工(**6 视角**：①累计 ②按天 ③明细 ④工单 ⑤人员 ⑥设备, 2026-08-14 重庆模式通用化; `-p prefix=101-01-DH -p date=2026-08-14`; date='' 全量) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLWIPCont_Resource, TBLEQPEQUIPMENTBASIS, tblOPBasis, TBLPRDPRODUCTBASIS, TBLUSRUSERBASIS |
+
+## 报工报表规范（2026-08-14 定版，重庆模式通用化）
+
+各 sMES 厂区「报工查询 → 报表」按 [`厂区报工报表规范.md`](厂区报工报表规范.md) 输出：**分层**（通用模板/厂区实例/厂区报表）+ **7 节板块**（元数据头/累计/按天/明细/人员/工单/观察）+ 厂区定制维度（重庆按产线、一厂大簧按设备）。实例见一厂大簧报表 `delivery/projects/hw-spring-mes/output/yi_chang_da_huang/2026-08-14_一厂大簧报工数据报表.md`。
 
 ## 使用
 
 - 查表结构/字段口径 → `../smes-621/` 数据字典
 - 查可直接跑的查询 → 本目录对应文件
 - 判设备归属厂区 → [`设备编号前缀-厂区映射.md`](设备编号前缀-厂区映射.md)（华纬全厂设备，752 台，2026-08-12 提炼）
+- 厂区报工报表 → 通用模板 + [`厂区报工报表规范.md`](厂区报工报表规范.md)（见上）
 - 引用方式: 回答查询类问题时查 `[smes-621-sql]`
