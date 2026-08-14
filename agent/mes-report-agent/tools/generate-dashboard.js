@@ -130,7 +130,7 @@ const DATA = {
   generated: today, kpi: { ...kpi, weekLogs: weekLogs.length },
   health: health(), priDist: priDist(), moduleDist: moduleDist(),
   trend: monthlyTrend(), projStatus: projStatus(),
-  needCoord: needCoord.map(t => ({ title: t['归集标题'], need: t['协调资源需求'], due: t['计划完成日期'] || '', pri: t['优先级'] })),
+  needCoord: needCoord.map(t => ({ title: t['归集标题'], proj: t['对应项目'] || '未填项目', need: t['协调资源需求'], due: t['计划完成日期'] || '', pri: t['优先级'] || 'P4' })),
   soon: soon.map(t => ({ title: t['归集标题'], due: t['计划完成日期'], pri: t['优先级'] })),
   p1: p1List.map(t => ({ title: t['归集标题'], proj: t['对应项目'], due: t['计划完成日期'] || '无期限', need: t['协调资源需求'] || '' })),
 };
@@ -176,6 +176,14 @@ header .meta{color:var(--gray);font-size:13px}
 .pill.due{background:var(--blue)}
 .title{font-weight:600;color:#1F2937}
 .sub{color:var(--gray);font-size:12px}
+.list .need{color:var(--yellow);font-size:12px;word-break:break-all}
+.grp{margin-bottom:6px}
+.grp:last-child{margin-bottom:0}
+.grp-h{display:flex;align-items:center;gap:8px;margin:8px 0 4px;padding-top:8px;border-top:1px dashed var(--line)}
+.grp:first-of-type .grp-h{border-top:none;padding-top:0}
+.grp-h .proj{font-size:13px;font-weight:700;color:var(--navy)}
+.grp-h .cnt{font-size:11px;color:var(--gray);background:var(--light);border-radius:10px;padding:0 8px}
+.grp-h .cnt.p1{color:#fff;background:var(--red)}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -209,7 +217,7 @@ header .meta{color:var(--gray);font-size:13px}
   <div class="card"><h3>业务模块工作分布</h3><div class="chart" id="c-module"></div></div>
   <div class="card"><h3>月度日志趋势</h3><div class="chart" id="c-trend"></div></div>
   <div class="card"><h3>项目 × 任务状态</h3><div class="chart" id="c-status"></div></div>
-  <div class="card"><h3>本周重点待协调</h3><ul class="list" id="coord"></ul></div>
+  <div class="card"><h3>本周重点待协调（${DATA.needCoord.length} 项）</h3><ul class="list" id="coord"></ul></div>
 </div>
 
 <div class="grid">
@@ -288,12 +296,38 @@ ch5.setOption({
   ]
 });
 
-// ⑥ 本周重点待协调
+// ⑥ 本周重点待协调（按项目归集，组内按优先级→截止日期）
 var coordEl = document.getElementById('coord');
-if (DATA.needCoord.length === 0) coordEl.innerHTML = '<li class="sub">无待协调事项</li>';
-else coordEl.innerHTML = DATA.needCoord.map(function(x){
-  return '<li><span class="pill '+x.pri+'">'+x.pri+'</span><span class="title">'+x.title+'</span><span class="sub">需协调：'+x.need+'</span>'+(x.due?'<span class="pill due">'+x.due+'</span>':'')+'</li>';
-}).join('');
+function escH(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+var PRI_RANK = { P1:0, P2:1, P3:2, P4:3 };
+function needCoordHtml(){
+  if (DATA.needCoord.length === 0) return '<li class="sub">无待协调事项</li>';
+  // 组内排序：P1→P4，再到截止日期（早→晚，无期在后）
+  var sorted = DATA.needCoord.slice().sort(function(a,b){
+    var pa = PRI_RANK[a.pri]!=null ? PRI_RANK[a.pri] : 9, pb = PRI_RANK[b.pri]!=null ? PRI_RANK[b.pri] : 9;
+    if (pa!==pb) return pa-pb;
+    return (a.due||'9999').localeCompare(b.due||'9999');
+  });
+  // 按项目归集（含 P1 的项目排前，其次按项目数量）
+  var grp = {};
+  sorted.forEach(function(x){ (grp[x.proj]=grp[x.proj]||[]).push(x); });
+  var order = Object.keys(grp).sort(function(a,b){
+    var a1 = grp[a].filter(function(x){return x.pri==='P1';}).length, b1 = grp[b].filter(function(x){return x.pri==='P1';}).length;
+    if (a1!==b1) return b1-a1;
+    return grp[b].length-grp[a].length;
+  });
+  return order.map(function(pj){
+    var list = grp[pj], p1n = list.filter(function(x){return x.pri==='P1';}).length;
+    return '<div class="grp"><div class="grp-h"><span class="proj">'+escH(pj)+'</span><span class="cnt">'+list.length+' 项</span>'+(p1n?'<span class="cnt p1">P1×'+p1n+'</span>':'')+'</div><ul class="list">'
+      + list.map(function(x){
+          var need = x.need||'', short = need.length>60 ? need.slice(0,60)+'…' : need;
+          return '<li><span class="pill '+x.pri+'">'+x.pri+'</span><span class="title">'+escH(x.title)+'</span>'
+            +'<span class="sub need" title="'+escH(need)+'">需协调：'+escH(short)+'</span>'
+            +(x.due?'<span class="pill due">'+escH(x.due)+'</span>':'')+'</li>';
+        }).join('')+'</ul></div>';
+  }).join('');
+}
+coordEl.innerHTML = needCoordHtml();
 
 // ⑦ 近7天到期
 var soonEl = document.getElementById('soon');
