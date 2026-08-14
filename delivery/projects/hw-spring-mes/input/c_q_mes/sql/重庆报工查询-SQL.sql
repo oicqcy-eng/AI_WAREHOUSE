@@ -10,6 +10,12 @@
  *      姓名映射 TBLUSRUSERBASIS(USERNO→USERNAME, 重庆17人全映射成功)
  * 设备前缀: EQ-CQSPR-*(弹簧线28台) + EQ-CQSTB-*(稳定杆线58台)，见 knowledge/设备口径卡.md
  * 时区: 库内北京时间，日期直接 CONVERT(CHAR(10),时间,120) 过滤
+ *
+ * 口径变更日志（改模板必记；改后须同步 SSMS 运行版 + 知识卡速查 + 报表口径注意）:
+ *   2026-08-14 V1→V2: ①新增第6视角(按报工人员统计) ②口径澄清——本次投入/产出以
+ *     TBLWIPLOTLOG_REPORT.INPUTQTY/GOODQTY+FAILQTY 为准(equipment 的 InputQty/OutputQty
+ *     是生产批累计值,非单次报工量) ③报工人员取 TBLWIPCont_Resource.USERNO(设备表 Creator 为空)
+ *   2026-08-14 V1: 初版 5 视角(累计/产线/按天/明细/工单)
  */
 
 /*—— ① 累计概览(全量) ——*/
