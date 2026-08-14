@@ -99,27 +99,27 @@ GROUP BY L.MONO, L.PRODUCTNO, P.PRODUCTNAME
 ORDER BY L.MONO;
 
 
-/* —— ⑥ 指定日报工按人员统计（重点：报工人员是谁） —— */
-SELECT X.USERNO AS 工号
+/* —— ⑥ 指定日报工按人员统计（重点：报工人员是谁；量=当天实际报工） —— */
+SELECT R.USERNO AS 工号
       ,ISNULL(U.USERNAME,'') AS 姓名
-      ,COUNT(*)               AS 报工次数
-      ,COUNT(DISTINCT P.LOTNO)AS 生产批
+      ,COUNT(DISTINCT X.LOGGROUPSERIAL) AS 报工次数
+      ,COUNT(DISTINCT P.LOTNO) AS 生产批
       ,COUNT(DISTINCT P.MONO) AS 工单
-      ,SUM(P.INPUTQTY)        AS 投入
-      ,SUM(P.GOODQTY + P.FAILQTY) AS 产出
-FROM (SELECT DISTINCT USERNO, LOGGROUPSERIAL
-      FROM TBLWIPCont_Resource
-      WHERE @date = '' OR CONVERT(CHAR(10),EVENTTIME,120) = @date) X
-LEFT JOIN TBLUSRUSERBASIS U ON X.USERNO = U.USERNO
-JOIN (SELECT LOGGROUPSERIAL, INPUTQTY, GOODQTY, FAILQTY, LOTNO, MONO
-      FROM TBLWIPLOTLOG_REPORT
-      WHERE OPNO <> 'LOTCREATE'
-        AND LOGGROUPSERIAL IN (SELECT DISTINCT LOGGROUPSERIAL
-                               FROM TBLWIPCont_Resource
-                               WHERE @date = '' OR CONVERT(CHAR(10),EVENTTIME,120) = @date)) P
+      ,ISNULL(SUM(X.InputQty),0) AS 投入
+      ,ISNULL(SUM(X.OutputQty),0) AS 产出
+FROM (SELECT DISTINCT E.LOGGROUPSERIAL, E.InputQty, E.OutputQty
+      FROM TBLWIPCONT_EQUIPMENT E
+      WHERE E.EQUIPMENTNO LIKE 'EQ-CQ%'
+        AND (@date = '' OR CONVERT(CHAR(10),E.STARTTIME,120) = @date)) X
+JOIN (SELECT DISTINCT LOGGROUPSERIAL, USERNO FROM TBLWIPCont_Resource) R
+  ON X.LOGGROUPSERIAL = R.LOGGROUPSERIAL
+LEFT JOIN TBLUSRUSERBASIS U ON R.USERNO = U.USERNO
+LEFT JOIN (SELECT LOGGROUPSERIAL, MAX(LOTNO) LOTNO, MAX(MONO) MONO
+           FROM TBLWIPLOTLOG_REPORT WHERE OPNO <> 'LOTCREATE'
+           GROUP BY LOGGROUPSERIAL) P
   ON X.LOGGROUPSERIAL = P.LOGGROUPSERIAL
-GROUP BY X.USERNO, U.USERNAME
-ORDER BY SUM(P.INPUTQTY) DESC;
+GROUP BY R.USERNO, U.USERNAME
+ORDER BY SUM(X.InputQty) DESC;
 
 
 /* ============================================================
@@ -133,9 +133,10 @@ ORDER BY SUM(P.INPUTQTY) DESC;
  * 2. 报工人员不在设备进出站表（Creator 为空），须从
  *    TBLWIPCont_Resource.USERNO 取（按 EVENTTIME 过滤）。
  * 3. 同一报工组（LOGGROUPSERIAL）可能多人协作 → 每人各计一次，
- *    ⑥的人员口径投入/产出总和会大于报工日志总量，对表时注意。
- * 4. 进行中报工（TBLWIPLOTLOG_REPORT.ENDTIME 为空）⑥也会统计，
- *    其投入为当前累计值（如 LW 冷弯 20000→2911 未闭环）。
+ *    ⑥的人员口径总和会略大于报工日志总量（重复计入），对表时注意。
+ * 4. ⑥报工量=当天实际报工量（TBLWIPCONT_EQUIPMENT 按 STARTTIME 过滤当日，
+ *    InputQty/OutputQty，V3 已验证与 report 一致；2026-08-14 起不再携带跨日开批累计）。
+ *    进行中报工（ENDTIME 为空）计入，产出为当前已出量（如 LW 冷弯 20000→2911 未闭环）。
  * 5. DS 账号 = 系统管理员代报（2026-08-14 用户确认），
  *    想只看真实车间报工可加  AND X.USERNO <> 'DS'。
  * 6. OPNO='LOTCREATE' 是开批记录，非报工，已排除。

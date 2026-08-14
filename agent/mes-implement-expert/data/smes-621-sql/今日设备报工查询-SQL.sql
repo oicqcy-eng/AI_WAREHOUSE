@@ -13,6 +13,9 @@
  * 共库注意: Home 共库多厂区并存, 视角⑤按人员/⑥按设备必须带 prefix 限定(LOGGROUPSERIAL∈厂区设备报工组),
  *           否则会统计进其他厂区人员/设备
  * 口径变更日志（改模板必记；改后须同步 厂区报工报表规范.md + 各厂实例说明 + 报表口径注意）:
+ *   2026-08-14 V2→V3: ⑤按人员改为严格当日量——报工量来源从 TBLWIPLOTLOG_REPORT(当前累计,
+ *     携带跨日开批量)改为 TBLWIPCONT_EQUIPMENT(按 STARTTIME 过滤当日, InputQty/OutputQty),
+ *     每人=当天实际报工量; 与重庆模板/SSMS 运行版同步修改
  *   2026-08-14 V1→V2: 重庆报工模式通用化——3视角扩为6视角(①累计 ②按天 ③明细 ④工单 ⑤人员 ⑥设备),
  *     对齐重庆报表板块; ⑤按人员新增 prefix 限定(共库多厂区必须); ②/④支持 date='' 全量
  *   2026-08-14 V1: 初版 3 视角(汇总/明细/工单), 支持 -p prefix + -p date
@@ -78,36 +81,36 @@ GROUP BY L.MONO, L.PRODUCTNO, P.PRODUCTNAME
 ORDER BY L.MONO;
 
 /*—— ⑤ 按报工人员统计: 指定日报工按人员汇总（-p date=YYYY-MM-DD；date='' 则全量）——
- * 人员: TBLWIPCont_Resource.USERNO(报工人员, EVENTTIME 报工时间)
- * 投入产出: TBLWIPLOTLOG_REPORT 本次口径(INPUTQTY 投入 / GOODQTY+FAILQTY 产出)
+ * 人员: TBLWIPCont_Resource.USERNO(报工人员)
+ * 投入产出: TBLWIPCONT_EQUIPMENT 当日口径——按 STARTTIME 过滤当天的 InputQty/OutputQty
+ *          (= report.INPUTQTY/GOODQTY+FAILQTY, V3 验证一致; 2026-08-14 V2→V3 改严格当日量,
+ *           不再携带跨日开批累计)
  * 姓名: TBLUSRUSERBASIS(USERNO→USERNAME)
- * 共库限定: LOGGROUPSERIAL∈该厂区设备报工组(prefix), 只统计本厂区人员
- * 口径: 每人按"参与报工的serial数"计；同一次报工多人协作时按参与人各计一次，
- *       人员口径投入/产出总和 ≠ 报工日志总量(多人重复计入)，勿直接对表
- * 注: 进行中报工(ENDTIME 为空)含在统计内，INPUTQTY 为当前累计投入
+ * 共库限定: 报工组∈该厂区设备报工组(prefix), 只统计本厂区人员
+ * 口径: 每人=他当天参与的报工组的当日量总和；多人协作按参与人各计一次,
+ *       人员总和≈当日报工日志总量(重复计入故略大), 勿精确对表
+ * 注: 进行中报工(STARTTIME 当天、ENDTIME 空)计入, 产出为当前已出量(可小于投入)
  */
-SELECT X.USERNO 工号
+SELECT R.USERNO 工号
       ,ISNULL(U.USERNAME,'') 姓名
-      ,COUNT(*) 报工次数
+      ,COUNT(DISTINCT X.LOGGROUPSERIAL) 报工次数
       ,COUNT(DISTINCT P.LOTNO) 生产批
       ,COUNT(DISTINCT P.MONO) 工单
-      ,SUM(P.INPUTQTY) 投入
-      ,SUM(P.GOODQTY+P.FAILQTY) 产出
-FROM (SELECT DISTINCT R.USERNO, R.LOGGROUPSERIAL
-      FROM TBLWIPCont_Resource R
-      WHERE R.LOGGROUPSERIAL IN (SELECT DISTINCT E.LOGGROUPSERIAL
-                                 FROM TBLWIPCONT_EQUIPMENT E
-                                 WHERE E.EQUIPMENTNO LIKE '{{prefix}}%')
-        AND ('' = '{{date}}' OR CONVERT(CHAR(10),R.EVENTTIME,120) = '{{date}}')) X
-LEFT JOIN TBLUSRUSERBASIS U ON X.USERNO = U.USERNO
-JOIN (SELECT LOGGROUPSERIAL, INPUTQTY, GOODQTY, FAILQTY, LOTNO, MONO FROM TBLWIPLOTLOG_REPORT
-      WHERE OPNO <> 'LOTCREATE'
-        AND LOGGROUPSERIAL IN (SELECT DISTINCT E.LOGGROUPSERIAL
-                               FROM TBLWIPCONT_EQUIPMENT E
-                               WHERE E.EQUIPMENTNO LIKE '{{prefix}}%')) P
+      ,ISNULL(SUM(X.InputQty),0) 投入
+      ,ISNULL(SUM(X.OutputQty),0) 产出
+FROM (SELECT DISTINCT E.LOGGROUPSERIAL, E.InputQty, E.OutputQty
+      FROM TBLWIPCONT_EQUIPMENT E
+      WHERE E.EQUIPMENTNO LIKE '{{prefix}}%'
+        AND ('' = '{{date}}' OR CONVERT(CHAR(10),E.STARTTIME,120) = '{{date}}')) X
+JOIN (SELECT DISTINCT LOGGROUPSERIAL, USERNO FROM TBLWIPCont_Resource) R
+  ON X.LOGGROUPSERIAL = R.LOGGROUPSERIAL
+LEFT JOIN TBLUSRUSERBASIS U ON R.USERNO = U.USERNO
+LEFT JOIN (SELECT LOGGROUPSERIAL, MAX(LOTNO) LOTNO, MAX(MONO) MONO
+           FROM TBLWIPLOTLOG_REPORT WHERE OPNO <> 'LOTCREATE'
+           GROUP BY LOGGROUPSERIAL) P
   ON X.LOGGROUPSERIAL = P.LOGGROUPSERIAL
-GROUP BY X.USERNO, U.USERNAME
-ORDER BY SUM(P.INPUTQTY) DESC;
+GROUP BY R.USERNO, U.USERNAME
+ORDER BY ISNULL(SUM(X.InputQty),0) DESC;
 
 /*—— ⑥ 按设备汇总(prefix 限定; date='' 则全量)——*/
 SELECT E.EQUIPMENTNO 设备
