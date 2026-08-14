@@ -65,13 +65,17 @@ const BANNED = /\b(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|TRUNCATE|MERGE|GRANT|R
 function stripComments(sql) {
   return sql.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/--[^\r\n]*/g, ' ');
 }
+// 剥掉字符串字面量（含 '' 转义），防止权限名/查询条件里的写关键字被误判（写关键字本身仍在引号外被拦）
+function stripLiterals(sql) {
+  return sql.replace(/'[^']*(?:''[^']*)*'/g, "''");
+}
 function assertReadOnly(sql) {
   const stripped = stripComments(sql).trim();
   if (!stripped) throw new Error('SQL 为空');
   const m = stripped.match(/^([A-Za-z]+)/);
   if (!m) throw new Error('SQL 首关键字无法识别');
   if (!/^select$/i.test(m[1])) throw new Error('仅允许 SELECT（当前首关键字: ' + m[1].toUpperCase() + '）');
-  if (BANNED.test(stripped)) throw new Error('检测到禁止的写操作关键字，拒绝执行');
+  if (BANNED.test(stripLiterals(stripped))) throw new Error('检测到禁止的写操作关键字，拒绝执行');
   return stripped;
 }
 
