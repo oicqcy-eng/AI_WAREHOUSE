@@ -17,6 +17,7 @@
  *   GET  /api/tasks/get?id=   按 id 取单条任务（编辑回填）
  *   GET  /attachments/<文件名> 附件静态服务（打开/下载 worklog/attachments 下文件）
  *   GET  /api/tasks/recent?n= 最近 n 条任务
+ *   GET  /api/tasks/search?q=&n=  按关键字搜索任务（匹配 归集标题/对应项目/问题来源/任务状态/协调资源需求/卡点&问题描述/闭环判定标准/周报归集分类）
  */
 'use strict';
 const http = require('http');
@@ -169,6 +170,18 @@ const server = http.createServer(async (req, res) => {
       const n = Number(url.searchParams.get('n') || 10);
       const tasks = loadJson(TASK_FILE, []).sort((a, b) => (b['发现日期'] || '').localeCompare(a['发现日期'] || '')).slice(0, n);
       send(res, 200, { code: 0, data: tasks });
+      return;
+    }
+    // 搜索任务（按关键字匹配文本字段；q 为空返回空）
+    if (p === '/api/tasks/search' && req.method === 'GET') {
+      const q = (url.searchParams.get('q') || '').trim();
+      const n = Number(url.searchParams.get('n') || 50);
+      if (!q) { send(res, 200, { code: 0, data: [], total: 0 }); return; }
+      const kw = q.toLowerCase();
+      const FIELDS = ['归集标题', '对应项目', '问题来源', '任务状态', '协调资源需求', '卡点&问题描述', '闭环判定标准', '周报归集分类'];
+      const matched = loadJson(TASK_FILE, []).filter(t => FIELDS.some(f => String(t[f] || '').toLowerCase().includes(kw)))
+        .sort((a, b) => (b['发现日期'] || '').localeCompare(a['发现日期'] || ''));
+      send(res, 200, { code: 0, data: matched.slice(0, n), total: matched.length });
       return;
     }
     send(res, 404, { code: 404, msg: 'Not Found: ' + p });
