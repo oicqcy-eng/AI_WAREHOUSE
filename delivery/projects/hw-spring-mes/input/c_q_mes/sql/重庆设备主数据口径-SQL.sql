@@ -1,0 +1,37 @@
+-- 重庆设备主数据口径查询（EQ-CQSPR-* 设备清单/分类统计）
+-- 库: 重庆独立 sMES 服务器（172.16.64.11/sMES_Home_Prod）
+-- 运行: node query-mes.js 本文件 --profile cq --show N（N=1~5）
+-- 表: TBLEQPEQUIPMENTBASIS（设备主数据，Home 库同表结构）
+--
+-- 用途: 沉淀重庆设备口径（数量/类型分布/类别分布/管理群组/清单示例），
+--       用于判定设备归属厂区、验证重庆限定查询条件。数据变化低频，随时可重跑。
+
+-- ① 设备总数与编号范围
+SELECT COUNT(*) AS 设备总数,
+       MIN(EQUIPMENTNO) AS 起始编号,
+       MAX(EQUIPMENTNO) AS 结尾编号
+FROM TBLEQPEQUIPMENTBASIS;
+
+-- ② 按设备类型 EQUIPMENTTYPE 分组
+SELECT EQUIPMENTTYPE AS 设备类型, COUNT(*) AS 数量
+FROM TBLEQPEQUIPMENTBASIS
+GROUP BY EQUIPMENTTYPE
+ORDER BY 数量 DESC;
+
+-- ③ 按设备类别 EQUIPMENTCLASS 分组
+SELECT EQUIPMENTCLASS AS 设备类别, COUNT(*) AS 数量
+FROM TBLEQPEQUIPMENTBASIS
+GROUP BY EQUIPMENTCLASS
+ORDER BY 数量 DESC;
+
+-- ④ 按管理群组 ENGINEERGROUPNO 分组
+SELECT ENGINEERGROUPNO AS 管理群组, COUNT(*) AS 数量
+FROM TBLEQPEQUIPMENTBASIS
+GROUP BY ENGINEERGROUPNO
+ORDER BY 数量 DESC;
+
+-- ⑤ 设备清单示例（前 30 台）
+SELECT TOP 30 EQUIPMENTNO AS 设备编号, EquipmentName AS 设备名称,
+       EQUIPMENTTYPE AS 类型, EQUIPMENTCLASS AS 类别, ENGINEERGROUPNO AS 群组
+FROM TBLEQPEQUIPMENTBASIS
+ORDER BY EQUIPMENTNO;
