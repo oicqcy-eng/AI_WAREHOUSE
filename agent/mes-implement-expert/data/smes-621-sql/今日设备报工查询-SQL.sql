@@ -13,6 +13,10 @@
  * 共库注意: Home 共库多厂区并存, 视角⑤按人员/⑥按设备必须带 prefix 限定(LOGGROUPSERIAL∈厂区设备报工组),
  *           否则会统计进其他厂区人员/设备
  * 口径变更日志（改模板必记；改后须同步 厂区报工报表规范.md + 各厂实例说明 + 报表口径注意）:
+ *   2026-08-14 V5 隐患修复（改 SQL）：⑤ X 子查询改 GROUP BY E.LOGGROUPSERIAL 聚合成组总量
+ *     （防"同量合并漏算"——DISTINCT(组,量) 在同组两次续报量相同时会合并漏算）+
+ *     R 子查询加 EVENTTIME 当天过滤（防跨天报工组把历史成员带入今日）——实测当前未触发
+ *     （A1 重复行=0 / A2 成员 EVENTTIME 全在当天）但逻辑隐患真实，修正后结果与 V4 完全一致
  *   2026-08-14 V4 审计确认（不改 SQL）：① 分次续报组（同批同工序一天多次进出站）的
  *     E 侧多行是真实报工（白班/晚班各报一次），SUM 精确=组总量非膨胀，COUNT=真实进出站次数；
  *     ② RESCLASS 0/1/4 的 USERNO 均为人员工号，⑤ 必须 DISTINCT(LOGGROUPSERIAL,USERNO)、勿按
@@ -95,10 +99,13 @@ ORDER BY L.MONO;
  *        (0 和 4 各一行、部分人另加 1); 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复,
  *        切勿 WHERE RESCLASS=0 过滤(会丢仅 1/4 行的记录)
  * 分次续报(2026-08-14 审计): 同批同工序一天多次进出站时 X 对同一 LOGGROUPSERIAL 多行,
- *        SUM 精确=组总量(非膨胀), COUNT(DISTINCT LOGGROUPSERIAL) 组数正确
+ *        X 用 GROUP BY 聚合成组总量(防"同量合并漏算": 若用 DISTINCT(组,量) 且两次量相同
+ *        会合并漏算), SUM 精确=组总量(非膨胀), COUNT(DISTINCT LOGGROUPSERIAL) 组数正确
+ * 成员时间限定(2026-08-14 审计): R 按 EVENTTIME 当天过滤——防跨天报工组把历史成员带入今日
  * 口径: 每人=他当天参与的报工组的当日量总和；多人协作按参与人各计一次,
  *       人员总和≈当日报工日志总量(重复计入故略大), 勿精确对表
- * 注: 进行中报工(STARTTIME 当天、ENDTIME 空)计入, 产出为当前已出量(可小于投入)
+ * 注: 进行中报工(STARTTIME 当天、ENDTIME 空)计入, 产出为当前已出量(可小于投入);
+ *       进行中判据=TBLWIPLOTLOG_REPORT.ENDTIME 空(设备可已出站 E.ENDTIME 非空)
  */
 SELECT R.USERNO 工号
       ,ISNULL(U.USERNAME,'') 姓名
@@ -107,11 +114,13 @@ SELECT R.USERNO 工号
       ,COUNT(DISTINCT P.MONO) 工单
       ,ISNULL(SUM(X.InputQty),0) 投入
       ,ISNULL(SUM(X.OutputQty),0) 产出
-FROM (SELECT DISTINCT E.LOGGROUPSERIAL, E.InputQty, E.OutputQty
+FROM (SELECT E.LOGGROUPSERIAL, SUM(E.InputQty) InputQty, SUM(E.OutputQty) OutputQty
       FROM TBLWIPCONT_EQUIPMENT E
       WHERE E.EQUIPMENTNO LIKE '{{prefix}}%'
-        AND ('' = '{{date}}' OR CONVERT(CHAR(10),E.STARTTIME,120) = '{{date}}')) X
-JOIN (SELECT DISTINCT LOGGROUPSERIAL, USERNO FROM TBLWIPCont_Resource) R
+        AND ('' = '{{date}}' OR CONVERT(CHAR(10),E.STARTTIME,120) = '{{date}}')
+      GROUP BY E.LOGGROUPSERIAL) X
+JOIN (SELECT DISTINCT LOGGROUPSERIAL, USERNO FROM TBLWIPCont_Resource
+      WHERE '' = '{{date}}' OR CONVERT(CHAR(10),EVENTTIME,120) = '{{date}}') R
   ON X.LOGGROUPSERIAL = R.LOGGROUPSERIAL
 LEFT JOIN TBLUSRUSERBASIS U ON R.USERNO = U.USERNO
 LEFT JOIN (SELECT LOGGROUPSERIAL, MAX(LOTNO) LOTNO, MAX(MONO) MONO

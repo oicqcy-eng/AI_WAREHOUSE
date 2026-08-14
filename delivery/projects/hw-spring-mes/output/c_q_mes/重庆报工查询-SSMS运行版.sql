@@ -110,11 +110,13 @@ SELECT R.USERNO AS 工号
       ,COUNT(DISTINCT P.MONO) AS 工单
       ,ISNULL(SUM(X.InputQty),0) AS 投入
       ,ISNULL(SUM(X.OutputQty),0) AS 产出
-FROM (SELECT DISTINCT E.LOGGROUPSERIAL, E.InputQty, E.OutputQty
+FROM (SELECT E.LOGGROUPSERIAL, SUM(E.InputQty) InputQty, SUM(E.OutputQty) OutputQty
       FROM TBLWIPCONT_EQUIPMENT E
       WHERE E.EQUIPMENTNO LIKE 'EQ-CQ%'
-        AND (@date = '' OR CONVERT(CHAR(10),E.STARTTIME,120) = @date)) X
-JOIN (SELECT DISTINCT LOGGROUPSERIAL, USERNO FROM TBLWIPCont_Resource) R
+        AND (@date = '' OR CONVERT(CHAR(10),E.STARTTIME,120) = @date)
+      GROUP BY E.LOGGROUPSERIAL) X
+JOIN (SELECT DISTINCT LOGGROUPSERIAL, USERNO FROM TBLWIPCont_Resource
+      WHERE @date = '' OR CONVERT(CHAR(10),EVENTTIME,120) = @date) R
   ON X.LOGGROUPSERIAL = R.LOGGROUPSERIAL
 LEFT JOIN TBLUSRUSERBASIS U ON R.USERNO = U.USERNO
 LEFT JOIN (SELECT LOGGROUPSERIAL, MAX(LOTNO) LOTNO, MAX(MONO) MONO
@@ -130,9 +132,9 @@ ORDER BY SUM(X.InputQty) DESC;
  * ------------------------------------------------------------
  * 1. 本次报工投入/产出 = TBLWIPCONT_EQUIPMENT.InputQty/OutputQty
  *    = TBLWIPLOTLOG_REPORT.INPUTQTY / GOODQTY(良品)+FAILQTY(不良)，
- *    两表逐条核对完全一致（2026-08-14 实测 19 条全等），取哪个都行；
- *    注意 TBLWIPCont_Resource.INPUTQTY 是资源加工量（≠本次报工投入），
- *    不要拿它统计投入。
+ *    无分次续报时两表逐条核对完全一致（2026-08-14 重庆实测 19 条全等），取哪个都行；
+ *    注意分次续报组（见第8点）E 侧单行≠L 单行、组 SUM 才一致；
+ *    TBLWIPCont_Resource.INPUTQTY 是资源加工量（≠本次报工投入），不要拿它统计投入。
  * 2. 报工人员不在设备进出站表（Creator 为空），须从
  *    TBLWIPCont_Resource.USERNO 取（按 EVENTTIME 过滤）。
  * 3. 同一报工组（LOGGROUPSERIAL）可能多人协作 → 每人各计一次，
@@ -147,5 +149,7 @@ ORDER BY SUM(X.InputQty) DESC;
  *    想只看真实车间报工可加  AND X.USERNO <> 'DS'。
  * 7. OPNO='LOTCREATE' 是开批记录，非报工，已排除。
  * 8. 分次续报（一厂有、重庆 2026-08-14 无）：同批同工序一天多次进出站共用
- *    LOGGROUPSERIAL，①记录数=真实进出站次数、SUM 精确=组总量（非膨胀）。
+ *    LOGGROUPSERIAL，①记录数=真实进出站次数、SUM 精确=组总量（非膨胀）；
+ *    组内 E 单行量 = 该次续报量（≠L 单行总量），⑥ 已用 GROUP BY LOGGROUPSERIAL
+ *    聚合成组总量再 SUM，防同量合并漏算。
  * ============================================================ */
