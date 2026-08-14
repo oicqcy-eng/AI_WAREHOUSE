@@ -4,6 +4,10 @@
  * 用法:
  *   node agent/mes-report-agent/tools/worklog-append.js log '<json>'     # 追加日志（写 logs/YYYY-MM.json）
  *   node agent/mes-report-agent/tools/worklog-append.js task '<json>'    # 追加任务（写 task-pool.json）
+ *   node agent/mes-report-agent/tools/worklog-append.js update-log '<{_id,...}>'   # 更新日志
+ *   node agent/mes-report-agent/tools/worklog-append.js update-task '<{_id,...}>'  # 更新任务
+ *   node agent/mes-report-agent/tools/worklog-append.js delete-log '<{_id}>'       # 删除日志
+ *   node agent/mes-report-agent/tools/worklog-append.js delete-task '<{_id}>'      # 删除任务
  *
  * 日志必填: 记录日期(YYYY-MM-DD) 所属项目 工作内容 结果类型 是否形成任务
  * 任务必填: 归集标题 对应项目 问题来源 优先级
@@ -155,6 +159,34 @@ function updateTask(id, patch) {
   return { file: TASK_FILE, total: arr.length };
 }
 
+// ---------- 删除（按 _id 精确匹配移除；日志跨月文件扫描） ----------
+function deleteLog(id) {
+  if (!id) throw new Error('缺少 _id');
+  if (!fs.existsSync(LOGS_DIR)) throw new Error('未找到 _id=' + id + ' 的日志记录');
+  for (const f of fs.readdirSync(LOGS_DIR)) {
+    if (!f.endsWith('.json')) continue;
+    const file = path.join(LOGS_DIR, f);
+    const arr = loadJson(file, []);
+    const i = findLogIndex(arr, id);
+    if (i !== -1) {
+      arr.splice(i, 1);
+      saveJson(file, arr);
+      return { deleted: true, file, total: arr.length };
+    }
+  }
+  throw new Error('未找到 _id=' + id + ' 的日志记录');
+}
+
+function deleteTask(id) {
+  if (!id) throw new Error('缺少 _id');
+  const arr = loadJson(TASK_FILE, []);
+  const i = findTaskIndex(arr, id);
+  if (i === -1) throw new Error('未找到 _id=' + id + ' 的任务记录');
+  arr.splice(i, 1);
+  saveJson(TASK_FILE, arr);
+  return { deleted: true, file: TASK_FILE, total: arr.length };
+}
+
 // ---------- 按 id 取单条（供编辑回填） ----------
 function findLog(id) {
   if (!fs.existsSync(LOGS_DIR)) return null;
@@ -173,7 +205,7 @@ function findTask(id) {
 }
 
 // ---------- 导出（供 worklog-server.js / Claude 工具复用） ----------
-module.exports = { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, saveJson, makeId, LOG_DEFAULTS, TASK_DEFAULTS, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY };
+module.exports = { appendLog, appendTask, updateLog, updateTask, deleteLog, deleteTask, findLog, findTask, loadJson, saveJson, makeId, LOG_DEFAULTS, TASK_DEFAULTS, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY };
 
 // ---------- CLI 入口 ----------
 if (require.main === module) {
@@ -202,8 +234,16 @@ if (require.main === module) {
       if (!rec['_id']) { console.error('❌ update-task 需要 _id'); process.exit(1); }
       const r = updateTask(rec['_id'], rec);
       console.log('✅ 任务已更新 → ' + path.relative(process.cwd(), r.file) + '（当前 ' + r.total + ' 条）');
+    } else if (mode === 'delete-log') {
+      if (!rec['_id']) { console.error('❌ delete-log 需要 _id'); process.exit(1); }
+      const r = deleteLog(rec['_id']);
+      console.log('🗑️ 日志已删除 → ' + path.relative(process.cwd(), r.file) + '（剩余 ' + r.total + ' 条）');
+    } else if (mode === 'delete-task') {
+      if (!rec['_id']) { console.error('❌ delete-task 需要 _id'); process.exit(1); }
+      const r = deleteTask(rec['_id']);
+      console.log('🗑️ 任务已删除 → ' + path.relative(process.cwd(), r.file) + '（剩余 ' + r.total + ' 条）');
     } else {
-      console.error('❌ 模式必须为 log / task / update-log / update-task'); process.exit(1);
+      console.error('❌ 模式必须为 log / task / update-log / update-task / delete-log / delete-task'); process.exit(1);
     }
   } catch (e) {
     console.error('❌ ' + e.message); process.exit(1);

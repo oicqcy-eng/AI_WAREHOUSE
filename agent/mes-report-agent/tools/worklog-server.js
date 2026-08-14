@@ -13,6 +13,8 @@
  *   POST /api/tasks           追加任务 {record:{...}} → 返回 {total, file, _id}
  *   POST /api/logs/update     更新日志 {_id, record:{完整记录}} → 返回 {moved, file, total}
  *   POST /api/tasks/update    更新任务 {_id, record:{完整记录}} → 返回 {file, total}
+ *   POST /api/logs/delete     删除日志 {_id} → 返回 {deleted, file, total}
+ *   POST /api/tasks/delete    删除任务 {_id} → 返回 {deleted, file, total}
  *   GET  /api/logs/get?id=    按 id 取单条日志（编辑回填）
  *   GET  /api/tasks/get?id=   按 id 取单条任务（编辑回填）
  *   GET  /attachments/<文件名> 附件静态服务（打开/下载 worklog/attachments 下文件）
@@ -24,7 +26,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
-const { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY } = require('./worklog-append.js');
+const { appendLog, appendTask, updateLog, updateTask, deleteLog, deleteTask, findLog, findTask, loadJson, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY } = require('./worklog-append.js');
 const ATTACH_DIR = path.join(WORKLOG_DIR, 'attachments');
 
 const PORT = process.env.WORKLOG_PORT || 8787;
@@ -161,6 +163,24 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
       const rec = updateTask(body._id, body.record || {});
+      regenerateDashboard();
+      send(res, 200, { code: 0, data: rec });
+      return;
+    }
+    // 删除日志（按 _id，跨月文件扫描）
+    if (p === '/api/logs/delete' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
+      const rec = deleteLog(body._id);
+      regenerateDashboard();
+      send(res, 200, { code: 0, data: rec });
+      return;
+    }
+    // 删除任务（按 _id）
+    if (p === '/api/tasks/delete' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
+      const rec = deleteTask(body._id);
       regenerateDashboard();
       send(res, 200, { code: 0, data: rec });
       return;

@@ -41,6 +41,8 @@ header .today{color:var(--gray);font-size:13px}
 .edit-btn{margin-left:8px;font-size:11px;color:var(--blue);background:none;border:1px solid var(--blue);border-radius:4px;padding:1px 7px;cursor:pointer}
 .edit-btn:hover{background:var(--light)}
 .edit-btn.cancel{color:var(--gray);border-color:var(--gray)}
+.edit-btn.del{color:var(--red);border-color:var(--red)}
+.edit-btn.del:hover{background:#FDE9E9}
 #editing-banner{display:none;margin-bottom:10px;padding:7px 12px;background:#FDF6E3;border:1px solid #E8D9A0;border-radius:6px;font-size:13px;color:#7A5B00}
 #editing-banner b{color:#B26B00}
 .search-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
@@ -161,7 +163,8 @@ function renderLogItem(x, kw){
   var tf = x['是否形成任务']==='是' ? '<span class="tag" style="background:#FDE9E9;color:#C00000">形成任务</span>' : '';
   var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
   return '<li><div class="meta">'+esc(x['记录日期'])+tag+rt+tf+at
-    +'<button class="edit-btn" onclick="startEditLog(\''+x['_id']+'\')">编辑</button></div>'
+    +'<button class="edit-btn" onclick="startEditLog(\''+x['_id']+'\')">编辑</button>'
+    +'<button class="edit-btn del" onclick="delRecord(\'log\',\''+x['_id']+'\',this)">删除</button></div>'
     +'<div class="content">'+hl(x['工作内容'], kw)+'</div></li>';
 }
 function renderTaskItem(x, kw){
@@ -172,7 +175,8 @@ function renderTaskItem(x, kw){
   // 搜索态额外显示卡点摘要（含高亮），便于看出命中依据
   var desc = (kw && x['卡点&问题描述']) ? '<div class="content" style="color:var(--gray);font-size:12px;margin-top:2px">'+hl(x['卡点&问题描述'], kw)+'</div>' : '';
   return '<li><div class="meta">'+esc(x['发现日期'])+tag+p+st+at
-    +'<button class="edit-btn" onclick="startEditTask(\''+x['_id']+'\')">编辑</button></div>'
+    +'<button class="edit-btn" onclick="startEditTask(\''+x['_id']+'\')">编辑</button>'
+    +'<button class="edit-btn del" onclick="delRecord(\'task\',\''+x['_id']+'\',this)">删除</button></div>'
     +'<div class="content">'+hl(x['归集标题'], kw)+'</div>'+desc+'</li>';
 }
 
@@ -275,6 +279,27 @@ function clearSearch(){
 }
 
 function showToast(el, msg, isErr){ el.textContent = msg; el.className = isErr ? 'err' : ''; }
+
+// ---- 删除（确认后调 /api/logs/delete 或 /api/tasks/delete） ----
+async function delRecord(kind, id, btn){
+  var li = btn ? btn.closest('li') : null;
+  var hint = li ? (li.querySelector('.content').textContent || '').slice(0, 24) : '';
+  var what = kind==='log' ? '日志' : '任务';
+  if (!confirm('确定删除这条'+what+'吗？\n「' + hint + (hint.length>=24?'…':'') + '」\n删除后不可恢复。')) return;
+  var r = await api('/api/' + kind + 's/delete', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({_id: id})
+  });
+  if (r.code!==0) return alert('删除失败：' + (r.msg || '未知错误'));
+  // 若正在编辑的就是被删记录，取消编辑态
+  if (EDITING.kind===kind && EDITING.id===id) cancelEdit();
+  loadRecent(CURRENT_TAB);
+  showToast(document.getElementById(kind==='log' ? 'toast-log' : 'toast-task'), '🗑️ 已删除，' + what + '剩余 ' + r.data.total + ' 条');
+  if (kind==='log'){ // 刷新今日统计
+    var t = await api('/api/logs/today');
+    document.getElementById('todayInfo').textContent = '今日 ' + TODAY + ' · 已录 ' + t.data.count + ' 条（形成任务 ' + t.data.formTask + '）';
+  }
+}
 
 // ---- 编辑状态（空 = 正常录入；非空 = 正在编辑某条） ----
 var EDITING = { kind:null, id:null };

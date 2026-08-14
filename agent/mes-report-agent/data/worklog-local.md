@@ -165,6 +165,8 @@ export-range.js 提取区间日志+任务池 → Claude 按 `report-bitable-spec
 - 任务 tab → `GET /api/tasks/search?q=&n=`，匹配 `归集标题/对应项目/问题来源/任务状态/协调资源需求/卡点&问题描述/闭环判定标准/周报归集分类`，搜索态额外显示卡点摘要行
 - n 默认 50，返回 `{data, total}`；点 ✕ 清空回到最近记录；切换 tab 自动重置
 
+**删除**（2026-08-14 新增）：右侧最近记录每条带【删除】按钮（红色），点击弹确认框（含被删内容摘要）→ 确认后调 `POST /api/logs/delete` / `POST /api/tasks/delete`（body `{_id}`）按 `_id` 从数据源物理删除，不可恢复；删除后自动刷新列表与今日统计。**正在编辑的就是被删记录时**自动取消编辑态。CLI 亦支持 `delete-log '<{_id}>'` / `delete-task '<{_id}>'`。
+
 **注意**：服务进程存在期间 worklog 文件由它管理；对话框/CLI 追加与录入页追加**共用同一数据源**（worklog/），实时可见，无同步问题。端口 8787 可被 `WORKLOG_PORT` 环境变量覆盖。
 
 ## 9. Excel 导出（发人/存档）
