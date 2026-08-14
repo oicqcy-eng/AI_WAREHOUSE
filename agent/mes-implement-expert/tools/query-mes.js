@@ -12,6 +12,7 @@
  *   node query-mes.js <file.sql> --limit 500 -p schema=dbo -p start_date=2026-08-01
  *   node query-mes.js <file.sql> --show 2   # 文件含多个查询时，显示第 2 个结果集
  *   node query-mes.js <file.sql> --out /tmp/result.csv  # 导出 CSV
+ *   node query-mes.js <file.sql> --profile cq   # 多服务器切换（见 db.local.json 的 profiles；默认取第一个）
  *
  * 配置模板见 config/db.local.example.json
  */
@@ -25,21 +26,37 @@ const mssql = require('mssql');
 const CONFIG_PATH = path.join(__dirname, '..', 'config', 'db.local.json');
 
 // ---- 读取连接配置：db.local.json 优先，环境变量 MES_DB_* 覆盖 ----
-function loadConfig() {
-  const base = {};
+// 支持多服务器 profile：
+//   { "profiles": { "home": {...}, "cq": {...} } }    ← 多服务器（--profile <name> 切换）
+//   { "server": "...", ... }                          ← 平铺单配置（兼容旧格式）
+function loadConfig(profileName) {
+  let raw = {};
   if (fs.existsSync(CONFIG_PATH)) {
-    try { Object.assign(base, JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'))); }
+    try { raw = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')); }
     catch (e) { console.error('❌ 读取 db.local.json 失败: ' + e.message); process.exit(1); }
+  }
+  let base, name;
+  const profs = raw.profiles;
+  if (profs && typeof profs === 'object') {
+    const names = Object.keys(profs);
+    if (!names.length) { console.error('❌ db.local.json 的 profiles 为空'); process.exit(1); }
+    name = profileName || names[0];
+    if (!profs[name]) { console.error('❌ 找不到 profile「' + name + '」，可用: ' + names.join(', ')); process.exit(1); }
+    base = Object.assign({}, profs[name]);
+  } else {
+    base = Object.assign({}, raw);
+    name = 'default';
   }
   const envMap = { server: 'MES_DB_SERVER', port: 'MES_DB_PORT', database: 'MES_DB_DATABASE', user: 'MES_DB_USER', password: 'MES_DB_PASSWORD' };
   for (const k of Object.keys(envMap)) {
     if (process.env[envMap[k]]) base[k] = k === 'port' ? Number(process.env[envMap[k]]) : process.env[envMap[k]];
   }
   if (!base.server || !base.user || !base.password || !base.database) {
-    console.error('❌ 缺少连接配置：请填写 ' + CONFIG_PATH);
+    console.error('❌ profile「' + name + '」缺少连接配置：请填写 ' + CONFIG_PATH);
     console.error('   模板见 config/db.local.example.json；或设环境变量 MES_DB_SERVER / MES_DB_DATABASE / MES_DB_USER / MES_DB_PASSWORD');
     process.exit(1);
   }
+  base._profile = name;
   return base;
 }
 
@@ -65,7 +82,7 @@ function applyParams(sql, params) {
 
 async function main() {
   const args = process.argv.slice(2);
-  let sqlSource = null, inline = false, limit = 100, out = null, show = 1;
+  let sqlSource = null, inline = false, limit = 100, out = null, show = 1, profile = process.env.MES_DB_PROFILE || null;
   const params = {};
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -73,10 +90,11 @@ async function main() {
     else if (a === '--limit') limit = Number(args[++i]) || 100;
     else if (a === '--out') out = args[++i];
     else if (a === '--show') show = Number(args[++i]) || 1;
+    else if (a === '--profile') profile = args[++i];
     else if (a === '-p') { const kv = args[++i].split('='); params[kv[0]] = kv.slice(1).join('='); }
     else if (a && !a.startsWith('-') && !sqlSource) sqlSource = a;
   }
-  if (!sqlSource) { console.error('用法: node query-mes.js <file.sql> | -q "SELECT..." [--limit N] [-p key=value] [--show N] [--out file.csv]'); process.exit(1); }
+  if (!sqlSource) { console.error('用法: node query-mes.js <file.sql> | -q "SELECT..." [--limit N] [-p key=value] [--show N] [--profile NAME] [--out file.csv]'); process.exit(1); }
 
   let sql;
   if (inline) sql = sqlSource;
@@ -86,7 +104,7 @@ async function main() {
   }
   const finalSql = applyParams(assertReadOnly(sql), params);
 
-  const cfg = loadConfig();
+  const cfg = loadConfig(profile);
   const pool = await new mssql.ConnectionPool({
     server: cfg.server, port: cfg.port || 1433, database: cfg.database,
     user: cfg.user, password: cfg.password,
@@ -95,7 +113,7 @@ async function main() {
   }).connect();
 
   try {
-    console.log('▶ 已连接 ' + cfg.server + ':' + (cfg.port || 1433) + '/' + cfg.database + '，执行只读查询…');
+    console.log('▶ 已连接 [' + cfg._profile + '] ' + cfg.server + ':' + (cfg.port || 1433) + '/' + cfg.database + '，执行只读查询…');
     const result = await pool.request().query(finalSql);
     // 支持单/多查询文件：recordsets 全量结果集；--show N 选第 N 个（默认第 1 个）
     const recSets = (result.recordsets && result.recordsets.length) ? result.recordsets : [result.recordset || []];

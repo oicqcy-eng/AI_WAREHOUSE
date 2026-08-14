@@ -1,9 +1,23 @@
 {
-  "_comment": "sMES 只读连接配置模板。复制为 db.local.json（已 gitignore，真实凭据不入库）后填写：",
-  "server": "10.0.0.10",
-  "port": 1433,
-  "database": "smes",
-  "user": "readonly_user",
-  "password": "请填写只读账号密码",
-  "options": { "encrypt": false, "trustServerCertificate": true }
+  "_comment": "sMES 只读连接配置模板。复制为 db.local.json（已 gitignore，真实凭据不入库）后填写；多服务器用 profiles，--profile <name> 切换（默认取第一个）",
+  "profiles": {
+    "home": {
+      "_comment": "示例：华纬总部 sMES 生产库",
+      "server": "10.0.0.10",
+      "port": 1433,
+      "database": "sMES_Home_Prod",
+      "user": "readonly_user",
+      "password": "请填写只读账号密码",
+      "options": { "encrypt": false, "trustServerCertificate": true }
+    },
+    "cq": {
+      "_comment": "示例：重庆 MES 服务器",
+      "server": "10.0.1.20",
+      "port": 1433,
+      "database": "sMES_Chongqing_Prod",
+      "user": "cq_readonly_user",
+      "password": "请填写重庆只读账号密码",
+      "options": { "encrypt": false, "trustServerCertificate": true }
+    }
+  }
 }

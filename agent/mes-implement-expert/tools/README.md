@@ -35,6 +35,7 @@ node tools/query-mes.js <file.sql>                 # 跑 smes-621-sql/ 下的 SQ
 node tools/query-mes.js -q "SELECT TOP 10 * FROM tblQCReasonBasis"
 node tools/query-mes.js <file.sql> --limit 500 -p schema=dbo -p start_date=2026-08-01
 node tools/query-mes.js <file.sql> --out result.csv   # 导出 CSV
+node tools/query-mes.js <file.sql> --profile cq    # 多服务器切换（默认取 db.local.json profiles 第一个）
 ```
 
 ## 维护规范
