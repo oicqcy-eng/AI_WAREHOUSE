@@ -1,0 +1,53 @@
+/*今日设备报工查询 —— 按厂区设备前缀 + 日期查当日报工（2026-08-14 实战沉淀）
+ * 用法: node tools/query-mes.js 本文件 -p prefix=101-01-DH -p date=2026-08-14 --show N
+ *   前缀即厂区设备标识（一厂大簧=101-01-DH、三厂小簧=X 系列、重庆按需），见 设备编号前缀-厂区映射.md
+ *   时区: sMES 库时间为北京时间(服务器 UTC+8)，日期直接按北京时间过滤
+ * 核心链路: TBLWIPCONT_EQUIPMENT(设备进出站报工, 设备编号/投入InputQty/产出OutputQty/时间)
+ *          LEFT JOIN TBLWIPLOTLOG_REPORT(生产批报工日志, 经 LOGGROUPSERIAL 关联, 拿生产批LOTNO/作业站OPNO/工单MONO/产品PRODUCTNO)
+ *          LEFT JOIN 设备表TBLEQPEQUIPMENTBASIS / 作业站tblOPBasis / 产品TBLPRDPRODUCTBASIS
+ */
+
+/*—— ① 汇总: 当日该厂区报工总览 ——*/
+SELECT COUNT(*) 报工记录数
+      ,COUNT(DISTINCT E.EQUIPMENTNO) 设备数
+      ,COUNT(DISTINCT L.LOTNO) 生产批数
+      ,COUNT(DISTINCT L.MONO) 工单数
+      ,ISNULL(SUM(E.InputQty),0) 投入总数
+      ,ISNULL(SUM(E.OutputQty),0) 产出总数
+FROM TBLWIPCONT_EQUIPMENT E
+JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+WHERE CONVERT(CHAR(10), E.STARTTIME, 120) = '{{date}}'
+  AND E.EQUIPMENTNO LIKE '{{prefix}}%';
+
+/*—— ② 明细: 设备×生产批×作业站 逐条报工 ——*/
+SELECT E.EQUIPMENTNO 设备
+      ,ISNULL(EQP.EquipmentName, '') 设备名
+      ,L.LOTNO 生产批
+      ,L.OPNO 作业站
+      ,ISNULL(OP.OPNAME, '') 工序名
+      ,E.InputQty 投入
+      ,E.OutputQty 产出
+      ,CONVERT(CHAR(16), E.STARTTIME, 120) 开始
+      ,CONVERT(CHAR(16), E.ENDTIME, 120) 结束
+FROM TBLWIPCONT_EQUIPMENT E
+LEFT JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+LEFT JOIN TBLEQPEQUIPMENTBASIS EQP ON EQP.EQUIPMENTNO = E.EQUIPMENTNO
+LEFT JOIN tblOPBasis OP ON L.OPNO = OP.OPNO
+WHERE CONVERT(CHAR(10), E.STARTTIME, 120) = '{{date}}'
+  AND E.EQUIPMENTNO LIKE '{{prefix}}%'
+ORDER BY E.STARTTIME;
+
+/*—— ③ 按工单汇总: 当日各工单报工数量 ——*/
+SELECT L.MONO 工单
+      ,L.PRODUCTNO 产品编号
+      ,P.PRODUCTNAME 产品名
+      ,COUNT(DISTINCT E.EQUIPMENTNO) 设备数
+      ,SUM(E.InputQty) 投入
+      ,SUM(E.OutputQty) 产出
+FROM TBLWIPCONT_EQUIPMENT E
+JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+LEFT JOIN TBLPRDPRODUCTBASIS P ON L.PRODUCTNO = P.PRODUCTNO AND L.PRODUCTVERSION = P.PRODUCTVERSION
+WHERE CONVERT(CHAR(10), E.STARTTIME, 120) = '{{date}}'
+  AND E.EQUIPMENTNO LIKE '{{prefix}}%'
+GROUP BY L.MONO, L.PRODUCTNO, P.PRODUCTNAME
+ORDER BY L.MONO;

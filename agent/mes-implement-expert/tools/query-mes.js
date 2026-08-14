@@ -10,6 +10,7 @@
  *   node query-mes.js <file.sql>              # 跑一个 SQL 文件（复用 smes-621-sql/ 模板）
  *   node query-mes.js -q "SELECT TOP 10 * FROM tblX"   # 内联 SQL
  *   node query-mes.js <file.sql> --limit 500 -p schema=dbo -p start_date=2026-08-01
+ *   node query-mes.js <file.sql> --show 2   # 文件含多个查询时，显示第 2 个结果集
  *   node query-mes.js <file.sql> --out /tmp/result.csv  # 导出 CSV
  *
  * 配置模板见 config/db.local.example.json
@@ -64,17 +65,18 @@ function applyParams(sql, params) {
 
 async function main() {
   const args = process.argv.slice(2);
-  let sqlSource = null, inline = false, limit = 100, out = null;
+  let sqlSource = null, inline = false, limit = 100, out = null, show = 1;
   const params = {};
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a === '-q') { inline = true; sqlSource = args[++i]; }
     else if (a === '--limit') limit = Number(args[++i]) || 100;
     else if (a === '--out') out = args[++i];
+    else if (a === '--show') show = Number(args[++i]) || 1;
     else if (a === '-p') { const kv = args[++i].split('='); params[kv[0]] = kv.slice(1).join('='); }
     else if (a && !a.startsWith('-') && !sqlSource) sqlSource = a;
   }
-  if (!sqlSource) { console.error('用法: node query-mes.js <file.sql> | -q "SELECT..." [--limit N] [-p key=value] [--out file.csv]'); process.exit(1); }
+  if (!sqlSource) { console.error('用法: node query-mes.js <file.sql> | -q "SELECT..." [--limit N] [-p key=value] [--show N] [--out file.csv]'); process.exit(1); }
 
   let sql;
   if (inline) sql = sqlSource;
@@ -95,7 +97,11 @@ async function main() {
   try {
     console.log('▶ 已连接 ' + cfg.server + ':' + (cfg.port || 1433) + '/' + cfg.database + '，执行只读查询…');
     const result = await pool.request().query(finalSql);
-    const rows = result.recordset || [];
+    // 支持单/多查询文件：recordsets 全量结果集；--show N 选第 N 个（默认第 1 个）
+    const recSets = (result.recordsets && result.recordsets.length) ? result.recordsets : [result.recordset || []];
+    if (show < 1 || show > recSets.length) { console.warn('⚠️ --show ' + show + ' 超出范围（该 SQL 含 ' + recSets.length + ' 个查询），改显示第 1 个'); show = 1; }
+    if (recSets.length > 1) console.log('ℹ️ 该 SQL 含 ' + recSets.length + ' 个查询，当前显示第 ' + show + ' 个（--show N 切换）');
+    const rows = recSets[show - 1] || [];
     const total = rows.length;
     if (total > limit) console.warn('⚠️ 命中 ' + total + ' 行，仅显示前 ' + limit + ' 行（--limit N 可调大）');
     else console.log('✅ 返回 ' + total + ' 行');

@@ -5,6 +5,8 @@
 
 > ✅ **连通状态（2026-08-14 启用）**：本目录 SQL 已可在 **`sMES_Home_Prod`**（192.168.200.18，SQL Server 2019）上直接跑通。账号 `hwmes_read_user` 仅 `db_datareader`（CONNECT+SELECT，无写权限）；[不良原因-SQL.sql](不良原因-SQL.sql) 实测返回 10941 行真实数据。运行方式见 [`tools/query-mes.js`](../../tools/query-mes.js)（强制只读：仅 SELECT+行数封顶）。注：早期文档记录的 `sMES_Production_61100` 为鼎捷标准库命名，当前生产库实际名为 `sMES_Home_Prod`（该账号在服务器上可访问的唯一 sMES 库）。
 
+> ⏰ **时区（2026-08-14 确认）**：sMES 库内时间戳为**北京时间**（服务器时区 UTC+8；`GETDATE()`/`GETUTCDATE()` 实测差 8 小时）。过滤日期直接 `CONVERT(CHAR(10), 时间字段, 120) = '2026-08-14'` 即可，无需时区换算。注意：mssql 驱动把 datetime 读回 JS 时可能显示成带 Z 的 UTC ISO 串（如 `2026-08-14T15:37:36.197Z`），那是驱动序列化假象，库内原始值仍是北京时间，以 SQL 端 `CONVERT` 输出为准。
+
 > ⚠️ **体系边界**：本目录全部 SQL 均为**鼎捷 sMES**（现行系统）的查询，**与老 MES（玖坤）无关**。玖坤是华纬上一代旧系统，仓库中涉及玖坤的只有「设备点检表导出专项」（见 task T-970e6a2c96），两者不要混淆。
 
 ## 说明
@@ -35,6 +37,7 @@
 | [设备生产查询-SQL.sql](设备生产查询-SQL.sql) | 设备生产情况(含 SMT 区域) | TBLWIPCONT_EQUIPMENT, TBLSMDAREABASIS 等 |
 | [模治具寿命管理历程-SQL.sql](模治具寿命管理历程-SQL.sql) | 模治具寿命管理/状态历程(含寿命延长 AddLife/RealAddLife) | TBLEMSACCESSORYSTATELOG, TBLEQPACCSTATEBASIS, tblEQPAccessoryBasis, tblEQPAccessoryCategory |
 | [物料-生产批使用历程-SQL.sql](物料-生产批使用历程-SQL.sql) | 物料耗用明细(生产批+工序 OPNO/OPNAME) | TBLWIPCONT_MATERIAL, TBLWIPCONT_MATERIALLOT, TBLWIPLOTLOG_REPORT, TBLOPBASIS |
+| [今日设备报工查询-SQL.sql](今日设备报工查询-SQL.sql) | 按厂区设备前缀+日期查当日报工(汇总/明细/按工单3视角, `-p prefix=101-01-DH -p date=2026-08-14`) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLEQPEQUIPMENTBASIS, tblOPBasis, TBLPRDPRODUCTBASIS |
 
 ## 使用
 
