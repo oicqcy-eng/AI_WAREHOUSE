@@ -26,6 +26,21 @@ reports/
 - 命名：`<YYYY-MM-DD>_<周报|月报|简报>_<口径>.md/.docx`，不改名覆盖
 - **不写来源信息**：汇报内不标注生成日期/数据源等内部字样
 
+## 厂区专属汇报
+
+各厂区专项汇报按厂区建子目录（**一个厂区一个目录**，跨厂区整体汇报放 `reports/`）：
+
+```
+output/
+├── reports/                 ← 全项目周报/月报/简报
+├── san-chang-xiao-huang/    ← 三厂小簧专项汇报
+├── yi_chang_da_huang/       ← 一厂大簧专项汇报（含 2026-08-14 起「今日报工报表」）
+├── c_q_mes/                 ← 重庆 MES 专项汇报
+└── lims/                    ← 实验室 LIMS 专项汇报
+```
+
+厂区数据类报表（如 `2026-08-14_一厂大簧今日报工报表.md/.docx`）来自 sMES 生产库实时查询（`agent/mes-implement-expert/tools/query-mes.js`），同样 md + docx 双份。
+
 ## 命名规范
 
 `<主题>_v<版本>_<YYYYMMDD>.<ext>`，例如 `MES蓝图_v1.0_20260801.docx`。不改名覆盖。
