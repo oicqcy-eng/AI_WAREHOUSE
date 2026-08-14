@@ -7,6 +7,7 @@
  *   GET  /                    录入页 HTML
  *   GET  /api/options         选项枚举（项目/结果类型/业务模块/阶段/优先级/状态/来源/周报分类）
  *   GET  /api/logs/recent?n=  最近 n 条日志（跨月，日期倒序）
+ *   GET  /api/logs/search?q=&n=  按关键字搜索日志（匹配 工作内容/所属项目/业务模块/结果类型/责任人/协作人/交付产出）
  *   GET  /api/logs/today      今日日志（含 是否形成任务=是 计数）
  *   POST /api/logs            追加日志 {record:{...}} → 返回 {total, file, _id}
  *   POST /api/tasks           追加任务 {record:{...}} → 返回 {total, file, _id}
@@ -97,6 +98,18 @@ const server = http.createServer(async (req, res) => {
       const n = Number(url.searchParams.get('n') || 10);
       const logs = allLogs().sort((a, b) => (b['记录日期'] || '').localeCompare(a['记录日期'] || '')).slice(0, n);
       send(res, 200, { code: 0, data: logs });
+      return;
+    }
+    // 搜索日志（按关键字，跨月匹配文本字段；q 为空返回空）
+    if (p === '/api/logs/search' && req.method === 'GET') {
+      const q = (url.searchParams.get('q') || '').trim();
+      const n = Number(url.searchParams.get('n') || 50);
+      if (!q) { send(res, 200, { code: 0, data: [], total: 0 }); return; }
+      const kw = q.toLowerCase();
+      const FIELDS = ['工作内容', '所属项目', '业务模块', '结果类型', '责任人', '协作人', '交付产出'];
+      const matched = allLogs().filter(l => FIELDS.some(f => String(l[f] || '').toLowerCase().includes(kw)))
+        .sort((a, b) => (b['记录日期'] || '').localeCompare(a['记录日期'] || ''));
+      send(res, 200, { code: 0, data: matched.slice(0, n), total: matched.length });
       return;
     }
     // 今日日志 + 统计

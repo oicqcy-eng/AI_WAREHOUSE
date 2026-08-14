@@ -43,6 +43,12 @@ header .today{color:var(--gray);font-size:13px}
 .edit-btn.cancel{color:var(--gray);border-color:var(--gray)}
 #editing-banner{display:none;margin-bottom:10px;padding:7px 12px;background:#FDF6E3;border:1px solid #E8D9A0;border-radius:6px;font-size:13px;color:#7A5B00}
 #editing-banner b{color:#B26B00}
+.search-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.search-row input{flex:1;min-width:160px;font-size:13px;padding:6px 9px;border:1px solid #C9D4E0;border-radius:6px}
+.search-row input:focus{outline:2px solid var(--blue);border-color:var(--blue)}
+.search-row .btn{padding:6px 14px;font-size:13px}
+#search-info{font-size:12px;color:var(--gray)}
+mark{background:#FFF3B0;padding:0 2px;border-radius:3px;color:inherit}
 </style>
 </head>
 <body>
@@ -122,6 +128,12 @@ header .today{color:var(--gray);font-size:13px}
   <!-- ===== 最近记录 ===== -->
   <div class="recent">
     <h3 id="recent-title">最近日志</h3>
+    <div id="search-row" class="search-row">
+      <input type="text" id="search-input" placeholder="输入关键字，按工作内容搜索日志（回车或点搜索）">
+      <button class="btn" onclick="doSearch()">🔍 搜索</button>
+      <button id="search-clear" class="btn" style="display:none" onclick="clearSearch()">✕ 清空</button>
+      <span id="search-info"></span>
+    </div>
     <ul id="recent-list"><li style="color:var(--gray)">加载中…</li></ul>
   </div>
 </div>
@@ -129,8 +141,37 @@ header .today{color:var(--gray);font-size:13px}
 <script>
 var O = null;
 var TODAY = '';
+var SEARCHING = false; // 当前是否在搜索结果态（搜索仅日志 tab 可用）
 var PROJ_SHORT = { '三厂小簧sMES':'三厂小簧', '一厂大簧sMES':'一厂大簧', '二厂大簧sMES':'二厂大簧', '重庆sMES项目':'重庆', '实验室Lims项目':'实验室Lims', '无锡泽根sMES项目':'无锡泽根', '华纬其它项目':'华纬其它' };
 function shortProj(p){ return PROJ_SHORT[p] || p; }
+
+// ---- 渲染辅助：HTML 转义 + 关键字高亮 ----
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function hl(text, kw){
+  text = esc(text);
+  if (!kw) return text;
+  var i = text.toLowerCase().indexOf(kw.toLowerCase());
+  if (i < 0) return text;
+  return text.slice(0,i)+'<mark>'+text.slice(i,i+kw.length)+'</mark>'+text.slice(i+kw.length);
+}
+function renderLogItem(x, kw){
+  var tag = x['所属项目'] ? '<span class="tag">'+esc(shortProj(x['所属项目']))+'</span>' : '';
+  var rt = x['结果类型'] ? '<span class="tag">'+esc(x['结果类型'])+'</span>' : '';
+  var tf = x['是否形成任务']==='是' ? '<span class="tag" style="background:#FDE9E9;color:#C00000">形成任务</span>' : '';
+  var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
+  return '<li><div class="meta">'+esc(x['记录日期'])+tag+rt+tf+at
+    +'<button class="edit-btn" onclick="startEditLog(\''+x['_id']+'\')">编辑</button></div>'
+    +'<div class="content">'+hl(x['工作内容'], kw)+'</div></li>';
+}
+function renderTaskItem(x){
+  var tag = '<span class="tag">'+esc(shortProj(x['对应项目']))+'</span>';
+  var p = x['优先级'] ? '<span class="tag" style="background:'+(x['优先级']==='P1'?'#FDE9E9;color:#C00000':x['优先级']==='P2'?'#FDF3E0;color:#B26B00':'#EFF3F8;color:#6B7280')+'">'+esc(x['优先级'])+'</span>' : '';
+  var st = x['任务状态'] ? '<span class="tag">'+esc(x['任务状态'])+'</span>' : '';
+  var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
+  return '<li><div class="meta">'+esc(x['发现日期'])+tag+p+st+at
+    +'<button class="edit-btn" onclick="startEditTask(\''+x['_id']+'\')">编辑</button></div>'
+    +'<div class="content">'+esc(x['归集标题'])+'</div></li>';
+}
 
 function fillSelect(id, arr, defaultVal){
   var el = document.getElementById(id);
@@ -153,6 +194,12 @@ function switchTab(t){
   document.getElementById('form-log').style.display = t==='log' ? '' : 'none';
   document.getElementById('form-task').style.display = t==='task' ? '' : 'none';
   document.getElementById('recent-title').textContent = t==='log' ? '最近日志' : '最近任务';
+  // 搜索仅日志 tab 可用；切换 tab 时重置搜索态
+  SEARCHING = false;
+  document.getElementById('search-row').style.display = t==='log' ? '' : 'none';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  document.getElementById('search-info').textContent = '';
   loadRecent(t);
 }
 
@@ -189,28 +236,35 @@ async function loadRecent(tab){
   if (tab==='log'){
     var r = await api('/api/logs/recent?n=12');
     if (!r.data.length){ ul.innerHTML = '<li style="color:var(--gray)">暂无日志</li>'; return; }
-    ul.innerHTML = r.data.map(function(x){
-      var tag = x['所属项目'] ? '<span class="tag">'+shortProj(x['所属项目'])+'</span>' : '';
-      var rt = x['结果类型'] ? '<span class="tag">'+x['结果类型']+'</span>' : '';
-      var tf = x['是否形成任务']==='是' ? '<span class="tag" style="background:#FDE9E9;color:#C00000">形成任务</span>' : '';
-      var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
-      return '<li><div class="meta">'+x['记录日期']+tag+rt+tf+at
-        +'<button class="edit-btn" onclick="startEditLog(\''+x['_id']+'\')">编辑</button></div>'
-        +'<div class="content">'+(x['工作内容']||'')+'</div></li>';
-    }).join('');
+    ul.innerHTML = r.data.map(function(x){ return renderLogItem(x); }).join('');
   } else {
     var r2 = await api('/api/tasks/recent?n=12');
     if (!r2.data.length){ ul.innerHTML = '<li style="color:var(--gray)">暂无任务</li>'; return; }
-    ul.innerHTML = r2.data.map(function(x){
-      var tag = '<span class="tag">'+shortProj(x['对应项目'])+'</span>';
-      var p = x['优先级'] ? '<span class="tag" style="background:'+(x['优先级']==='P1'?'#FDE9E9;color:#C00000':x['优先级']==='P2'?'#FDF3E0;color:#B26B00':'#EFF3F8;color:#6B7280')+'">'+x['优先级']+'</span>' : '';
-      var st = x['任务状态'] ? '<span class="tag">'+x['任务状态']+'</span>' : '';
-      var at = x['附件'] ? '<a class="tag" style="text-decoration:none;background:#EAF3E8;color:#2E7D32" href="/attachments/'+encodeURIComponent(x['附件'])+'" target="_blank">📎</a>' : '';
-      return '<li><div class="meta">'+x['发现日期']+tag+p+st+at
-        +'<button class="edit-btn" onclick="startEditTask(\''+x['_id']+'\')">编辑</button></div>'
-        +'<div class="content">'+(x['归集标题']||'')+'</div></li>';
-    }).join('');
+    ul.innerHTML = r2.data.map(function(x){ return renderTaskItem(x); }).join('');
   }
+}
+
+// ---- 搜索日志（按关键字，工作内容为主） ----
+async function doSearch(){
+  var q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  SEARCHING = true;
+  var r = await api('/api/logs/search?q='+encodeURIComponent(q));
+  var ul = document.getElementById('recent-list');
+  if (!r.data.length){
+    ul.innerHTML = '<li style="color:var(--gray)">未找到包含「'+esc(q)+'」的日志</li>';
+  } else {
+    ul.innerHTML = r.data.map(function(x){ return renderLogItem(x, q); }).join('');
+  }
+  document.getElementById('search-clear').style.display = '';
+  document.getElementById('search-info').textContent = '「'+q+'」命中 '+r.total+' 条，显示前 '+r.data.length+' 条';
+}
+function clearSearch(){
+  SEARCHING = false;
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  document.getElementById('search-info').textContent = '';
+  loadRecent('log');
 }
 
 function showToast(el, msg, isErr){ el.textContent = msg; el.className = isErr ? 'err' : ''; }
