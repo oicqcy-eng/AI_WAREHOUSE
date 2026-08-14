@@ -8,6 +8,10 @@
 |------|------|:--------:|
 | `agent.yaml` | 版本基线配置（模板） | ✅ 入库 |
 | `agent.local.yaml` | 本机/环境覆盖（复制自模板填写） | ❌ 入库（`.gitignore`） |
+| `db.local.example.json` | sMES 只读库连接配置**模板**（字段说明） | ✅ 入库 |
+| `db.local.json` | sMES 只读库连接**真实凭据**（复制自模板填写） | ❌ 入库（`.gitignore`） |
+
+> **DB 连接**：真实凭据只填 `db.local.json`（或环境变量 `MES_DB_SERVER` / `MES_DB_DATABASE` / `MES_DB_USER` / `MES_DB_PASSWORD`），**绝不提交入库**。查询一律走 `tools/query-mes.js`（强制只读：仅 SELECT + 行数封顶 + 禁写关键字）。
 
 ## 关键配置项
 

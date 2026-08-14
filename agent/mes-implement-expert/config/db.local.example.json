@@ -1,0 +1,9 @@
+{
+  "_comment": "sMES 只读连接配置模板。复制为 db.local.json（已 gitignore，真实凭据不入库）后填写：",
+  "server": "10.0.0.10",
+  "port": 1433,
+  "database": "smes",
+  "user": "readonly_user",
+  "password": "请填写只读账号密码",
+  "options": { "encrypt": false, "trustServerCertificate": true }
+}

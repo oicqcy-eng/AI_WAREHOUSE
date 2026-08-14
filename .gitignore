@@ -2,6 +2,9 @@
 
 # ── 敏感文件/凭据（每行一条规则）──
 *.key
+# MES 只读库连接凭据 + 本地 agent 覆盖配置（真实值不入库；模板 db.local.example.json 入库）
+agent/mes-implement-expert/config/db.local.json
+agent/mes-implement-expert/config/agent.local.yaml
 *.pem
 *.p12
 *.pfx

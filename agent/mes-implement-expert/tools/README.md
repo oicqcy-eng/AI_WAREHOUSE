@@ -22,6 +22,21 @@
 
 预置只读查询模板见 `query-templates.sql`，供 `sql_query`/`mes_query` 使用。
 
+## MES 只读查询运行器（query-mes.js）
+
+`query-mes.js` 是 sMES（SQL Server）库的**只读**查询入口，硬约束：
+- **仅允许 `SELECT`**：首关键字非 SELECT、或全文含写关键字（INSERT/UPDATE/DELETE/DROP/ALTER/EXEC/TRUNCATE 等）一律在连库前拒绝
+- **行数封顶**：默认只显示前 100 行，防止大表拉爆
+- **凭据不入库**：连接配置读 `config/db.local.json`（gitignore）或环境变量 `MES_DB_*`
+
+用法：
+```bash
+node tools/query-mes.js <file.sql>                 # 跑 smes-621-sql/ 下的 SQL 模板
+node tools/query-mes.js -q "SELECT TOP 10 * FROM tblQCReasonBasis"
+node tools/query-mes.js <file.sql> --limit 500 -p schema=dbo -p start_date=2026-08-01
+node tools/query-mes.js <file.sql> --out result.csv   # 导出 CSV
+```
+
 ## 维护规范
 
 1. 新增工具在 `config/agent.yaml` 的 `tools_enabled` 白名单中登记
