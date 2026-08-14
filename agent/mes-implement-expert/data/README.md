@@ -11,6 +11,7 @@
 | `smes-621/` | 通用 SMES 数据字典（sMES_Production_61100，189表）解析库，见下方说明 |
 | `smes-621-sql/` | 鼎捷 sMES 通用查询 SQL 资产库，见下方说明 |
 | `u9-sql/` | **U9 ERP（用友）接口查询 SQL 资产库**（MES←U9 发料取数），见下方说明 |
+| `iiot/` | **鼎华智能 IIoT 数采平台资产库**（重庆数采系统，独立于 sMES；时序数据在 InfluxDB 8086），见下方说明 |
 
 ## smes-621 数据字典（通用）
 
@@ -36,6 +37,14 @@
 - 入口: `u9-sql/README.md`（业务背景 + 表结构）+ `file_index.md`
 - 关键表: `ESB_IssueWoItem_Queue`（发料队列）`MO_MOPickList`（领料清单）`MO_MO`（工单）`CBO_ItemMaster`（物料）`Base_UOM`（单位），跨库关联 MES `TBLOEMOBASIS`
 - 引用方式: 回答 U9 接口/发料同步类问题时查 `[u9-sql]`
+
+## iiot 鼎华智能 IIoT 数采平台资产库
+
+> `iiot/` 是**重庆数采平台**（鼎华智能 IIoT v2.2.6.0）的资产库。数采实时数据在 **InfluxDB(8086)** 时序库，**不落 sMES**；MES 与数采当前各自为政（2026-08-14 探查）。
+> 体系边界：IIOT ≠ sMES ≠ LIMS ≠ U9，四套独立系统互不混入。
+
+- 入口: `iiot/README.md`（服务器拓扑/端口/凭据现状/待打通点）
+- 引用方式: 回答数采/采集数据类问题时查 `[iiot]`
 
 ## 与业务模块数据的关系
 
