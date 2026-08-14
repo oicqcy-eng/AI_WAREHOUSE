@@ -13,6 +13,10 @@
  * 共库注意: Home 共库多厂区并存, 视角⑤按人员/⑥按设备必须带 prefix 限定(LOGGROUPSERIAL∈厂区设备报工组),
  *           否则会统计进其他厂区人员/设备
  * 口径变更日志（改模板必记；改后须同步 厂区报工报表规范.md + 各厂实例说明 + 报表口径注意）:
+ *   2026-08-14 V4 审计确认（不改 SQL）：① 分次续报组（同批同工序一天多次进出站）的
+ *     E 侧多行是真实报工（白班/晚班各报一次），SUM 精确=组总量非膨胀，COUNT=真实进出站次数；
+ *     ② RESCLASS 0/1/4 的 USERNO 均为人员工号，⑤ 必须 DISTINCT(LOGGROUPSERIAL,USERNO)、勿按
+ *     RESCLASS=0 过滤——认知修正见 厂区报工报表规范.md 五节速查
  *   2026-08-14 V2→V3: ⑤按人员改为严格当日量——报工量来源从 TBLWIPLOTLOG_REPORT(当前累计,
  *     携带跨日开批量)改为 TBLWIPCONT_EQUIPMENT(按 STARTTIME 过滤当日, InputQty/OutputQty),
  *     每人=当天实际报工量; 与重庆模板/SSMS 运行版同步修改
@@ -87,6 +91,11 @@ ORDER BY L.MONO;
  *           不再携带跨日开批累计)
  * 姓名: TBLUSRUSERBASIS(USERNO→USERNAME)
  * 共库限定: 报工组∈该厂区设备报工组(prefix), 只统计本厂区人员
+ * RESCLASS(2026-08-14 审计): 0/1/4 三类 USERNO 均为人员工号, 同人同组可能多行
+ *        (0 和 4 各一行、部分人另加 1); 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复,
+ *        切勿 WHERE RESCLASS=0 过滤(会丢仅 1/4 行的记录)
+ * 分次续报(2026-08-14 审计): 同批同工序一天多次进出站时 X 对同一 LOGGROUPSERIAL 多行,
+ *        SUM 精确=组总量(非膨胀), COUNT(DISTINCT LOGGROUPSERIAL) 组数正确
  * 口径: 每人=他当天参与的报工组的当日量总和；多人协作按参与人各计一次,
  *       人员总和≈当日报工日志总量(重复计入故略大), 勿精确对表
  * 注: 进行中报工(STARTTIME 当天、ENDTIME 空)计入, 产出为当前已出量(可小于投入)

@@ -99,7 +99,10 @@ GROUP BY L.MONO, L.PRODUCTNO, P.PRODUCTNAME
 ORDER BY L.MONO;
 
 
-/* —— ⑥ 指定日报工按人员统计（重点：报工人员是谁；量=当天实际报工） —— */
+/* —— ⑥ 指定日报工按人员统计（重点：报工人员是谁；量=当天实际报工） ——
+ * 注意（2026-08-14 审计确认）：TBLWIPCont_Resource.RESCLASS 0/1/4 三类
+ * 记录的 USERNO 均为人员工号（非"1=设备"），同人同组可能多行；
+ * 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复，切勿按 RESCLASS=0 过滤。 */
 SELECT R.USERNO AS 工号
       ,ISNULL(U.USERNAME,'') AS 姓名
       ,COUNT(DISTINCT X.LOGGROUPSERIAL) AS 报工次数
@@ -137,7 +140,12 @@ ORDER BY SUM(X.InputQty) DESC;
  * 4. ⑥报工量=当天实际报工量（TBLWIPCONT_EQUIPMENT 按 STARTTIME 过滤当日，
  *    InputQty/OutputQty，V3 已验证与 report 一致；2026-08-14 起不再携带跨日开批累计）。
  *    进行中报工（ENDTIME 为空）计入，产出为当前已出量（如 LW 冷弯 20000→2911 未闭环）。
- * 5. DS 账号 = 系统管理员代报（2026-08-14 用户确认），
+ * 5. RESCLASS 认知（2026-08-14 审计修正）：TBLWIPCont_Resource.RESCLASS 0/1/4
+ *    三类 USERNO 均为人员工号（实测 HW2994 仅在 RESCLASS=1 出现），同人同组多行；
+ *    统计人员必须 DISTINCT(LOGGROUPSERIAL, USERNO)，勿按 RESCLASS=0 过滤。
+ * 6. DS 账号 = 系统管理员代报（2026-08-14 用户确认），
  *    想只看真实车间报工可加  AND X.USERNO <> 'DS'。
- * 6. OPNO='LOTCREATE' 是开批记录，非报工，已排除。
+ * 7. OPNO='LOTCREATE' 是开批记录，非报工，已排除。
+ * 8. 分次续报（一厂有、重庆 2026-08-14 无）：同批同工序一天多次进出站共用
+ *    LOGGROUPSERIAL，①记录数=真实进出站次数、SUM 精确=组总量（非膨胀）。
  * ============================================================ */

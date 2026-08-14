@@ -13,6 +13,9 @@
  * 时区: 库内北京时间，日期直接 CONVERT(CHAR(10),时间,120) 过滤
  *
  * 口径变更日志（改模板必记；改后须同步 SSMS 运行版 + 知识卡速查 + 报表口径注意）:
+ *   2026-08-14 V4 审计确认（不改 SQL）：RESCLASS 0/1/4 的 USERNO 均为人员工号（实测，
+ *     HW2994 仅在 RESCLASS=1 出现），⑥ 必须 DISTINCT(LOGGROUPSERIAL,USERNO)、勿按 RESCLASS=0
+ *     过滤——认知修正见 knowledge/设备口径卡.md；当日 19 条无分次续报组（一厂有，见通用模板）
  *   2026-08-14 V3→V4: ⑥按人员改为严格当日量——报工量来源从 TBLWIPLOTLOG_REPORT(当前累计,
  *     携带跨日开批)改为 TBLWIPCONT_EQUIPMENT(按 STARTTIME 过滤当日 InputQty/OutputQty),
  *     每人=当天实际报工量; 与通用模板同步修改; ④日期条件统一 ''='{{date}}' 写法
@@ -105,6 +108,8 @@ ORDER BY L.MONO;
  *          (= report.INPUTQTY/GOODQTY+FAILQTY, V3 验证一致; 2026-08-14 V3→V4 改严格当日量,
  *           不再携带跨日开批累计)
  * 姓名: TBLUSRUSERBASIS(USERNO→USERNAME)
+ * RESCLASS(2026-08-14 审计): 0/1/4 三类 USERNO 均为人员工号, 同人同组可能多行;
+ *        必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复, 切勿 WHERE RESCLASS=0 过滤
  * 口径: 每人=他当天参与的报工组的当日量总和；多人协作按参与人各计一次,
  *       人员总和≈当日报工日志总量(重复计入故略大), 勿精确对表
  * 注: 进行中报工(STARTTIME 当天、ENDTIME 空)计入, 产出为当前已出量(可小于投入)
