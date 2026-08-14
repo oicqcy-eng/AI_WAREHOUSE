@@ -23,6 +23,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { execFile } = require('child_process');
 const { appendLog, appendTask, updateLog, updateTask, findLog, findTask, loadJson, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY } = require('./worklog-append.js');
 const ATTACH_DIR = path.join(WORKLOG_DIR, 'attachments');
 
@@ -53,6 +54,17 @@ function allLogs() {
   return arr;
 }
 
+// 保存后自动重新生成项目驾驶舱（静态快照 → 保持与 worklog 数据同步）
+function regenerateDashboard() {
+  const gen = path.join(__dirname, 'generate-dashboard.js');
+  execFile(process.execPath, [gen], (err, stdout, stderr) => {
+    if (err) console.error('[dashboard] 自动刷新失败:', err.message, (stderr || '').trim());
+    else {
+      const line = (stdout || '').trim().split('\n')[0];
+      console.log('[dashboard] 保存后已自动刷新:' + (line ? ' ' + line : ''));
+    }
+  });
+}
 function send(res, code, obj) {
   const body = JSON.stringify(obj);
   res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body) });
@@ -123,6 +135,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/logs' && req.method === 'POST') {
       const body = await readBody(req);
       const rec = appendLog(body.record || {});
+      regenerateDashboard();
       send(res, 200, { code: 0, data: rec });
       return;
     }
@@ -130,6 +143,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/tasks' && req.method === 'POST') {
       const body = await readBody(req);
       const rec = appendTask(body.record || {});
+      regenerateDashboard();
       send(res, 200, { code: 0, data: rec });
       return;
     }
@@ -138,6 +152,7 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
       const rec = updateLog(body._id, body.record || {});
+      regenerateDashboard();
       send(res, 200, { code: 0, data: rec });
       return;
     }
@@ -146,6 +161,7 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       if (!body._id) { send(res, 400, { code: 400, msg: '缺少 _id' }); return; }
       const rec = updateTask(body._id, body.record || {});
+      regenerateDashboard();
       send(res, 200, { code: 0, data: rec });
       return;
     }
