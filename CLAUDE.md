@@ -29,11 +29,12 @@
 - 跨厂区**产出**（周报/月报/整体汇报/dashboard）→ `output/` 统一放总目录根级
 - 厂区子目录统一**全小写下划线**命名（如 `input/yi_chang_da_huang/`、`input/c_q_mes/`）；`san-chang-xiao-huang/` 为早期 kebab-case 历史遗留，暂不改名；新厂区在 input/ 下按厂区建子目录
 
-## 系统体系与共享资产（2026-08-12 定版）
-同一客户可能存在**多个系统**，资产按**系统体系**组织，不按厂区复制：
-- **MES 多厂区共库**：三厂小簧/一厂大簧/重庆同用一个鼎捷 sMES 库 → 通用资产（数据字典 `agent/mes-implement-expert/data/smes-621/`、通用查询 `data/smes-621-sql/`）**一份共享**，各厂区都不复制
+## 系统体系与共享资产（2026-08-14 修正：服务器拓扑）
+同一客户可能存在**多个系统**，资产按**系统体系**组织，不按厂区复制。**服务器拓扑（2026-08-14 用户确认）**：
+- **sMES 共库**：除重庆/无锡泽根外的 sMES（三厂小簧/一厂大簧/二厂大簧等）共用 **192.168.200.18 的 `sMES_Home_Prod`** 一个库 → 通用资产（数据字典 `agent/mes-implement-expert/data/smes-621/`、通用查询 `data/smes-621-sql/`）**一份共享**，各厂区都不复制
+- **独立 MES 服务器**：**重庆 sMES、无锡泽根 sMES** 各自独立服务器/独立库 → 查询走 `--profile`（见 `config/db.local.json` profiles），资产按系统分库
 - **厂区限定资产**（按厂区条件限定的 SQL/资料，如按设备前缀/PROCESSTYPE）→ `input/<厂区>/sql/`
-- **独立系统**（LIMS/U9/老MES玖坤）→ 独立资产库 `data/<system>/`（如 `data/lims/`、`data/u9-sql/`），与 smes-621 平级，**不混入** sMES 资产
+- **独立系统**（LIMS/U9/老MES玖坤）→ 独立资产库 `data/<system>/`（如 `data/lims/`、`data/u9-sql/`），与 smes-621 平级，**不混入** sMES 资产；LIMS 为独立服务器，U9/玖坤另算
 
 **归档铁律（2026-08-12 定版）**：后续所有提交的资料，**必须先判定归属**——属于**具体项目/厂区**（→ `delivery/projects/<客户>/input/<厂区>/`）还是**共用项目**（跨厂区通用资产 → `agent/mes-implement-expert/data/<system>/`）——**判定通过才进行下一步操作**（归档/沉淀/建任务/写入 worklog）。判不了 → 不硬猜不归错，列出现状与候选去向请用户判断；用户确认前不进行下一步。
 
