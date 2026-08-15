@@ -36,6 +36,7 @@ hw-spring-mes/
 │   ├── lims/                  实验室 LIMS 专属产出(IT总监汇报大纲→md+docx)
 │   ├── c_q_mes/               重庆厂区交付物(重庆MES项目汇报 md+docx)
 │   └── dashboard.html         仪表盘(跨厂区)
+├── ops-knowledge/             运维排障知识库(报错截图→排障卡, 2026-08-15 建立)
 └── CHANGELOG.md               交付记录
 ```
 
@@ -57,3 +58,4 @@ hw-spring-mes/
 - 汇报生成能力: `agent/mes-report-agent/`
 - 行业知识: `docs/industry-knowledge/`
 - 工作日志/任务池: `agent/mes-report-agent/data/worklog/`（权威数据源）
+- 运维排障: `ops-knowledge/`（报错投喂入口 `delivery/inbox/日常运维报错截图/`）
