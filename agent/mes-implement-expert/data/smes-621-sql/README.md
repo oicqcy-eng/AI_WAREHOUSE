@@ -33,7 +33,7 @@
 
 **系统/厂区资产归属（独立系统不混入 Home 通用资产）**：重庆/无锡泽根 sMES 为独立服务器，其**主数据/流程口径单独沉淀**（重庆 → `delivery/projects/hw-spring-mes/input/c_q_mes/`），不并入本目录；`设备编号前缀-厂区映射.md` 是跨厂区**判定总表**，各厂区前缀行（含重庆 `EQ-CQSPR-*`）作为判定依据保留在其中，与详细主数据分开。
 
-## 查询清单（20 个通用）
+## 查询清单（21 个通用）
 
 | 文件 | 查询内容 | 涉及核心表 |
 |------|---------|-----------|
@@ -58,6 +58,7 @@
 | [今日设备报工查询-SQL.sql](今日设备报工查询-SQL.sql) | 按厂区设备前缀+日期查报工(**6 视角**：①累计 ②按天 ③明细 ④工单 ⑤人员 ⑥设备, 2026-08-14 重庆模式通用化; `-p prefix=101-01-DH -p date=2026-08-14`; date='' 全量) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLWIPCont_Resource, TBLEQPEQUIPMENTBASIS, tblOPBasis, TBLPRDPRODUCTBASIS, TBLUSRUSERBASIS |
 | [报工完成度与漏报分析-SQL.sql](报工完成度与漏报分析-SQL.sql) | 报工流程完成度/漏出站(**6 视角**：①完成度总览 ②当日未完结明细 ③滞留清单 ④按设备 ⑤按工序 ⑥按天趋势; 进行中判据=L.ENDTIME 空, `-p prefix= -p date=`; 一厂 8-14 对账 27条/80,244) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLEQPEQUIPMENTBASIS, tblOPBasis |
 | [点检记录查询-SQL.sql](点检记录查询-SQL.sql) | 设备点检执行情况(**6 视角**：①概览 ②按设备 ③记录明细 ④项目明细 ⑤NG清单 ⑥按天趋势; QCRESULT 0=OK/1=NG, QCTYPE 0标准值/1范围值/2显示信息/3输入数据, `-p prefix= -p date=`; 替换客户旧「点检项目-SQL.sql」) | TBLWIPEQPQCLISTLOG, tblWIPEQPQCListDetail, TBLEQPEQUIPMENTBASIS |
+| [发料查询-SQL.sql](发料查询-SQL.sql) | 工单材料领料/缺料核对(标准用量×工单数=理论领料, U9需求REQUIREQTY vs 已领ORGMATERIALQTY, `-p mono=`; 首站扫码上料报"条码不存在MES"排查核心, 用户提供) | Tbloemomateriallist, Tbloemobasis |
 
 ## 报工报表规范（2026-08-14 定版，重庆模式通用化）
 
