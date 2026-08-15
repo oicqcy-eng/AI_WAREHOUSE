@@ -1,0 +1,137 @@
+/*重庆看板数据源 —— 在制品/设备状态/当日产出/人员现况（6视角，2026-08-15 实战沉淀）
+ * 库: 重庆独立 sMES（172.16.64.11/sMES_Home_Prod，--profile cq）
+ * 用法: node query-mes.js 本文件 --profile cq -p date=2026-08-14 --show N
+ *   date=YYYY-MM-DD 指定日（④⑤当日产出用）；date='' 则全量
+ *   N=1 在制品分布 / 2 在制品明细 / 3 设备状态 / 4 当日产出按产线×工序 / 5 当日产出按设备 / 6 人员现况
+ * 时区: 库内北京时间，日期直接 CONVERT(CHAR(10),时间,120) 过滤
+ *
+ * ── 核心口径（务必先读）────────────────────────────
+ * 【在制品】= TBLWIPLOTSTATE（生产批状态，每工序一行，CURQTY=当前量，STATUS 状态码）：
+ *   0 Queue排队 / 1 Running运行 / 2 Wait暂停 / 9 SPC检验 / 22 制程检验=在制；
+ *   11 良品线边仓 / 12 不良品线边仓 = 已下线入边仓（可另列示，非在制）。
+ *   重庆实测(2026-08-15)：0=233条 / 1=30条 / 11=147 / 12=39——在制=STATUS IN(0,1,2,9,22)。
+ * 【产线判定】区段 PSNO 前缀（CQSPR-RJ=弹簧线冷卷 / CQSTB-KX=稳定杆线）兜底 AREANO（QY-CQSPR%）。
+ * 【设备状态】= TBLEMSEQUIPMENTSTATELOG（状态日志，每次变更一条）：
+ *   EQUIPMENTSTATE 0闲置/1加工/2故障/3维修/4保养/5暂停/6设置/7关机（sMES 通用状态码）。
+ *   重庆实测：日志全部闭合(无 ENDTIME 空)，仅 29/98 台有状态记录→"当前状态"取每设备最新一条(MAX STARTTIME)，
+ *   ⚠️ 覆盖不全，须结合【当天报工活动】(TBLWIPCONT_EQUIPMENT 当天有记录=在加工)补全。
+ * 【当日产出】= 报工链路 TBLWIPCONT_EQUIPMENT E JOIN TBLWIPLOTLOG_REPORT L（LOGGROUPSERIAL）：
+ *   E.InputQty/OutputQty=本次报工投入/产出，按 E.STARTTIME 过滤当日；重庆 8-14 实测 19 条(弹簧4/稳定杆15)。
+ * 【人员现况】= TBLWIPOPERATORSTATE（操作人员状态，按事件记，同人同班多行→DISTINCT(USERNO,WORKDATE)）。
+ * 【口径变更日志】2026-08-15 初版——重庆看板数据源（8-21 看板初版节点数据支撑）
+ */
+
+/*—— ① 在制品分布: 产线×工序×状态 汇总（当前在制批，CURQTY 求和） ——*/
+SELECT CASE WHEN ISNULL(S.PSNO,'') LIKE 'CQSPR%' OR ISNULL(S.AREANO,'') LIKE 'QY-CQSPR%' THEN '弹簧线(CQSPR)'
+            WHEN ISNULL(S.PSNO,'') LIKE 'CQSTB%' OR ISNULL(S.AREANO,'') LIKE 'QY-CQSTB%' THEN '稳定杆线(CQSTB)'
+            ELSE '其他' END                        AS 产线
+      ,S.OPNO                                     AS 工序
+      ,CASE S.STATUS WHEN 0 THEN '排队' WHEN 1 THEN '运行' WHEN 2 THEN '暂停'
+                     WHEN 9 THEN 'SPC检验' WHEN 22 THEN '制程检验' ELSE CONVERT(VARCHAR,S.STATUS) END AS 状态
+      ,COUNT(*)                                   AS 在制批数
+      ,ISNULL(SUM(S.CURQTY),0)                    AS 在制数量
+FROM TBLWIPLOTSTATE S
+WHERE S.STATUS IN (0,1,2,9,22)
+GROUP BY CASE WHEN ISNULL(S.PSNO,'') LIKE 'CQSPR%' OR ISNULL(S.AREANO,'') LIKE 'QY-CQSPR%' THEN '弹簧线(CQSPR)'
+              WHEN ISNULL(S.PSNO,'') LIKE 'CQSTB%' OR ISNULL(S.AREANO,'') LIKE 'QY-CQSTB%' THEN '稳定杆线(CQSTB)'
+              ELSE '其他' END
+        ,S.OPNO
+        ,CASE S.STATUS WHEN 0 THEN '排队' WHEN 1 THEN '运行' WHEN 2 THEN '暂停'
+                       WHEN 9 THEN 'SPC检验' WHEN 22 THEN '制程检验' ELSE CONVERT(VARCHAR,S.STATUS) END
+ORDER BY 产线, 在制数量 DESC;
+
+/*—— ② 在制品明细: 当前在制批清单（批号/工单/产品/工序/状态/数量/区段/最后事件） ——
+ * 关联: TBLWIPLOTBASIS(主批号 BASELOTNO→MONO/产品)，产品名 TBLPRDPRODUCTBASIS
+ */
+SELECT S.LOTNO                                    AS 生产批
+      ,ISNULL(B.MONO,'')                          AS 工单
+      ,ISNULL(P.PRODUCTNAME,'')                   AS 产品名
+      ,S.OPNO                                     AS 工序
+      ,CASE S.STATUS WHEN 0 THEN '排队' WHEN 1 THEN '运行' WHEN 2 THEN '暂停'
+                     WHEN 9 THEN 'SPC检验' WHEN 22 THEN '制程检验' ELSE CONVERT(VARCHAR,S.STATUS) END AS 状态
+      ,S.CURQTY                                   AS 当前量
+      ,ISNULL(S.PSNO,'')                          AS 区段
+      ,ISNULL(S.AREANO,'')                        AS 区域
+      ,CONVERT(CHAR(16),S.EVENTTIME,120)          AS 最后事件
+FROM TBLWIPLOTSTATE S
+LEFT JOIN TBLWIPLOTBASIS B ON S.LOTNO = B.BASELOTNO
+LEFT JOIN TBLPRDPRODUCTBASIS P ON B.PRODUCTNO = P.PRODUCTNO AND B.PRODUCTVERSION = P.PRODUCTVERSION
+WHERE S.STATUS IN (0,1,2,9,22)
+ORDER BY S.STATUS, S.EVENTTIME DESC;
+
+/*—— ③ 设备状态: 每设备最新状态日志 + 当天是否报工（产线×状态汇总，8-21 看板设备状态板） ——
+ * 最新状态=MAX(STARTTIME)那条；当天报工=TBLWIPCONT_EQUIPMENT 当日有记录(活动=在加工)
+ * ⚠️ 状态日志仅覆盖部分设备(重庆 29/98)，无日志但有当日报工=按"加工中"处理
+ */
+SELECT CASE WHEN E.EQUIPMENTNO LIKE 'EQ-CQSPR%' THEN '弹簧线'
+            WHEN E.EQUIPMENTNO LIKE 'EQ-CQSTB%' THEN '稳定杆线' ELSE '其他' END AS 产线
+      ,CASE WHEN LS.EQUIPMENTSTATE IS NULL AND ACT.EQUIPMENTNO IS NOT NULL THEN '加工(当日有报工)'
+            ELSE ISNULL(LS.STATENAME,'未记录') END AS 设备状态
+      ,COUNT(*)                                   AS 设备数
+FROM TBLEQPEQUIPMENTBASIS E
+LEFT JOIN (SELECT s.EQUIPMENTNO, s.EQUIPMENTSTATE,
+                  CASE s.EQUIPMENTSTATE WHEN 0 THEN '闲置' WHEN 1 THEN '加工' WHEN 2 THEN '故障'
+                                        WHEN 3 THEN '维修' WHEN 4 THEN '保养' WHEN 5 THEN '暂停'
+                                        WHEN 6 THEN '设置' WHEN 7 THEN '关机' ELSE CONVERT(VARCHAR,s.EQUIPMENTSTATE) END AS STATENAME
+           FROM TBLEMSEQUIPMENTSTATELOG s
+           JOIN (SELECT EQUIPMENTNO, MAX(STARTTIME) mx FROM TBLEMSEQUIPMENTSTATELOG GROUP BY EQUIPMENTNO) t
+             ON s.EQUIPMENTNO = t.EQUIPMENTNO AND s.STARTTIME = t.mx) LS
+  ON E.EQUIPMENTNO = LS.EQUIPMENTNO
+LEFT JOIN (SELECT DISTINCT EQUIPMENTNO FROM TBLWIPCONT_EQUIPMENT
+           WHERE CONVERT(CHAR(10),STARTTIME,120) = '{{date}}') ACT
+  ON E.EQUIPMENTNO = ACT.EQUIPMENTNO
+WHERE E.EQUIPMENTNO LIKE 'EQ-CQ%'
+GROUP BY CASE WHEN E.EQUIPMENTNO LIKE 'EQ-CQSPR%' THEN '弹簧线'
+              WHEN E.EQUIPMENTNO LIKE 'EQ-CQSTB%' THEN '稳定杆线' ELSE '其他' END
+        ,CASE WHEN LS.EQUIPMENTSTATE IS NULL AND ACT.EQUIPMENTNO IS NOT NULL THEN '加工(当日有报工)'
+              ELSE ISNULL(LS.STATENAME,'未记录') END
+ORDER BY 产线, 设备状态;
+
+/*—— ④ 当日产出: 产线×工序 汇总（-p date=YYYY-MM-DD；date='' 全量） ——*/
+SELECT CASE WHEN E.EQUIPMENTNO LIKE 'EQ-CQSPR%' THEN '弹簧线(CQSPR)'
+            WHEN E.EQUIPMENTNO LIKE 'EQ-CQSTB%' THEN '稳定杆线(CQSTB)'
+            ELSE '其他' END                       AS 产线
+      ,L.OPNO                                     AS 工序
+      ,ISNULL(OP.OPNAME,'')                       AS 工序名
+      ,COUNT(*)                                   AS 报工记录数
+      ,COUNT(DISTINCT L.LOTNO)                    AS 生产批数
+      ,ISNULL(SUM(E.InputQty),0)                  AS 投入
+      ,ISNULL(SUM(E.OutputQty),0)                 AS 产出
+FROM TBLWIPCONT_EQUIPMENT E
+JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+LEFT JOIN tblOPBasis OP ON L.OPNO = OP.OPNO
+WHERE E.EQUIPMENTNO LIKE 'EQ-CQ%'
+  AND ('' = '{{date}}' OR CONVERT(CHAR(10),E.STARTTIME,120) = '{{date}}')
+GROUP BY CASE WHEN E.EQUIPMENTNO LIKE 'EQ-CQSPR%' THEN '弹簧线(CQSPR)'
+              WHEN E.EQUIPMENTNO LIKE 'EQ-CQSTB%' THEN '稳定杆线(CQSTB)'
+              ELSE '其他' END
+        ,L.OPNO, OP.OPNAME
+ORDER BY 产线, 投入 DESC;
+
+/*—— ⑤ 当日产出: 按设备明细（-p date=YYYY-MM-DD；date='' 全量） ——*/
+SELECT E.EQUIPMENTNO                               AS 设备
+      ,ISNULL(EQP.EquipmentName,'')                AS 设备名
+      ,CASE WHEN E.EQUIPMENTNO LIKE 'EQ-CQSPR%' THEN '弹簧线' ELSE '稳定杆线' END AS 产线
+      ,COUNT(*)                                    AS 报工记录数
+      ,COUNT(DISTINCT L.LOTNO)                     AS 生产批数
+      ,ISNULL(SUM(E.InputQty),0)                   AS 投入
+      ,ISNULL(SUM(E.OutputQty),0)                  AS 产出
+FROM TBLWIPCONT_EQUIPMENT E
+JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+LEFT JOIN TBLEQPEQUIPMENTBASIS EQP ON EQP.EQUIPMENTNO = E.EQUIPMENTNO
+WHERE E.EQUIPMENTNO LIKE 'EQ-CQ%'
+  AND ('' = '{{date}}' OR CONVERT(CHAR(10),E.STARTTIME,120) = '{{date}}')
+GROUP BY E.EQUIPMENTNO, EQP.EquipmentName,
+         CASE WHEN E.EQUIPMENTNO LIKE 'EQ-CQSPR%' THEN '弹簧线' ELSE '稳定杆线' END
+ORDER BY 投入 DESC;
+
+/*—— ⑥ 人员现况: 当前登录操作人员（DISTINCT 防同人同班重复行） ——*/
+SELECT DISTINCT O.USERNO                          AS 工号
+      ,ISNULL(U.USERNAME,'')                      AS 姓名
+      ,O.SHIFTNO                                  AS 班次
+      ,CONVERT(CHAR(10),O.WORKDATE,120)           AS 工作日期
+      ,CONVERT(CHAR(16),MAX(O.LOGINDATE),120)     AS 最近登录
+FROM TBLWIPOPERATORSTATE O
+LEFT JOIN TBLUSRUSERBASIS U ON O.USERNO = U.USERNO
+GROUP BY O.USERNO, U.USERNAME, O.SHIFTNO, CONVERT(CHAR(10),O.WORKDATE,120)
+ORDER BY 工作日期 DESC, 工号;
