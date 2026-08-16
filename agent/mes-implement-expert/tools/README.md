@@ -26,7 +26,7 @@
 
 `query-mes.js` 是 sMES（SQL Server）库的**只读**查询入口，硬约束：
 - **仅允许 `SELECT`**：首关键字非 SELECT、或全文含写关键字（INSERT/UPDATE/DELETE/DROP/ALTER/EXEC/TRUNCATE 等）一律在连库前拒绝
-- **行数封顶**：默认只显示前 100 行，防止大表拉爆
+- **行数显示封顶**：默认只显示前 1000 行（`--limit N` 可调）。⚠️ 注意：limit 只截**显示/导出**，不控制查询拉取量（结果集全量已在内存），所以调大 limit **纯收益、无内存风险**——跑报表/沉淀数据遇到截断提示就放心调大
 - **凭据不入库**：连接配置读 `config/db.local.json`（gitignore）或环境变量 `MES_DB_*`
 
 用法：

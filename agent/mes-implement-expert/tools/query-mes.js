@@ -3,7 +3,7 @@
  *
  * 规则（硬约束，见 tools/README.md）：
  *   - 强制只读：仅允许 SELECT；拒绝 INSERT/UPDATE/DELETE/DROP/ALTER/EXEC 等一切写操作
- *   - 行数封顶（默认显示前 100 行），防大表拉爆内存
+ *   - 行数显示封顶（默认 1000 行），仅截显示/导出，不控拉取量——查询结果集全量已在内存，调大 --limit 纯收益、无内存风险
  *   - 连接配置走 gitignore 的 db.local.json（不入库）或环境变量 MES_DB_* 覆盖
  *
  * 用法:
@@ -86,7 +86,7 @@ function applyParams(sql, params) {
 
 async function main() {
   const args = process.argv.slice(2);
-  let sqlSource = null, inline = false, limit = 100, out = null, show = 1, profile = process.env.MES_DB_PROFILE || null;
+  let sqlSource = null, inline = false, limit = 1000, out = null, show = 1, profile = process.env.MES_DB_PROFILE || null;
   const params = {};
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
