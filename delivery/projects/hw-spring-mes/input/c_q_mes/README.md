@@ -41,6 +41,6 @@ c_q_mes/
 
 ## 关联
 
-- 项目交付物：`output/c_q_mes/`（重庆MES项目汇报 md+docx）
+- 项目交付物：`output/c_q_mes/`（重庆MES项目汇报 md+docx；**8-17 起糅合完整汇报+周例会主持稿为一份《项目汇报暨周例会主持稿》一体化文档**）
 - 工作日志/任务：worklog（所属项目=`重庆sMES项目`）
 - 其他厂区资料见 `input/`（三厂小簧 `san-chang-xiao-huang/`、一厂大簧 `yi_chang_da_huang/`、LIMS `lims_system/`、项目总体 `project/`）
