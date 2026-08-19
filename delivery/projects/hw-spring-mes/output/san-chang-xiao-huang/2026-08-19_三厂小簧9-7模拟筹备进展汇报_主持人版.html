@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模拟冲刺指挥板</title>
+<meta name="description" content="三厂小簧 sMES 9/7-9/11 全流程模拟筹备进度 · 协同会主持人版">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* ---- 深墨蓝控制台（默认暗色优先） ---- */
+  --bg: #0d1624;
+  --bg-rail: #0a111c;
+  --surface: #152238;
+  --surface-2: #1b2e47;
+  --raised: #1f3352;
+  --ink: #eaf0f8;
+  --ink-dim: #93a7c4;
+  --ink-faint: #5f7696;
+  --line: rgba(127, 163, 208, 0.18);
+  --line-strong: rgba(127, 163, 208, 0.34);
+  --signal: #4fd1c5;      /* 青绿信号色 */
+  --signal-soft: rgba(79, 209, 197, 0.12);
+  --warn: #ffb454;        /* 琥珀：P1 卡点 */
+  --warn-soft: rgba(255, 180, 84, 0.12);
+  --danger: #ff6b5e;      /* 红橙：受阻 */
+  --danger-soft: rgba(255, 107, 94, 0.12);
+  --ok: #5acb7c;          /* 绿：完成 */
+  --ok-soft: rgba(90, 203, 124, 0.12);
+  --ghost: #3c5678;
+  --shadow: 0 18px 40px rgba(3, 8, 16, 0.5);
+  --shadow-sm: 0 8px 22px rgba(3, 8, 16, 0.35);
+  --mono: 'IBM Plex Mono', 'Cascadia Mono', 'Consolas', monospace;
+  --sans: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    /* ---- 冷调浅色（蓝灰纸面，非暖米色） ---- */
+    --bg: #f2f6fb;
+    --bg-rail: #e9eff7;
+    --surface: #ffffff;
+    --surface-2: #eef3fa;
+    --raised: #ffffff;
+    --ink: #14202e;
+    --ink-dim: #52667f;
+    --ink-faint: #8496af;
+    --line: rgba(24, 55, 90, 0.14);
+    --line-strong: rgba(24, 55, 90, 0.26);
+    --signal: #0d7a82;
+    --signal-soft: rgba(13, 122, 130, 0.10);
+    --warn: #a46500;
+    --warn-soft: rgba(164, 101, 0, 0.10);
+    --danger: #c0392b;
+    --danger-soft: rgba(192, 57, 43, 0.10);
+    --ok: #1e7a40;
+    --ok-soft: rgba(30, 122, 64, 0.10);
+    --ghost: #a8bdd6;
+    --shadow: 0 16px 34px rgba(20, 50, 84, 0.14);
+    --shadow-sm: 0 8px 20px rgba(20, 50, 84, 0.10);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1624; --bg-rail: #0a111c; --surface: #152238; --surface-2: #1b2e47;
+  --raised: #1f3352; --ink: #eaf0f8; --ink-dim: #93a7c4; --ink-faint: #5f7696;
+  --line: rgba(127, 163, 208, 0.18); --line-strong: rgba(127, 163, 208, 0.34);
+  --signal: #4fd1c5; --signal-soft: rgba(79, 209, 197, 0.12);
+  --warn: #ffb454; --warn-soft: rgba(255, 180, 84, 0.12);
+  --danger: #ff6b5e; --danger-soft: rgba(255, 107, 94, 0.12);
+  --ok: #5acb7c; --ok-soft: rgba(90, 203, 124, 0.12);
+  --ghost: #3c5678;
+  --shadow: 0 18px 40px rgba(3, 8, 16, 0.5); --shadow-sm: 0 8px 22px rgba(3, 8, 16, 0.35);
+}
+:root[data-theme="light"] {
+  --bg: #f2f6fb; --bg-rail: #e9eff7; --surface: #ffffff; --surface-2: #eef3fa;
+  --raised: #ffffff; --ink: #14202e; --ink-dim: #52667f; --ink-faint: #8496af;
+  --line: rgba(24, 55, 90, 0.14); --line-strong: rgba(24, 55, 90, 0.26);
+  --signal: #0d7a82; --signal-soft: rgba(13, 122, 130, 0.10);
+  --warn: #a46500; --warn-soft: rgba(164, 101, 0, 0.10);
+  --danger: #c0392b; --danger-soft: rgba(192, 57, 43, 0.10);
+  --ok: #1e7a40; --ok-soft: rgba(30, 122, 64, 0.10);
+  --ghost: #a8bdd6;
+  --shadow: 0 16px 34px rgba(20, 50, 84, 0.14); --shadow-sm: 0 8px 20px rgba(20, 50, 84, 0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px 96px; }
+.mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-dim); font-weight: 700; padding-top: 46px;
+}
+.eyebrow .tick { width: 26px; height: 2px; background: var(--signal); border-radius: 2px; }
+
+/* ---------- Hero ---------- */
+.hero { padding: 26px 0 34px; border-bottom: 1px solid var(--line); }
+.hero h1 {
+  font-size: clamp(34px, 5.2vw, 52px); font-weight: 900; line-height: 1.12;
+  letter-spacing: -0.01em; text-wrap: balance; margin-top: 14px;
+}
+.hero h1 .accent { color: var(--signal); }
+.hero .sub {
+  margin-top: 14px; font-size: clamp(14px, 1.6vw, 17px); color: var(--ink-dim);
+  max-width: 62ch; text-wrap: balance;
+}
+.hero .sub b { color: var(--ink); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: 9px 16px;
+  font-size: 13.5px; color: var(--ink-dim);
+}
+.chip .k { color: var(--ink-faint); }
+.chip .v { color: var(--ink); font-weight: 700; }
+.chip .v.mono { font-size: 13px; letter-spacing: 0.02em; }
+.chip.warn { border-color: color-mix(in srgb, var(--warn) 45%, transparent); background: var(--warn-soft); }
+.chip.warn .v { color: var(--warn); }
+.chip.signal { border-color: color-mix(in srgb, var(--signal) 45%, transparent); background: var(--signal-soft); }
+.chip.signal .v { color: var(--signal); }
+#countdown { font-weight: 700; color: var(--signal); }
+
+/* ---------- Section chrome ---------- */
+.sec { margin-top: 46px; }
+.sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+.sec-index {
+  font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--signal);
+  letter-spacing: 0.06em;
+}
+.sec-title { font-size: 21px; font-weight: 900; letter-spacing: -0.005em; }
+.sec-head .hint { font-size: 12.5px; color: var(--ink-faint); margin-left: auto; text-align: right; }
+
+/* ---------- 核心结论 cards ---------- */
+.concl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.concl-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; padding: 18px 18px 16px; display: flex; gap: 14px;
+  box-shadow: var(--shadow-sm); transition: transform .15s ease, border-color .15s ease;
+}
+.concl-card:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+.concl-card.wide { grid-column: 1 / -1; }
+.concl-num {
+  font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--signal);
+  background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent);
+  border-radius: 8px; min-width: 34px; height: 26px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.concl-card h3 { font-size: 15.5px; font-weight: 700; margin-bottom: 5px; }
+.concl-card p { font-size: 13px; color: var(--ink-dim); line-height: 1.55; }
+.concl-card p b { color: var(--ink); font-weight: 700; }
+
+/* ---------- 时间线 ---------- */
+.timeline { position: relative; }
+.tl-row {
+  display: grid; grid-template-columns: 150px 1fr; gap: 18px;
+  position: relative; padding-bottom: 4px;
+}
+.tl-date {
+  font-family: var(--mono); font-weight: 700; font-size: 14px;
+  color: var(--signal); text-align: right; padding-top: 10px; white-space: nowrap;
+}
+.tl-card {
+  background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--ghost);
+  border-radius: 0 10px 10px 0; padding: 10px 14px 9px;
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.tl-card .t { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+.tl-card .o { font-size: 12.5px; color: var(--ink-dim); margin-left: auto; text-align: right; }
+.tl-row.hot .tl-date { color: var(--warn); }
+.tl-row.hot .tl-card { border-left-color: var(--warn); background: var(--warn-soft); }
+.tl-row.done .tl-date { color: var(--ok); }
+.tl-row.done .tl-card { border-left-color: var(--ok); }
+.tl-row.milestone .tl-card { border-left-width: 4px; border-left-color: var(--signal); }
+.tl-row.milestone .t { color: var(--signal); font-size: 15.5px; }
+.tl-row.milestone .tl-date { font-size: 15px; }
+.dot-row { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-faint); font-family: var(--mono); }
+
+/* ---------- P1 卡点 ---------- */
+.p1-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.p1 {
+  background: var(--surface); border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent);
+  border-radius: 12px; padding: 20px; box-shadow: var(--shadow-sm);
+}
+.p1-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--warn-soft); color: var(--warn);
+  border: 1px solid color-mix(in srgb, var(--warn) 38%, transparent);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  border-radius: 6px; padding: 4px 10px; margin-bottom: 12px;
+}
+.p1-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); }
+.p1 h3 { font-size: 16.5px; font-weight: 900; margin-bottom: 12px; }
+.p1 dl { display: grid; grid-template-columns: 74px 1fr; row-gap: 8px; font-size: 13px; }
+.p1 dt { color: var(--ink-faint); font-weight: 700; font-size: 12.5px; padding-top: 1px; }
+.p1 dd { color: var(--ink-dim); line-height: 1.55; }
+.p1 dd b { color: var(--ink); font-weight: 700; }
+.p1 dd.hl { color: var(--warn); font-weight: 700; }
+
+/* ---------- 行动清单 ---------- */
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); }
+thead th {
+  text-align: left; font-size: 12px; letter-spacing: 0.05em; color: var(--ink-dim);
+  background: var(--surface-2); padding: 11px 16px; border-bottom: 1px solid var(--line-strong);
+  font-weight: 700; white-space: nowrap;
+}
+tbody td { padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--signal-soft); }
+td.who { font-weight: 700; white-space: nowrap; }
+td.when { font-family: var(--mono); color: var(--signal); white-space: nowrap; font-size: 12.5px; }
+td.when.hot { color: var(--warn); font-weight: 700; }
+
+/* ---------- 拍板 ---------- */
+.verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.verdict-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px 18px; display: flex; gap: 13px; box-shadow: var(--shadow-sm);
+}
+.verdict-num {
+  font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--signal);
+  background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent);
+  border-radius: 8px; min-width: 30px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+}
+.verdict-card h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
+.verdict-card p { font-size: 13px; color: var(--ink-dim); line-height: 1.55; }
+.verdict-card p b { color: var(--ink); }
+
+/* ---------- 就绪度 ---------- */
+.readiness { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rdy {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 13px 16px; box-shadow: var(--shadow-sm);
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.dot.ok { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-soft); }
+.dot.hot { background: var(--danger); box-shadow: 0 0 0 4px var(--danger-soft); }
+.dot.run { background: var(--warn); box-shadow: 0 0 0 4px var(--warn-soft); }
+.dot.plan { background: var(--ghost); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ghost) 30%, transparent); }
+.rdy .lab { flex: 1; font-size: 13.5px; font-weight: 700; }
+.rdy .val { font-size: 12.5px; color: var(--ink-faint); text-align: right; }
+.rdy .val.hot { color: var(--danger); font-weight: 700; }
+.rdy .val.okv { color: var(--ok); font-weight: 700; }
+.rdy .val.wv { color: var(--warn); font-weight: 700; }
+.rdy .val.mono { font-family: var(--mono); }
+
+/* ---------- 收尾 ---------- */
+.closer {
+  margin-top: 48px; background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 32%, transparent);
+  border-radius: 14px; padding: 24px 26px;
+}
+.closer .lbl { font-size: 12px; letter-spacing: 0.14em; font-weight: 700; color: var(--signal); margin-bottom: 10px; }
+.closer ol { list-style: none; counter-reset: c; }
+.closer li { counter-increment: c; display: flex; gap: 14px; font-size: 15px; line-height: 1.6; padding: 7px 0; }
+.closer li::before {
+  content: counter(c); font-family: var(--mono); font-weight: 700; color: var(--signal);
+  background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent);
+  border-radius: 7px; min-width: 26px; height: 24px; display: flex; align-items: center; justify-content: center;
+  font-size: 12.5px; margin-top: 3px; flex-shrink: 0;
+}
+.closer li b { font-weight: 900; }
+.closer li span { color: var(--ink-dim); }
+.foot { margin-top: 34px; font-size: 12px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 16px; line-height: 1.7; }
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 18px 80px; }
+  .concl, .p1-grid, .verdict, .readiness { grid-template-columns: 1fr; }
+  .tl-row { grid-template-columns: 1fr; gap: 2px; }
+  .tl-date { text-align: left; padding-top: 2px; }
+  .sec-head .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .concl-card:hover { transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow"><span class="tick"></span>华纬科技 · 三厂小簧 sMES · 协同会</div>
+
+  <header class="hero">
+    <h1>模拟冲刺指挥板<br><span class="accent">9/7 全流程模拟</span></h1>
+    <p class="sub">数据建模、权限、设备档案已就位。接下来 20 天为 <b>9/7-9/11 正式模拟</b>冲刺：<b>IQC → 派工 → 打印派工单 → 制样 → 报工 → PQC → 完工 → 量产流程 → 入库</b>，用实际工单把链条跑通。</p>
+    <div class="chips">
+      <span class="chip"><span class="k">正式模拟</span><span class="v mono">09-07 ~ 09-11</span></span>
+      <span class="chip signal"><span class="k">距开跑</span><span class="v mono" id="countdown">– 天</span></span>
+      <span class="chip warn"><span class="k">P1 卡点</span><span class="v">2 · 8-28 闭环</span></span>
+      <span class="chip"><span class="k">硬件</span><span class="v">9/30 到位 · 解耦</span></span>
+      <span class="chip"><span class="k">数采</span><span class="v">65/109 · 分线</span></span>
+    </div>
+  </header>
+
+  <section class="sec">
+    <div class="sec-head"><span class="sec-index">01</span><span class="sec-title">核心结论</span><span class="hint">先定调，再对表</span></div>
+    <div class="concl">
+      <div class="concl-card"><span class="concl-num">1</span><div><h3>9/7-9/11 全流程模拟定档</h3><p>实际工单验证完整链条，非走形式。</p></div></div>
+      <div class="concl-card"><span class="concl-num">2</span><div><h3>两个 P1 卡点 8-28 闭环</h3><p>制样开发 + 10 产品主数据，任一拖延模拟后延。</p></div></div>
+      <div class="concl-card"><span class="concl-num">3</span><div><h3>硬件与模拟解耦</h3><p>平板 3 + PDA 2 先行，电脑端可模拟，工控机 9/30 不阻塞。</p></div></div>
+      <div class="concl-card"><span class="concl-num">4</span><div><h3>数采分线推进</h3><p>9 月底完成 + 1 周联调，与模拟不互为前置。</p></div></div>
+      <div class="concl-card wide"><span class="concl-num">5</span><div><h3>IQC 模拟前置</h3><p>8-21 郑少青提供 SQL → 8-28 MES 配置完成；正式对接 U9 待重启。</p></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="sec-index">02</span><span class="sec-title">筹备冲刺时间线</span><span class="hint">每个节点都是前置依赖 · 8-21 先落三件</span></div>
+    <div class="timeline">
+      <div class="tl-row"><div class="tl-date">08-21</div><div class="tl-card"><span class="t">《模拟方案》V1.0</span><span class="o">姜皓翊 / 谢建寅</span></div></div>
+      <div class="tl-row"><div class="tl-date">08-21</div><div class="tl-card"><span class="t">管理员权限改小簧管理员</span><span class="o">姜皓翊 · 全局管理员留 IT</span></div></div>
+      <div class="tl-row hot"><div class="tl-date">08-21</div><div class="tl-card"><span class="t">IQC 提供 SQL</span><span class="o">郑少青 · U9C 到货单 → QMS</span></div></div>
+      <div class="tl-row"><div class="tl-date">08-24</div><div class="tl-card"><span class="t">项目计划表按 9/7 重排</span><span class="o">王红烨</span></div></div>
+      <div class="tl-row hot"><div class="tl-date">08-28</div><div class="tl-card"><span class="t">制样开发完成 + 测试 + 演示</span><span class="o">姜皓翊 · P1</span></div></div>
+      <div class="tl-row hot"><div class="tl-date">08-28</div><div class="tl-card"><span class="t">10 个产品控制计划导入</span><span class="o">彭理想 + IT · P1</span></div></div>
+      <div class="tl-row"><div class="tl-date">08-28</div><div class="tl-card"><span class="t">eSOP 手册按部门职责</span><span class="o">姜皓翊</span></div></div>
+      <div class="tl-row"><div class="tl-date">08-28</div><div class="tl-card"><span class="t">IQC MES 配置完成</span><span class="o">IT</span></div></div>
+      <div class="tl-row"><div class="tl-date">08-29 ~ 09-04</div><div class="tl-card"><span class="t">制样关键用户验证窗口</span><span class="o">验证期留开发资源</span></div></div>
+      <div class="tl-row"><div class="tl-date">08-31</div><div class="tl-card"><span class="t">点检老MES基础资料初版</span><span class="o">谢建寅</span></div></div>
+      <div class="tl-row"><div class="tl-date">09-04</div><div class="tl-card"><span class="t">制样关键用户培训</span><span class="o">姜皓翊 · 完成留档</span></div></div>
+      <div class="tl-row milestone"><div class="tl-date">09-07 ~ 09-11</div><div class="tl-card"><span class="t">正式模拟 · 全流程</span><span class="o">IQC→派工→打印→制样→报工→PQC→完工→量产→入库</span></div></div>
+      <div class="tl-row milestone"><div class="tl-date">09-11 下午</div><div class="tl-card"><span class="t">日复盘 + 整体复盘</span><span class="o">每日产出模拟数据分析报告</span></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="sec-index">03</span><span class="sec-title">两大 P1 卡点 · 重点盯</span><span class="hint">当场认领，定死闭环</span></div>
+    <div class="p1-grid">
+      <div class="p1">
+        <span class="p1-badge">P1 · 8-28 闭环</span>
+        <h3>制样功能定制开发（含审批流程）</h3>
+        <dl>
+          <dt>现状</dt><dd>测试中；<b>未纳入培训</b>，审批流程未落地</dd>
+          <dt>为什么卡</dt><dd>制样完才允许报工是硬规则，不做通模拟第一站就卡</dd>
+          <dt>闭环要求</dt><dd class="hl">8-28 演示过 · 9-4 培训留档 · 9/7 可真实跑通</dd>
+          <dt>追问姜皓翊</dt><dd>进度百分比？剩余子项？演示对象定了没？</dd>
+        </dl>
+      </div>
+      <div class="p1">
+        <span class="p1-badge">P1 · 8-28 闭环</span>
+        <h3>10 个产品控制计划导入</h3>
+        <dl>
+          <dt>现状</dt><dd>仅 2 款验证完成，其余批量未完成</dd>
+          <dt>为什么卡</dt><dd>主数据不齐，真实工单开不出来</dd>
+          <dt>闭环要求</dt><dd class="hl">8-24 定 10 款清单 · 8-28 全量导入可查</dd>
+          <dt>追问彭理想/IT</dt><dd>清单何时定？批量还是逐条？谁最终验收？</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="sec-index">04</span><span class="sec-title">各方行动清单</span><span class="hint">当场认领 · 8-28 前交付</span></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>责任方</th><th>8-28 前要交付</th><th>时间</th></tr></thead>
+        <tbody>
+          <tr><td class="who">姜皓翊</td><td>模拟方案 V1.0 · 制样开发+演示 · eSOP · 权限隔离 · 9-4 培训</td><td class="when hot">8-21 / 8-28 / 9-4</td></tr>
+          <tr><td class="who">谢建寅</td><td>模拟方案联制 · 点检资料初版 · 硬件支架推进</td><td class="when">8-21 / 8-31</td></tr>
+          <tr><td class="who">郑少青</td><td>IQC 提供 SQL（U9C → QMS）</td><td class="when hot">8-21</td></tr>
+          <tr><td class="who">彭理想 + IT</td><td>10 款产品清单 + 控制计划导入</td><td class="when hot">8-24 / 8-28</td></tr>
+          <tr><td class="who">王红烨</td><td>项目计划表按 9/7 重排</td><td class="when">8-24</td></tr>
+          <tr><td class="who">翁子淮</td><td>数采 9 月底完成 + 1 周联调（分线）</td><td class="when">9-30</td></tr>
+          <tr><td class="who">陈宇（IT）</td><td>硬件采购落地（平板3+PDA2 先行）· IQC 配置协调</td><td class="when">持续</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="sec-index">05</span><span class="sec-title">当场拍板</span><span class="hint">4 项，能定当场定</span></div>
+    <div class="verdict">
+      <div class="verdict-card"><span class="verdict-num">1</span><div><h3>10 款模拟产品清单</h3><p>8-24 前彭理想定清单，IT 确认验收口径。</p></div></div>
+      <div class="verdict-card"><span class="verdict-num">2</span><div><h3>模拟环境</h3><p>电脑端先模拟，平板/PDA 到位即切，不等工控机。</p></div></div>
+      <div class="verdict-card"><span class="verdict-num">3</span><div><h3>操作级培训</h3><p>模拟前 9/1-9/4 安排，留档签字。</p></div></div>
+      <div class="verdict-card"><span class="verdict-num">4</span><div><h3>验证窗口资源</h3><p>姜皓翊预留开发资源，验证问题当日响应。</p></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="sec-index">06</span><span class="sec-title">筹备就绪度一页纸</span><span class="hint">给领导</span></div>
+    <div class="readiness">
+      <div class="rdy"><span class="dot ok"></span><span class="lab">数据建模</span><span class="val okv">完成</span></div>
+      <div class="rdy"><span class="dot ok"></span><span class="lab">人员权限</span><span class="val okv">期初完成</span></div>
+      <div class="rdy"><span class="dot hot"></span><span class="lab">制样功能</span><span class="val hot">P1 · 8-28</span></div>
+      <div class="rdy"><span class="dot hot"></span><span class="lab">10 产品主数据</span><span class="val hot">P1 · 8-28</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">设备数采</span><span class="val wv mono">65/109</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">现场硬件</span><span class="val wv">9/30 · 解耦</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">IQC 配置</span><span class="val wv">8-21 SQL</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">操作手册 eSOP</span><span class="val wv">8-28</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">点检资料</span><span class="val wv">8-31</span></div>
+      <div class="rdy"><span class="dot plan"></span><span class="lab">正式模拟</span><span class="val">9/7-9/11 定档</span></div>
+    </div>
+  </section>
+
+  <section class="closer">
+    <div class="lbl">总结 · 三句话带走</div>
+    <ol>
+      <li><b>9/7-9/11 正式模拟雷打不动</b><span> —— 所有筹备朝这个日子倒排。</span></li>
+      <li><b>两个 P1 卡点 8-28 闭环</b><span> —— 制样开发 + 10 产品主数据，谁卡谁负责。</span></li>
+      <li><b>硬件数采不拖模拟</b><span> —— 能先跑的电脑端先跑，设备到了无缝切。</span></li>
+    </ol>
+  </section>
+
+  <div class="foot">
+    数据源：本地化工作日志 + 任务池 + 8-19 协同会纪要/待办拆分表 · 项目计划见 input/san-chang-xiao-huang/knowledge/项目计划.md<br>
+    配套文档：2026-08-19_三厂小簧9-7模拟筹备进展汇报_主持人版.md / .docx · 本页仅供协同会投影展示
+  </div>
+
+</div>
+<script>
+(function () {
+  var target = new Date('2026-09-07T00:00:00+08:00');
+  var now = new Date();
+  var days = Math.max(0, Math.ceil((target - now) / 86400000));
+  var el = document.getElementById('countdown');
+  if (el) el.textContent = days + ' 天';
+})();
+</script>
+</body>
+</html>
