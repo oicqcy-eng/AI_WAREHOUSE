@@ -70,11 +70,12 @@ function stripLiterals(sql) {
   return sql.replace(/'[^']*(?:''[^']*)*'/g, "''");
 }
 function assertReadOnly(sql) {
-  const stripped = stripComments(sql).trim();
+  const stripped = stripComments(sql).trim().replace(/^;+/, '').trim();
   if (!stripped) throw new Error('SQL 为空');
   const m = stripped.match(/^([A-Za-z]+)/);
   if (!m) throw new Error('SQL 首关键字无法识别');
-  if (!/^select$/i.test(m[1])) throw new Error('仅允许 SELECT（当前首关键字: ' + m[1].toUpperCase() + '）');
+  // SELECT 或 WITH（只读 CTE）开头均可；WITH 内不允许写关键字，仍由下方 BANNED 拦截
+  if (!/^select$/i.test(m[1]) && !/^with$/i.test(m[1])) throw new Error('仅允许 SELECT（当前首关键字: ' + m[1].toUpperCase() + '）');
   if (BANNED.test(stripLiterals(stripped))) throw new Error('检测到禁止的写操作关键字，拒绝执行');
   return stripped;
 }

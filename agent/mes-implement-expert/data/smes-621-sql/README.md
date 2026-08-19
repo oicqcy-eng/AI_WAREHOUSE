@@ -48,7 +48,7 @@
 | [模治具維修歷程查詢-SQL.sql](模治具維修歷程查詢-SQL.sql) | 模治具维修历程 | tblEMSACCLog_Repair, TBLEMSACCESSORYSTATE |
 | [点检项目-SQL.sql](点检项目-SQL.sql) | 点检项目/清单 | tblWIPEQPQCListDetail, TBLWIPEQPQCLISTLOG |
 | [物料-SQL.sql](物料-SQL.sql) | 物料耗用查询 | tblWIPCont_Material, tblWIPCont_MaterialLot |
-| [生产批历程查询-SQL.sql](生产批历程查询-SQL.sql) | 生产批完整历程(报工/工序) | RPT_LotHistory_N, TBLWIPLOTLOG_REPORT 等 |
+| [生产批历程查询-SQL.sql](生产批历程查询-SQL.sql) | 生产批完整历程/过程追溯(开立/报工/暂停/分批/并批，**2026-08-19 参数化**: `-p lotno=MO1012608050057-001` 一条命令出全程; 客户原版在 raw/) | RPT_LotHistory_N, TBLWIPLOTLOG_REPORT, TBLWIPWAITBASIS, TBLWIPSPLITCONTENT, TBLWIPMERGECONTENT 等 |
 | [生产批操作历程-SQL.sql](生产批操作历程-SQL.sql) | 生产批操作履历(开批/进出站/外包) | TBLWIPLOTBASIS, tblWIPCont_Partialin 等 |
 | [订单工单查询-SQL.sql](订单工单查询-SQL.sql) | 订单/工单(RO/MO) | TBLOEROBASIS, TBLOEMOBASIS, TBLWIPLOTBASIS |
 | [设备-SQL.sql](设备-SQL.sql) | 设备工时/数量统计 | tblWIPCont_Resource, TBLEQPEQUIPMENTBASIS |

@@ -1,3 +1,11 @@
+/* ============================================================
+ * 生产批历程查询（过程追溯）— 参数化版（2026-08-19 改造）
+ * 用法: node agent/mes-implement-expert/tools/query-mes.js 生产批历程查询-SQL.sql \
+ *          --profile home -p lotno=MO1012608050057-001
+ * 参数: lotno 主批号/生产批号（必传；如需全量请传空串 -p lotno=）
+ * 输出列: 生产批号/类型/作业站/作业名称/订单/产品/品名/图号/规格/输入/良品/不良/短少/多余/开始/结束/人时/机时/流程/工单/客户/主批号/客户批号/暂停处置/目的站点
+ * 说明: 全程履历含开立/报工/暂停/分批/并批；客户原版见 raw/生产批历程查询-SQL.sql
+ * ============================================================ */
 WITH RPT_LotHistory_N
      AS (SELECT C.DTYPE
                ,C.DTYPENAME
@@ -327,18 +335,6 @@ LEFT JOIN TBLPRDPRODUCTBASIS c
 Left join tblWIPWaitLotDisposition WWLD on WWLD.WaitNo=a.WaitNo 
 Left Join tblPRSNodeBasis PNB1 on PNB1.NodeID=WWLD.NODEID
 LEFT JOIN tblOEMOBasis oe on oe.MONO = a.MONO
-where 1=1 
-/*{{a.STARTTIME}}*/  
-/*{{a.STARTTIME}}*/
-/*{{a.PRODUCTNO}}*/  
-/*{{c.PRODUCTNAME}}*/
-/*{{a.CUSTOMERNO}}*/
-/*{{d.CUSTOMERNAME}}*/
-/*{{e.RONO}}*/
-/*{{a.MONO}}*/
-/*{{a.LOTNO}}*/
-/*{{a.DTYPENAME}}*/
-/*{{c.GraphNo}}*/
-/*{{c.ItemSpec}}*/
-/*{{oe.Description}}*/
+where 1=1
+  AND ('' = '{{lotno}}' OR a.BASELOTNO = '{{lotno}}')
 order by a.LOTNO ,a.STARTTIME   /*#122280*/
