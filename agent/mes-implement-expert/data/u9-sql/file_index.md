@@ -10,6 +10,8 @@
 | 2 | U9C_IQC到货单查询-SQL.sql | SQL-U9C接口 | `data/u9-sql/` | ✓ |
 | 3 | U9C数据库字典-基础.md | U9C字典 | `data/u9-sql/` | ✓ |
 | 4 | U9C核心链路-表结构与排障.md | U9C链路手册（断连对冲） | `data/u9-sql/` | ✓ |
+| 5 | U9C全量表清单.md | U9C表清单（断连地图） | `data/u9-sql/` | ✓ |
+| 6 | U9C全量表清单.csv | U9C全量表数据（7554行） | `data/u9-sql/` | ✓ |
 
 ## 备注
 

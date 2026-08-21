@@ -51,10 +51,26 @@
 
 > 见 [U9_ERP发料查询-SQL.sql](U9_ERP发料查询-SQL.sql)。关键字段：doc_no/wo_no/item_no/qty/std_qty/unit_no/sync_status。关联问题 T-c038ddec12（调拨条码无物料条码字段）。
 
-### 2.3 其他 U9C 模块表（待按需验证，勿猜）
+### 2.3 `esb_mes_wo_create` — MES 工单创建同步状态表（2026-08-21 补录）
 
-- 工单：`MO_MO`；领料：`MO_MOPickList`（U9C 表名与既有文档一致，未实测列结构）
-- 物料主数据：`CBO_ItemMaster`；单位：`Base_UOM`（同上，待实测）
+> **用途**：U9C → MES 的**工单创建/同步状态表**（wo_no 维度，ESB outbox 模式），记录 U9 工单下发 MES 的 create/update/status 各阶段回执。发料链路的上游工单入口，与 `ESB_IssueWoItem_Queue`（发料）同属 ESB 接口层。实测 11 列，全列沉淀。
+
+| 列名 | 类型 | 语义 |
+|------|------|------|
+| ID | nvarchar(255) | 主键 |
+| wo_no | nvarchar(255) | 工单号（非空） |
+| wo_state | nvarchar(255) | 工单状态 |
+| modifytime / esbmodifytime | datetime | 修改时间 / ESB 修改时间 |
+| create_code / create_message | nvarchar(255) | 创建回执：码 / 信息 |
+| update_code / update_message | nvarchar(255) | 更新回执：码 / 信息 |
+| status_code / status_message | nvarchar(255) | 状态回执：码 / 信息 |
+
+> ⚠️ 状态码取值（create/update/status_code）未实测，需对照 MES 消费逻辑或更多正式数据确认；取值语义断连时按"回执码+回执信息"配对推断。
+
+### 2.4 其他 U9C 模块表（核心链路已实测，其余按需验证）
+
+- 已实测（详见 [U9C核心链路-表结构与排障.md](U9C核心链路-表结构与排障.md)）：`MO_MO`(330列)/`MO_MOPickList`(220列)/`PM_Receivement`(250列)/`CBO_ItemMaster`(200+)/`Base_UOM`(100列)——关键字段已提炼
+- 其余 7549 张标准用友产品表：**不全量沉淀**，查 [U9C全量表清单.md](U9C全量表清单.md)（7554 表地图）→ 按需 `INFORMATION_SCHEMA` 验证
 
 ## 三、使用注意
 

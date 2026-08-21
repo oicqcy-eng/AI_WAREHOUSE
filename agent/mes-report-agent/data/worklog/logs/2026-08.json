@@ -1001,5 +1001,18 @@
     "协作人": "用户(提供连接信息)",
     "交付产出": "agent/mes-implement-expert/data/u9-sql/U9C核心链路-表结构与排障.md + data/smes-621-sql/sMES核心链路-表结构与排障.md",
     "_id": "L-01a2e2d5c3"
+  },
+  {
+    "记录日期": "2026-08-21",
+    "所属项目": "华纬MES项目",
+    "工作内容": "断连对冲第二轮沉淀(用户问是否有必要沉淀U9C/MES全字典): 实测7554(U9C)/1472(sMES)全量不必要(标准产品表),但发现真缺口——U9C ESB接口层仅5表(补esb_mes_wo_create工单同步状态表11列入字典-基础); sMES生产库1472表 vs 189主字典只覆盖13%, 22个SQL查询模板实际使用的68张核心表(TBLWIPLOTBASIS/TBLWIPLOTLOG_REPORT/TBLWIPCONT_EQUIPMENT/TBLUSRUSERBASIS/TBLEQPEQUIPMENTBASIS/TBLOPBASIS/TBLWIPEQPQCLISTLOG等)结构字典全缺→全结构补录(09-core-ops-补录.md 68表1727列); 落盘U9C全量表清单.md+csv(7554行+180模块)+sMES全量表清单.md+csv(1472行+分组+diff分析); 两侧README/file_index登记; 关联T-e2b1635778/T-ee6e262764",
+    "结果类型": "数据完成",
+    "是否形成任务": "是",
+    "业务模块": "系统接口",
+    "项目阶段": "现场实施",
+    "责任人": "MES项目组",
+    "协作人": "",
+    "交付产出": "agent/mes-implement-expert/data/u9-sql/U9C全量表清单.md+csv + esb_mes_wo_create; data/smes-621/09-core-ops-补录.md; data/smes-621-sql/sMES全量表清单.md+csv",
+    "_id": "L-77b1e4c9a2"
   }
 ]
