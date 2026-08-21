@@ -1,21 +1,25 @@
 # U9 ERP（用友）接口查询 SQL 资产库
 
-> 华纬 **U9 ERP**（用友）相关接口查询 —— MES 从 U9 取数（发料/领料）的接口契约，与 `data/smes-621-sql/`（鼎捷 sMES 数据库内查询）是**两套不同体系**。
-> 来源: `delivery/inbox/SQL/U9_ERP发料查询SQL.docx`（2026-07-06 归档）。原件保留在本地 `raw/` 原件区供追溯。
+> 华纬 **U9 ERP**（用友）相关接口查询 —— MES 从 U9 取数（发料/领料/IQC到货单）的接口契约，与 `data/smes-621-sql/`（鼎捷 sMES 数据库内查询）是**两套不同体系**。
+> 来源: `delivery/inbox/SQL/U9_ERP发料查询SQL.docx`（2026-07-06 归档）+ **2026-08-21 U9C 首次连库实测**。原件保留在本地 `raw/` 原件区供追溯。
 
 ## 说明
 
 - 本目录沉淀 **U9 ERP 侧**的查询 SQL（U9 库表 + MES 侧跨库关联）
-- U9 关键库表：`ESB_IssueWoItem_Queue`（发料队列表/中间表）、`MO_MO`（工单）、`MO_MOPickList`（工单领料清单）、`CBO_ItemMaster`（物料主数据）、`Base_UOM`（单位）
+- ✅ **连通状态（2026-08-21 启用）**：U9C ERP 库已可直连 —— **192.168.200.16/HWAWAYU9CDB**（SQL Server 2019，7554 表全 dbo），账号 `u9_readonly_user` 仅只读。运行方式：`node query-mes.js <file.sql> --profile u9c`（profile 见 `config/db.local.json`，凭据不入库；与 sMES 共库 `home`/重庆 `cq` 平级）
+- U9 关键库表：`esb_iqc_receipt_outbox`（**IQC 到货单同步队列**）、`ESB_IssueWoItem_Queue`（发料队列表）、`MO_MO`（工单）、`MO_MOPickList`（工单领料清单）、`CBO_ItemMaster`（物料主数据）、`Base_UOM`（单位）
 - 关联 MES 侧库表：`[MES].[sMES_Home_Prod].[dbo].[TBLOEMOBASIS]`（OEM 工单基础表）
 - 每个 SQL 文件为独立查询，可直接复制执行；字段说明见文件内注释
 - 与 sMES 数据库（`sMES_Production_61100`）的查询分开存放，避免混用
+- **表结构按需验证，不全量沉淀**（7554 表）；字典见 [U9C数据库字典-基础.md](U9C数据库字典-基础.md)
 
 ## 查询清单
 
 | 文件 | 查询内容 | 涉及核心表 |
 |------|---------|-----------|
 | [U9_ERP发料查询-SQL.sql](U9_ERP发料查询-SQL.sql) | U9 发料数据取数（取 1 条待同步发料记录，关联领料单标准用量，校验工单已在 MES） | ESB_IssueWoItem_Queue, MO_MO, MO_MOPickList, CBO_ItemMaster, Base_UOM, MES.TBLOEMOBASIS |
+| [U9C_IQC到货单查询-SQL.sql](U9C_IQC到货单查询-SQL.sql) | **IQC 到货单取数（4 视角）**：①待同步清单(sync_status=0) ②按单/物料全状态 ③状态分布 ④失败重试；`--profile u9c -p receipt_no= -p item_code=` | esb_iqc_receipt_outbox |
+| [U9C数据库字典-基础.md](U9C数据库字典-基础.md) | U9C 库概况 + 已实测表结构（esb_iqc_receipt_outbox 29 列详解 + 测试数据） | — |
 
 ## 业务背景（为什么有这份 SQL）
 
