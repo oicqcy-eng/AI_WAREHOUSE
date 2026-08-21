@@ -33,6 +33,12 @@
 | 18 | 稳定杆生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬稳定杆厂（PROCESSTYPE=稳定杆流程） | `projects/hw-spring-mes/input/san-chang-xiao-huang/sql/` | ✓ |
 | 19 | 金晟-生產批現況查詢-SQL.sql | SQL-厂区限定 | 华纬金晟厂（主要产品稳定杆 / PROCESSTYPE=金晟流程） | `projects/hw-spring-mes/input/san-chang-xiao-huang/sql/` | ✓ |
 
+## 断连对冲沉淀（非 inbox 归档，AI 连库实测编制）
+
+| 文件 | 类型 | 说明 |
+|------|------|------|
+| `sMES核心链路-表结构与排障.md` | 链路手册 | 五链路（报工/权限/生产批/点检/发料）编排 + 判据 + 排障环节；配合 `../smes-621/` 189 表字典 + 本目录查询模板，断连也能判断链路、定位环节（2026-08-21 编制） |
+
 ## 备注
 
 - 判定依据：文件名/注释/`PROCESSTYPE` 限定条件（弹簧/稳定杆/金晟流程）→ 厂区专属；其余按业务维度查询 → 通用

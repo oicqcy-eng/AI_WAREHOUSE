@@ -20,6 +20,7 @@
 | [U9_ERP发料查询-SQL.sql](U9_ERP发料查询-SQL.sql) | U9 发料数据取数（取 1 条待同步发料记录，关联领料单标准用量，校验工单已在 MES） | ESB_IssueWoItem_Queue, MO_MO, MO_MOPickList, CBO_ItemMaster, Base_UOM, MES.TBLOEMOBASIS |
 | [U9C_IQC到货单查询-SQL.sql](U9C_IQC到货单查询-SQL.sql) | **IQC 到货单取数（4 视角）**：①待同步清单(sync_status=0) ②按单/物料全状态 ③状态分布 ④失败重试；`--profile u9c -p receipt_no= -p item_code=` | esb_iqc_receipt_outbox |
 | [U9C数据库字典-基础.md](U9C数据库字典-基础.md) | U9C 库概况 + 已实测表结构（esb_iqc_receipt_outbox 29 列详解 + 测试数据） | — |
+| [U9C核心链路-表结构与排障.md](U9C核心链路-表结构与排障.md) | **断连对冲手册**：U9C 核心链路（IQC到货单/发料/工单/物料/单位）+ 每表关键字段（超宽表提炼）+ 环节拆分 + 断连排障点 | PM_Receivement, esb_iqc_receipt_outbox, MO_MO, MO_MOPickList, ESB_IssueWoItem_Queue, CBO_ItemMaster, Base_UOM |
 
 ## 业务背景（为什么有这份 SQL）
 
