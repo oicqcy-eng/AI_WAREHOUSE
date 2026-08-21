@@ -60,6 +60,7 @@
 | [报工完成度与漏报分析-SQL.sql](报工完成度与漏报分析-SQL.sql) | 报工流程完成度/漏出站(**6 视角**：①完成度总览 ②当日未完结明细 ③滞留清单 ④按设备 ⑤按工序 ⑥按天趋势; 进行中判据=L.ENDTIME 空, `-p prefix= -p date=`; 一厂 8-14 对账 27条/80,244) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLEQPEQUIPMENTBASIS, tblOPBasis |
 | [点检记录查询-SQL.sql](点检记录查询-SQL.sql) | 设备点检执行情况(**6 视角**：①概览 ②按设备 ③记录明细 ④项目明细 ⑤NG清单 ⑥按天趋势; QCRESULT 0=OK/1=NG, QCTYPE 0标准值/1范围值/2显示信息/3输入数据, `-p prefix= -p date=`; 替换客户旧「点检项目-SQL.sql」) | TBLWIPEQPQCLISTLOG, tblWIPEQPQCListDetail, TBLEQPEQUIPMENTBASIS |
 | [发料查询-SQL.sql](发料查询-SQL.sql) | 工单材料领料/缺料核对(标准用量×工单数=理论领料, U9需求REQUIREQTY vs 已领ORGMATERIALQTY, `-p mono=`; 首站扫码上料报"条码不存在MES"排查核心, 用户提供) | Tbloemomateriallist, Tbloemobasis |
+| [发料查询-SQL-SSMS直接执行.sql](发料查询-SQL-SSMS直接执行.sql) | 同一查询的 **SSMS 手动版**(2026-08-21 找回生成): 改顶部 `@mono` 变量值即查任意工单，整段 F5 执行返回 ①发料核对/②扫码上料/③进站核对 三表 | 同左 |
 | [用户权限查询-SQL.sql](用户权限查询-SQL.sql) | 用户作业群组权限排查(**4 视角**：①用户主档 ②群组关联 ③群组权限明细(PRIVTYPE 9=菜单/0=平台/8=按钮) ④控件禁用; `-p userno=HW0403`; H5端看不到功能按钮排查核心, 2026-08-21 三厂小簧派工无按钮实测归纳) | TBLUSRUSERBASIS, TBLUSRUSERGROUP, TBLUSRGROUPBASIS, TBLUSRGROUPPRIV, TBLUSRGROUPPRIVCONTROL |
 | [sMES核心链路-表结构与排障.md](sMES核心链路-表结构与排障.md) | **断连对冲手册**：五链路（报工/权限/生产批/点检/发料）环节编排 + 判读核心 + 断连排障点，逐链路指路本目录查询模板 + `../smes-621/` 字典（2026-08-21 编制） | — |
 | [sMES全量表清单.md](sMES全量表清单.md)（+ [csv](sMES全量表清单.csv)） | **断连地图**：1472 表完整清单 + 分组分布 + **与 189 字典差异分析**（1284 未覆盖，其中 68 张为查询模板核心表已补录 [09-core-ops-补录.md](../smes-621/09-core-ops-补录.md)） | 全库 |
