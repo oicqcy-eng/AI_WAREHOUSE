@@ -86,9 +86,11 @@ ORDER BY L.MONO;
 
 
 /* —— ⑤ 指定日报工按人员统计（重点：报工人员是谁；量=当天实际报工） ——
- * 注意（2026-08-14 审计确认）：TBLWIPCont_Resource.RESCLASS 0/1/4 三类
- * 记录的 USERNO 均为人员工号（非"1=设备"），同人同组可能多行；
- * 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复，切勿按 RESCLASS=0 过滤。
+ * 注意（2026-08-23 RESCLASS 语义修正）：TBLWIPCont_Resource.RESCLASS
+ * 0=EMP人时（USERNO=作业人员）/ 1=EQP机时（USERNO=报工者=操作报工账号）/
+ * 4=UCB群组（每笔EMP冗余一行）；参与人员=0∪1 去重（口径B：报工的人也是
+ * 一起作业的，用户确认）；同人同组多行，必须 DISTINCT(LOGGROUPSERIAL, USERNO)
+ * 防重复，勿把 RESCLASS=4 单独当人员。
  * X 子查询 GROUP BY 聚合成组总量（防分次续报同量合并漏算）；
  * R 子查询按 EVENTTIME 当天过滤（防跨天组历史成员带入今日）。 */
 SELECT R.USERNO AS 工号
@@ -152,9 +154,11 @@ ORDER BY SUM(E.InputQty) DESC;
  * 5. ⑤报工量=当天实际报工量（TBLWIPCONT_EQUIPMENT 按 STARTTIME 过滤当日
  *    InputQty/OutputQty），不再携带跨日开批累计；进行中报工（ENDTIME 为空）
  *    计入，产出为当前已出量（可小于投入）。
- * 6. RESCLASS 认知（2026-08-14 审计修正）：TBLWIPCont_Resource.RESCLASS 0/1/4
- *    三类 USERNO 均为人员工号（非"1=设备"），同人同组多行；统计人员必须
- *    DISTINCT(LOGGROUPSERIAL, USERNO)，勿按 RESCLASS=0 过滤（会丢仅 1/4 行的记录）。
+ * 6. RESCLASS 认知（2026-08-23 字典+实测语义修正，废止 2026-08-14 旧表述）：
+ *    RESCLASS 0=EMP人时（USERNO=作业人员）/ 1=EQP机时（USERNO=报工者=操作报工
+ *    账号）/ 4=UCB群组（每笔 EMP 冗余一行）。参与人员=0∪1 去重=口径B（用户确认：
+ *    报工的人也是一起作业的）。同人同组多行（0/1/4 各一行），必须
+ *    DISTINCT(LOGGROUPSERIAL, USERNO)；勿把 RESCLASS=4 单独当人员。
  * 7. DS 账号 = 系统管理员代报（2026-08-14 用户确认），看纯车间报工可加
  *     AND R.USERNO <> 'DS'。
  * 8. OPNO='LOTCREATE' 是开批记录，非报工（⑤已排除；③按进出站逐条，如出现

@@ -1,5 +1,5 @@
 /*报工完成度与漏报分析 —— 定位"该报工没走完/漏出站"（6视角，2026-08-15 实战沉淀）
- * 库: sMES_Home_Prod 共库（--profile home）；重庆/泽根为独立服务器走各自 --profile
+ * 库: sMES_Home_Prod 共库（--profile home）；重庆独立服务器走 --profile cq；无锡泽根独立服务器（暂未接入 profile）
  * 用法: node tools/query-mes.js 本文件 --profile home -p prefix=101-01-DH -p date=2026-08-14 --show N
  *   prefix=厂区设备前缀(见 设备编号前缀-厂区映射.md): 一厂大簧=101-01-DH、三厂小簧=X%、金晟=JS-* 等
  *   date=YYYY-MM-DD 指定日；date='' 则全量(①完成度/⑥趋势适用)

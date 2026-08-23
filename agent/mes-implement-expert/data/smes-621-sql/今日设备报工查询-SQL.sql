@@ -1,18 +1,28 @@
-/*今日设备报工查询 —— 按厂区设备前缀查报工（6视角，2026-08-14 重庆模式通用化）
- * 库: sMES_Home_Prod 共库（--profile home，总部 192.168.200.18）；重庆/泽根为独立服务器走各自 --profile
+/*今日设备报工查询 —— 按厂区设备前缀查报工（7视角，2026-08-14 重庆模式通用化；2026-08-22 增⑦跨天收口）
+ * 库: sMES_Home_Prod 共库（--profile home，总部 192.168.200.18）；重庆独立服务器走 --profile cq；无锡泽根独立服务器（暂未接入 profile）
  * 用法: node tools/query-mes.js 本文件 --profile home -p prefix=101-01-DH -p date=2026-08-14 --show N
- *   prefix=厂区设备前缀(见 设备编号前缀-厂区映射.md): 一厂大簧=101-01-DH、三厂小簧=X%、金晟=JS-* 等
+ *   prefix=厂区设备前缀(见 设备编号前缀-厂区映射.md): 一厂大簧=101-01-DH、三厂小簧=X%、二厂=F%（报工前缀，
+ *   台账 BM/CP/CQ 非报工前缀）、金晟=JS-* 等
  *   date=YYYY-MM-DD 指定日；date='' 则全量(累计/按天/工单视角适用, 明细/人员/设备视角会慢)
- *   N=1 累计概览 / 2 按天分布 / 3 指定日明细 / 4 按工单汇总 / 5 按人员统计 / 6 按设备汇总
+ *   N=1 累计概览 / 2 按天分布 / 3 指定日明细 / 4 按工单汇总 / 5 按人员统计 / 6 按设备汇总 / 7 跨天收口
  * 时区: 库内北京时间，日期直接 CONVERT(CHAR(10),时间,120) 过滤
  * 核心链路: TBLWIPCONT_EQUIPMENT(设备进出站报工, InputQty/OutputQty=本次报工投入/产出, STARTTIME)
  *          JOIN TBLWIPLOTLOG_REPORT(经 LOGGROUPSERIAL 拿 LOTNO/MONO/PRODUCTNO/OPNO, 与 equipment 同量;
  *              ENDTIME 为空=进行中未出站; OPNO='LOTCREATE' 是开批记录非报工)
  *          注意: TBLWIPCont_Resource.INPUTQTY 为资源加工量(≠本次报工投入), 勿用于投入统计
  * 人员: TBLWIPCont_Resource(资源使用, USERNO=报工人员, EVENTTIME=报工时间) → TBLUSRUSERBASIS(USERNO→USERNAME)
+ *      RESCLASS(2026-08-23 语义修正): 0=EMP人时(USERNO=作业人员)/1=EQP机时(USERNO=报工者=操作报工账号)/4=UCB群组(冗余)
+ *      ——⑤参与人员=R 子查询全 RESCLASS DISTINCT(组,USERNO)=口径B(用户确认报工的人也是一起作业的), 勿改 R 过滤
  * 共库注意: Home 共库多厂区并存, 视角⑤按人员/⑥按设备必须带 prefix 限定(LOGGROUPSERIAL∈厂区设备报工组),
  *           否则会统计进其他厂区人员/设备
  * 口径变更日志（改模板必记；改后须同步 厂区报工报表规范.md + 各厂实例说明 + 报表口径注意）:
+ *   2026-08-23 V7 注释修正（不改 SQL）：RESCLASS 语义字典+实测修正——0=EMP人时(USERNO=作业人员)
+ *     /1=EQP机时(USERNO=报工者=操作报工账号)/4=UCB群组(冗余); 参与人员=0∪1去重=口径B
+ *     (用户确认"报工的人也是一起作业的"), 旧"0/1/4均为人时归属者、勿按RESCLASS=0过滤"表述废止;
+ *     V5 注中的"会丢仅1/4行记录"实为报工者(口径B应含), 结论不变但表述修正
+ *   2026-08-22 V6 新增⑦跨天收口视角（改 SQL）：当日出站但非当日新开批(ENDTIME=当日、STARTTIME<当日)——
+ *     "看产线当天实际交付多少活"需把当日新开批产出 + 跨天收口产出相加（重庆 8-21 实测跨天收口
+ *     产出 21209 ≈ 新开批 4557 的 4.7 倍）；跨厂区通用认知，重庆模板/SSMS运行版已同步；①-⑥不动
  *   2026-08-14 V5 隐患修复（改 SQL）：⑤ X 子查询改 GROUP BY E.LOGGROUPSERIAL 聚合成组总量
  *     （防"同量合并漏算"——DISTINCT(组,量) 在同组两次续报量相同时会合并漏算）+
  *     R 子查询加 EVENTTIME 当天过滤（防跨天报工组把历史成员带入今日）——实测当前未触发
@@ -20,7 +30,8 @@
  *   2026-08-14 V4 审计确认（不改 SQL）：① 分次续报组（同批同工序一天多次进出站）的
  *     E 侧多行是真实报工（白班/晚班各报一次），SUM 精确=组总量非膨胀，COUNT=真实进出站次数；
  *     ② RESCLASS 0/1/4 的 USERNO 均为人员工号，⑤ 必须 DISTINCT(LOGGROUPSERIAL,USERNO)、勿按
- *     RESCLASS=0 过滤——认知修正见 厂区报工报表规范.md 五节速查
+ *     RESCLASS=0 过滤——认知修正见 厂区报工报表规范.md 五节速查（⚠️ 2026-08-23 该表述已修订：
+ *     实际 0=EMP人时归属者/1=EQP报工者/4=UCB冗余，统计参与人员应含 1，见 V7 条目）
  *   2026-08-14 V2→V3: ⑤按人员改为严格当日量——报工量来源从 TBLWIPLOTLOG_REPORT(当前累计,
  *     携带跨日开批量)改为 TBLWIPCONT_EQUIPMENT(按 STARTTIME 过滤当日, InputQty/OutputQty),
  *     每人=当天实际报工量; 与重庆模板/SSMS 运行版同步修改
@@ -95,9 +106,10 @@ ORDER BY L.MONO;
  *           不再携带跨日开批累计)
  * 姓名: TBLUSRUSERBASIS(USERNO→USERNAME)
  * 共库限定: 报工组∈该厂区设备报工组(prefix), 只统计本厂区人员
- * RESCLASS(2026-08-14 审计): 0/1/4 三类 USERNO 均为人员工号, 同人同组可能多行
- *        (0 和 4 各一行、部分人另加 1); 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复,
- *        切勿 WHERE RESCLASS=0 过滤(会丢仅 1/4 行的记录)
+ * RESCLASS(2026-08-23 字典+实测语义修正): 0=EMP人时(USERNO=作业人员, INPUTQTY=每人报工量)
+ *        1=EQP机时(USERNO=报工者=操作报工账号, INPUTQTY=出站量) 4=UCB群组(每笔EMP冗余一行)
+ *        同人同组多行(0/1/4各一行), 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复
+ *        参与人员=0∪1 去重(口径B: 报工的人也是一起作业的, 用户确认)——勿把 RESCLASS=4 单独当人员
  * 分次续报(2026-08-14 审计): 同批同工序一天多次进出站时 X 对同一 LOGGROUPSERIAL 多行,
  *        X 用 GROUP BY 聚合成组总量(防"同量合并漏算": 若用 DISTINCT(组,量) 且两次量相同
  *        会合并漏算), SUM 精确=组总量(非膨胀), COUNT(DISTINCT LOGGROUPSERIAL) 组数正确
@@ -145,3 +157,31 @@ WHERE E.EQUIPMENTNO LIKE '{{prefix}}%'
   AND ('' = '{{date}}' OR CONVERT(CHAR(10),E.STARTTIME,120) = '{{date}}')
 GROUP BY E.EQUIPMENTNO, EQP.EquipmentName
 ORDER BY SUM(E.InputQty) DESC;
+
+/*—— ⑦ 跨天收口: 当日出站(ENDTIME=当日)但非当日新开批(STARTTIME<当日) ——
+ * 口径(2026-08-22 用户需求, 重庆 8-21 实测→通用化): 报工报表需同时体现"当日新开批"与"跨天收口"两口径,
+ *       当日实际交付 = 当日新开批产出(③今日明细 STARTTIME=当日) + 跨天收口产出(本视角)
+ * 判定: E.ENDTIME 在当日(已出站) 且 E.STARTTIME 不在当日(跨天批), 即"8-21 出站的 8-14/8-15 开批"
+ * 例: 重庆 8-21 实测 4 组(投入34373/产出21209), 含空心杆冷弯 MO1072608110002(8-11开批 20000→8156)
+ * 用途: 看"产线当天实际交付多少活", 跨天收口常大于当日新开批产出, 勿只看当日新开批口径
+ * 注: date='' 时本视角语义不适用(需指定出站日), 全量请用 ①累计概览
+ */
+SELECT E.LOGGROUPSERIAL 报工组
+      ,E.EQUIPMENTNO 设备
+      ,ISNULL(EQP.EquipmentName,'') 设备名
+      ,L.LOTNO 生产批
+      ,L.MONO 工单
+      ,L.PRODUCTNO 产品编号
+      ,ISNULL(OP.OPNAME,'') 工序名
+      ,CONVERT(CHAR(10),E.STARTTIME,120) 开批日
+      ,CONVERT(CHAR(10),E.ENDTIME,120) 出站日
+      ,E.InputQty 投入
+      ,E.OutputQty 产出
+FROM TBLWIPCONT_EQUIPMENT E
+LEFT JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+LEFT JOIN TBLEQPEQUIPMENTBASIS EQP ON EQP.EQUIPMENTNO = E.EQUIPMENTNO
+LEFT JOIN tblOPBasis OP ON L.OPNO = OP.OPNO
+WHERE E.EQUIPMENTNO LIKE '{{prefix}}%'
+  AND CONVERT(CHAR(10),E.ENDTIME,120) = '{{date}}'
+  AND CONVERT(CHAR(10),E.STARTTIME,120) <> '{{date}}'
+ORDER BY E.ENDTIME;

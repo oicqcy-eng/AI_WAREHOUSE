@@ -1,5 +1,5 @@
 /* ============================================================
- * 重庆 sMES 报工查询 —— SSMS 直接运行版（2026-08-14 导出）
+ * 重庆 sMES 报工查询 —— SSMS 直接运行版（2026-08-14 导出；2026-08-22 增⑦跨天收口）
  * ------------------------------------------------------------
  * 【连接信息】
  *   服务器: 172.16.64.11   （重庆独立 sMES，非总部 192.168.200.18）
@@ -8,9 +8,11 @@
  *   SQL Server 身份验证
  *
  * 【用法】
- *   1. 顶部 @date 变量改日期，F5 一次跑全部 6 个视角
+ *   1. 顶部 @date 变量改日期，F5 一次跑全部 7 个视角
  *   2. @date = '' 表示不按日期过滤（全量统计，④⑥会慢）
  *   3. 想单看某个视角：选中对应 SELECT 段再执行即可
+ *   4. ⑦跨天收口 = 当日出站(ENDTIME=当日)但非当日新开批(STARTTIME<当日)，
+ *      看"当天实际交付"需把 ⑦产出 + ④当日新开批产出 相加
  *
  * 【口径说明】见文件末尾「口径与注意」节
  * 【同源同步】本文件与仓库模板 sql/重庆报工查询-SQL.sql 同源（工具版用 {{date}} 占位符，
@@ -100,9 +102,10 @@ ORDER BY L.MONO;
 
 
 /* —— ⑥ 指定日报工按人员统计（重点：报工人员是谁；量=当天实际报工） ——
- * 注意（2026-08-14 审计确认）：TBLWIPCont_Resource.RESCLASS 0/1/4 三类
- * 记录的 USERNO 均为人员工号（非"1=设备"），同人同组可能多行；
- * 必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复，切勿按 RESCLASS=0 过滤。 */
+ * 注意（2026-08-23 RESCLASS 语义修正）：TBLWIPCont_Resource.RESCLASS
+ * 0=EMP人时（USERNO=作业人员）/ 1=EQP机时（USERNO=报工者=操作报工账号）/ 4=UCB群组（冗余）
+ * 参与人员 = 0∪1 去重（口径B：报工的人也是一起作业的，用户确认）；
+ * 同人同组多行，必须 DISTINCT(LOGGROUPSERIAL, USERNO) 防重复，勿把 RESCLASS=4 单独当人员。 */
 SELECT R.USERNO AS 工号
       ,ISNULL(U.USERNAME,'') AS 姓名
       ,COUNT(DISTINCT X.LOGGROUPSERIAL) AS 报工次数
@@ -127,6 +130,33 @@ GROUP BY R.USERNO, U.USERNAME
 ORDER BY SUM(X.InputQty) DESC;
 
 
+/* —— ⑦ 跨天收口：当日出站但非当日新开批（ENDTIME=当日, STARTTIME<当日）——
+ * 口径（2026-08-22 新增）：看"产线当天实际交付多少活"时，跨天批当日收口常是主体，
+ *   当日实际交付 = ④今日明细(新开批)产出 + ⑦跨天收口产出，勿只看新开批口径。
+ * 例：8-21 实测 4 组（投入34373/产出21209），含空心杆冷弯 MO1072608110002
+ *   （8-11 开批 20000→产出8156，交付主体）。
+ * @date='' 时本视角语义不适用（需指定出站日），全量请用 ①累计概览。 */
+SELECT E.LOGGROUPSERIAL                            AS 报工组
+      ,E.EQUIPMENTNO                               AS 设备
+      ,ISNULL(EQP.EquipmentName,'')                AS 设备名
+      ,L.LOTNO                                     AS 生产批
+      ,L.MONO                                      AS 工单
+      ,L.PRODUCTNO                                 AS 产品编号
+      ,ISNULL(OP.OPNAME,'')                        AS 工序名
+      ,CONVERT(CHAR(10),E.STARTTIME,120)           AS 开批日
+      ,CONVERT(CHAR(10),E.ENDTIME,120)             AS 出站日
+      ,E.InputQty                                  AS 投入
+      ,E.OutputQty                                 AS 产出
+FROM TBLWIPCONT_EQUIPMENT E
+LEFT JOIN TBLWIPLOTLOG_REPORT L ON E.LOGGROUPSERIAL = L.LOGGROUPSERIAL
+LEFT JOIN TBLEQPEQUIPMENTBASIS EQP ON EQP.EQUIPMENTNO = E.EQUIPMENTNO
+LEFT JOIN tblOPBasis OP ON L.OPNO = OP.OPNO
+WHERE E.EQUIPMENTNO LIKE 'EQ-CQ%'
+  AND CONVERT(CHAR(10),E.ENDTIME,120) = @date
+  AND CONVERT(CHAR(10),E.STARTTIME,120) <> @date
+ORDER BY E.ENDTIME;
+
+
 /* ============================================================
  * 口径与注意（重要）
  * ------------------------------------------------------------
@@ -142,9 +172,10 @@ ORDER BY SUM(X.InputQty) DESC;
  * 4. ⑥报工量=当天实际报工量（TBLWIPCONT_EQUIPMENT 按 STARTTIME 过滤当日，
  *    InputQty/OutputQty，V3 已验证与 report 一致；2026-08-14 起不再携带跨日开批累计）。
  *    进行中报工（ENDTIME 为空）计入，产出为当前已出量（如 LW 冷弯 20000→2911 未闭环）。
- * 5. RESCLASS 认知（2026-08-14 审计修正）：TBLWIPCont_Resource.RESCLASS 0/1/4
- *    三类 USERNO 均为人员工号（实测 HW2994 仅在 RESCLASS=1 出现），同人同组多行；
- *    统计人员必须 DISTINCT(LOGGROUPSERIAL, USERNO)，勿按 RESCLASS=0 过滤。
+ * 5. RESCLASS 认知（2026-08-23 字典+实测语义修正，废止 2026-08-14 旧表述）：
+ *    RESCLASS 0=EMP人时（USERNO=作业人员）/ 1=EQP机时（USERNO=报工者=操作报工账号）/
+ *    4=UCB群组（每笔 EMP 冗余一行）。参与人员=0∪1 去重=口径B（用户确认：报工的人也是
+ *    一起作业的）。同人同组多行（0/1/4 各一行），必须 DISTINCT(LOGGROUPSERIAL, USERNO)。
  * 6. DS 账号 = 系统管理员代报（2026-08-14 用户确认），
  *    想只看真实车间报工可加  AND X.USERNO <> 'DS'。
  * 7. OPNO='LOTCREATE' 是开批记录，非报工，已排除。
@@ -152,4 +183,10 @@ ORDER BY SUM(X.InputQty) DESC;
  *    LOGGROUPSERIAL，①记录数=真实进出站次数、SUM 精确=组总量（非膨胀）；
  *    组内 E 单行量 = 该次续报量（≠L 单行总量），⑥ 已用 GROUP BY LOGGROUPSERIAL
  *    聚合成组总量再 SUM，防同量合并漏算。
+ * 9. 跨天收口（2026-08-22 新增 ⑦ 视角）：当日出站(ENDTIME=当日)但非当日新开批
+ *    (STARTTIME<当日)的批；看"当天实际交付多少活"须 ④新开批产出 + ⑦跨天收口产出，
+ *    单看新开批口径会严重低估（8-21 跨天收口产出 21209 ≈ 新开批 4557 的 4.7 倍）。
+ * 10. 多人协作判定（2026-08-22 用户咨询确认）：看 TBLWIPCont_Resource 同 LOGGROUPSERIAL
+ *    是否多行不同 USERNO，不是看登录设备；同笔报工每人资源记录各记整笔量，
+ *    故人员口径总和 ≠ 报工日志总量（重复计入）。
  * ============================================================ */

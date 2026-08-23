@@ -84,23 +84,35 @@
 
 ### 核心表结构
 
-**`ESB_IssueWoItem_Queue`（40 列，已实测全列）** —— 发料队列
+**`ESB_IssueWoItem_Queue`（40 列，2026-08-23 全列复核，全列已实测）** —— 发料队列（[U9_ERP发料查询-SQL.sql](U9_ERP发料查询-SQL.sql) 实际用到其中 32 列）
 | 字段 | 类型 | 语义 |
 |------|------|------|
 | id / source_biz_key | bigint / nvarchar200 | 主键 / 源业务键 |
+| source_cvouchtype | nvarchar50 | 源单据类别 |
 | doc_type_no / doc_no / seq | nvarchar20/50 / int | 源单据类型 / 单据号 / 行序 |
+| create_date | datetime | 创建日期（SQL 取数用；与 create_time 两列并存，语义区分待正式数据确认） |
+| biz_status | tinyint | 业务状态 |
+| header_remark | nvarchar500 | 单头备注 |
+| applicant_no | nvarchar50 | 申请人 |
+| workstation_no | nvarchar50 | 工作站 |
 | barcode | nvarchar50 | 物料条码（⚠️ 队列有 barcode 列，但 [T-c038ddec12](任务池) 已定论：领料表/发料队列实际无可用条码数据支撑扫码校验，**不要据此翻案**） |
 | wo_no / item_no | nvarchar50 | 工单号 / 物料编码 |
+| item_feature_no / replaced_item_feature_no | nvarchar60 | 物料特征 / 替代料特征 |
 | qpa_molecular / qpa_denominator | decimal | 分子/分母（QPA） |
 | std_qty / qty | decimal | 标准用量 / 数量 |
 | unit_no | nvarchar20 | 单位码（U9C 单位 → sMES 映射：公斤→W013、公斤(5位)→W016） |
-| item_type / biz_status | tinyint | 物料类型 / 业务状态 |
+| item_type | tinyint | 物料类型 |
+| input_datetime | datetime | 输入/入队时间 |
 | warehouse_no / location_no / lot_no | nvarchar50 | 仓库 / 库位 / 批次 |
 | expiry_date | datetime | 到期日 |
+| detail_remark | nvarchar500 | 行明细备注 |
+| positive_negative | decimal | 正负量（替代/冲销等） |
 | replaced_item_no / replaced_qty | nvarchar50/decimal | 替代料编码 / 替代数量 |
+| replaced_type / issue_to_type / sub_type | tinyint | 替代类型 / 发料去向类型 / 子类型 |
 | op_no | nvarchar50 | 工序号 |
 | **sync_status** | tinyint | **同步状态（0=待同步，MES 未消费）** |
-| sync_msg / sync_time / create_time | nvarchar500/datetime | 同步信息 / 同步时间 / 创建时间 |
+| sync_msg / sync_time | nvarchar500/datetime | 同步信息 / 同步时间 |
+| create_time | datetime | 创建时间（与 create_date 并存，勿混用） |
 | doc_no_trim | nvarchar50 | 去空格单据号（MES 侧 MONO 匹配用） |
 
 **`MO_MO`（330 列超宽，关键列）** —— 生产工单主档

@@ -1,5 +1,5 @@
 /*点检记录查询 —— 设备点检执行情况（6视角，2026-08-15 实战沉淀）
- * 库: sMES_Home_Prod 共库（--profile home）；重庆/泽根为独立服务器走各自 --profile
+ * 库: sMES_Home_Prod 共库（--profile home）；重庆独立服务器走 --profile cq；无锡泽根独立服务器（暂未接入 profile）
  * 用法: node tools/query-mes.js 本文件 --profile home -p prefix=101-01-DH -p date=2026-08-15 --show N
  *   prefix=厂区设备前缀: 一厂大簧=101-01-DH、金晟=JS、二厂=F、重庆=EQ-CQ(独立库) 等;
  *         空='' 则查全库（共库多厂区并存时慎用，会混入所有厂区）

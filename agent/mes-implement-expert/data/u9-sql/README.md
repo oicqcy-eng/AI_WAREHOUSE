@@ -1,7 +1,7 @@
 # U9 ERP（用友）接口查询 SQL 资产库
 
 > 华纬 **U9 ERP**（用友）相关接口查询 —— MES 从 U9 取数（发料/领料/IQC到货单）的接口契约，与 `data/smes-621-sql/`（鼎捷 sMES 数据库内查询）是**两套不同体系**。
-> 来源: `delivery/inbox/SQL/U9_ERP发料查询SQL.docx`（2026-07-06 归档）+ **2026-08-21 U9C 首次连库实测**。原件保留在本地 `raw/` 原件区供追溯。
+> 来源: `raw/U9_ERP发料查询SQL.docx`（2026-07-06 归档，原件在本地 `raw/` 原件区供追溯）+ **2026-08-21 U9C 首次连库实测**。
 
 ## 说明
 
@@ -10,7 +10,7 @@
 - U9 关键库表：`esb_iqc_receipt_outbox`（**IQC 到货单同步队列**）、`ESB_IssueWoItem_Queue`（发料队列表）、`esb_mes_wo_create`（**工单同步状态表**，11 列已实测）、`MO_MO`（工单）、`MO_MOPickList`（工单领料清单）、`CBO_ItemMaster`（物料主数据）、`Base_UOM`（单位）
 - 关联 MES 侧库表：`[MES].[sMES_Home_Prod].[dbo].[TBLOEMOBASIS]`（OEM 工单基础表）
 - 每个 SQL 文件为独立查询，可直接复制执行；字段说明见文件内注释
-- 与 sMES 数据库（`sMES_Production_61100`）的查询分开存放，避免混用
+- 与 sMES 数据库（实际库名 `sMES_Home_Prod`；`sMES_Production_*` 为鼎捷标准命名参考）的查询分开存放，避免混用
 - **表结构按需验证，不全量沉淀**（7554 表）；字典见 [U9C数据库字典-基础.md](U9C数据库字典-基础.md)
 
 ## 查询清单
@@ -22,6 +22,7 @@
 | [U9C数据库字典-基础.md](U9C数据库字典-基础.md) | U9C 库概况 + 已实测表结构（esb_iqc_receipt_outbox 29 列详解 + 测试数据 + **esb_mes_wo_create 工单同步状态表 11 列补录**） | — |
 | [U9C核心链路-表结构与排障.md](U9C核心链路-表结构与排障.md) | **断连对冲手册**：U9C 核心链路（IQC到货单/发料/工单/物料/单位）+ 每表关键字段（超宽表提炼）+ 环节拆分 + 断连排障点 | PM_Receivement, esb_iqc_receipt_outbox, MO_MO, MO_MOPickList, ESB_IssueWoItem_Queue, CBO_ItemMaster, Base_UOM |
 | [U9C全量表清单.md](U9C全量表清单.md)（+ [csv](U9C全量表清单.csv)） | **断连地图**：7554 表完整清单 + 180 模块分布 + ESB 接口层 5 表清单；标准用友产品表不全量沉淀结构 | 全库 |
+| [U9C用户手册-模块地图与分析.md](U9C用户手册-模块地图与分析.md) | **U9C 用户手册分析**（449 页扫描件 OCR）：14 模块/流程编号地图 + 委外河南华纬链路 + 与 MES 对接 4 流程（收货检验→IQC/生产领料→发料/完工入库/工单同步）+ 连库验证对照（组织/仓库/单号规则——**手册培训数据 ≠ 生产库格式**） | Base_Organization, CBO_Wh, MO_MO, PM_Receivement |
 
 ## 业务背景（为什么有这份 SQL）
 

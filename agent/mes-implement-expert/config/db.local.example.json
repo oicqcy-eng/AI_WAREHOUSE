@@ -11,10 +11,10 @@
       "options": { "encrypt": false, "trustServerCertificate": true }
     },
     "cq": {
-      "_comment": "示例：重庆 MES 服务器",
+      "_comment": "示例：重庆 MES 服务器（独立服务器；库名与 home 同为 sMES_Home_Prod，勿写成 sMES_Chongqing_Prod）",
       "server": "10.0.1.20",
       "port": 1433,
-      "database": "sMES_Chongqing_Prod",
+      "database": "sMES_Home_Prod",
       "user": "cq_readonly_user",
       "password": "请填写重庆只读账号密码",
       "options": { "encrypt": false, "trustServerCertificate": true }

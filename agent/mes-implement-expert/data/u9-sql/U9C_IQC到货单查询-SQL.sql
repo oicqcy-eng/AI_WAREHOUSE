@@ -9,7 +9,8 @@
  *
  * ── 口径说明（务必先读）────────────────────────────
  * [表] esb_iqc_receipt_outbox = U9C→MES 的 IQC 到货单同步队列（29 列，ESB 中台 outbox 模式，
- *      与发料队列 ESB_IssueWoItem_Queue 同构）。字段详解见 ../u9-sql/U9C数据库字典-基础.md
+ *      与发料队列 ESB_IssueWoItem_Queue 同为 ESB 出站队列但结构不同：本表 29 列 vs 发料队列 40 列）。
+ *      字段详解见 ../u9-sql/U9C数据库字典-基础.md
  * [状态机] sync_status 语义（待实测确认，参考发料队列约定）：
  *   0=待同步（MES 未消费，IQC 取数主查）/ 非 0=已消费或失败
  *   retry_count/next_retry_time=失败重试；claim_token/claimed_time=消费中租约；last_error=最近错误
