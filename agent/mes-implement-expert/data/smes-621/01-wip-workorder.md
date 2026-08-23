@@ -2,7 +2,7 @@
 
 > 数据字典模块分组 · 来源: `SMES_621数据库设计文档20250313.html` (sMES_Production_61100)
 
-本模块 46 张表：
+本模块 49 张表：
 
 | 表名 | 说明 | 字段数 |
 |------|------|:------:|
@@ -21,7 +21,10 @@
 | [tblWIPCont_PCSMaterial](#tblwipcont_pcsmaterial) | 部件序号 | 44 |
 | [tblWIPCont_PCSMTLLot](#tblwipcont_pcsmtllot) | 成品与物料批号绑定 | 15 |
 | [tblWIPCont_PCSNo](#tblwipcont_pcsno) | 序号对应生产批的关系表成品序号（旧表格） | 47 |
-| [tblWIPCONT_PCSNoChangeLog](#tblwipcont_pcsnochangelog) | 成品序号更新记录 | 61 |
+| [tblWIPCONT_PCSNoChangeLog](#tblwipcont_pcsnochangelog) | 成品序号更新记录 | 13 |
+| [TBLWIPCONT_PCSNOWARNLOG](#tblwipcont_pcsnowarnlog) | 生产线序号收集放行记录 | 17 |
+| [TBLWIPCONT_RESOURCE](#tblwipcont_resource) | 使用资源历史明细表 | 21 |
+| [TBLWIPCONT_RESOURCE_OFFLINE](#tblwipcont_resource_offline) | 报工作业单身资源档 | 10 |
 | [tblWIPCont_SubProductLog](#tblwipcont_subproductlog) | 副产品产出纪录 | 17 |
 | [tblWIPCountPartialinWaitLog](#tblwipcountpartialinwaitlog) | 进站等候时间历程表 | 242 |
 | [tblWIPLeanDataAcquisition](#tblwipleandataacquisition) | 精实生产资料 | 8 |
@@ -1240,8 +1243,9 @@
 
 ---
 
-### tblWIPCONT_PCSNoChangeLog — 成品序号更新记录（61 字段）
-> 主键：SID, LOGGROUPSERIAL, RESITEM, USERNO, EVENTTIME
+### tblWIPCONT_PCSNoChangeLog — 成品序号更新记录（13 字段）
+> 主键：SID
+> ⚠️ 2026-08-23 甄审修正：原 61 字段节为解析拼接错误，已拆分为 4 张独立表（本表 + TBLWIPCONT_PCSNOWARNLOG + TBLWIPCONT_RESOURCE + TBLWIPCONT_RESOURCE_OFFLINE），以下 13 字段为本表真实结构
 | 序号 | 列名 | 类型 | 长度 | 主键 | 业务主键 | 自增 | 允许空值 | 默认值 | 说明 |
 |------|------|------|------|:----:|:--------:|:----:|:-------:|--------|------|
 | 1 | SID | nvarchar | (50) | √ |  |  |  |  | 识别码 |
@@ -1257,6 +1261,13 @@
 | 11 | EDITOR | nvarchar | (50) |  |  |  | √ |  | 修改者：数据修改人员 |
 | 12 | GUID | nvarchar | (50) |  |  |  | √ |  | 数据键值 |
 | 13 | ORIGINGUID | nvarchar | (50) |  |  |  | √ |  | 父键值 |
+
+---
+
+### TBLWIPCONT_PCSNOWARNLOG — 生产线序号收集放行记录（17 字段）
+> 主键：（无主键标记，历史/放行记录类）
+| 序号 | 列名 | 类型 | 长度 | 主键 | 业务主键 | 自增 | 允许空值 | 默认值 | 说明 |
+|------|------|------|------|:----:|:--------:|:----:|:-------:|--------|------|
 | 1 | EDITDATE | datetime |  |  |  |  | √ |  | 修改时间：数据修改时间 |
 | 2 | LOTNO | nvarchar | (50) |  |  |  |  |  | 生产批号 |
 | 3 | PDLINENO | nvarchar | (50) |  |  |  |  |  | 生产线编号 |
@@ -1274,14 +1285,23 @@
 | 15 | EDITOR | nvarchar | (50) |  |  |  | √ |  | 修改者：数据修改人员 |
 | 16 | GUID | nvarchar | (50) |  |  |  | √ |  | 数据键值 |
 | 17 | ORIGINGUID | nvarchar | (50) |  |  |  | √ |  | 父键值 |
+
+---
+
+### TBLWIPCONT_RESOURCE — 使用资源历史明细表（21 字段）
+> 主键：LOGGROUPSERIAL, RESITEM, USERNO, EVENTTIME
+> ⚠️ 2026-08-23 甄审修正：报工资源使用记录（TBLWIPCont_Resource），报工人员/工时/机时的核心来源表（见 `data/smes-621-sql/今日设备报工查询-SQL.sql` ⑤视角）
+> 🔗 同表亦见于 [09-core-ops-补录.md](09-core-ops-补录.md)（连库实测版，2026-08-21 因本表原拼接错位被误判缺失而补录）；本处为设计文档版，两处字段一致、并存互补。
+| 序号 | 列名 | 类型 | 长度 | 主键 | 业务主键 | 自增 | 允许空值 | 默认值 | 说明 |
+|------|------|------|------|:----:|:--------:|:----:|:-------:|--------|------|
 | 1 | LOTNO | nvarchar | (50) |  |  |  |  |  | 批号 |
 | 2 | MONO | nvarchar | (50) |  |  |  |  |  | 工单编号 |
 | 3 | BASELOTNO | nvarchar | (50) |  |  |  |  |  | 主批号 |
 | 4 | OPNO | nvarchar | (20) |  |  |  |  |  | 作业站编号 |
 | 5 | LOGGROUPSERIAL | nvarchar | (50) | √ |  |  |  |  | Log序号 |
-| 6 | RESCLASS | numeric | (2,0) |  |  |  |  |  | 资源大分类：0 EMP（工时） 1 EQP（机时） 2 OS（外包） 3 MTL（物料） 4 报工群组自变量 |
-| 7 | RESTYPE | nvarchar | (50) |  |  |  |  |  | 资源类别：依据资源主分类记录不同数据 EMP：EMP EQP：设备类别 OS：OS MTL：物料编号 |
-| 8 | RESITEM | nvarchar | (50) | √ |  |  |  |  | RES Item：依据资源主分类记录不同数据 EMP：EMP EQP：设备编号 OS：OS MTL：物料批号 |
+| 6 | RESCLASS | numeric | (2,0) |  |  |  |  |  | 资源大分类：**0 EMP人时（USERNO=作业人员）/ 1 EQP机时（USERNO=报工者=操作报工账号）/ 4 UCB报工群组（每笔EMP冗余一行）**——2026-08-23 连库实测确认（0/1/4）；词典原述含「2 OS（外包） 3 MTL（物料）」未实测，本表实际只见 0/1/4 |
+| 7 | RESTYPE | nvarchar | (50) |  |  |  |  |  | 资源类别：依据资源主分类记录不同数据 EMP：EMP EQP：设备类别 OS：OS MTL：物料编号（2026-08-23 重庆实测确认：EQP 行 RESTYPE=TBLEQPEQUIPMENTBASIS.EQUIPMENTTYPE，如'端面磨削机'；⚠️是设备类别≠设备中文名 EquipmentName，该机 EquipmentName='端面磨削报工工位'；UCB 行写死'UCB'） |
+| 8 | RESITEM | nvarchar | (50) | √ |  |  |  |  | RES Item：依据资源主分类记录不同数据 EMP：EMP EQP：设备编号 OS：OS MTL：物料批号（2026-08-23 重庆实测确认：EQP 行 RESITEM=EQUIPMENTNO，如'EQ-CQSPR-MX-01'，与设备基础表精确匹配；EMP/UCB 行写死'EMP'/'UCB'，具体人/群组成员看 USERNO） |
 | 9 | RESVALUE | numeric | (15,4) |  |  |  | √ |  | 实际用量：RESTYPE=EMP时 记录人时(UI可修改 单位分钟) RESTYPE=EQP时 记录机时(UI可修改 单位分钟) |
 | 10 | STDVALUE | numeric | (10,2) |  |  |  |  |  | 标准用量：保留栏位 无作用 |
 | 11 | INPUTQTY | numeric | (12,4) |  |  |  |  |  | 输入数量：RESTYPE=EMP时  记录报工数量(预设为良品数，UI可修改) RESTYPE=EQP时  记录出站数量(=出站画面上的出站数量，不可修改) 良品数=出站数量-报废-短少+多余 |
@@ -1295,9 +1315,17 @@
 | 19 | Creator | nvarchar | (50) |  |  |  | √ |  | 创建者：数据创建人员 |
 | 20 | CreateDate | datetime |  |  |  |  | √ |  | 创建时间：数据创建时间 |
 | 21 | GUID | nvarchar | (50) |  |  |  | √ |  | 数据键值 |
+
+---
+
+### TBLWIPCONT_RESOURCE_OFFLINE — 报工作业单身资源档（10 字段）
+> 主键：（无主键标记，MASTER_SID 对应 tblWIPLot_Report_Offline.Sid）
+> ⚠️ 2026-08-23 甄审修正：离线报工单的资源档（报工作业单身），与 tblWIPLot_Report_Offline 通过 MASTER_SID 关联
+| 序号 | 列名 | 类型 | 长度 | 主键 | 业务主键 | 自增 | 允许空值 | 默认值 | 说明 |
+|------|------|------|------|:----:|:--------:|:----:|:-------:|--------|------|
 | 1 | SID | nvarchar | (50) |  |  |  | √ |  | SID |
 | 2 | MASTER_SID | nvarchar | (50) |  |  |  | √ |  | 单头Sid：对应tblWIPLot_Report_Offline.Sid |
-| 3 | RESCLASS | numeric | (2,0) |  |  |  | √ |  | 资源大分类：0 EMP（工时） 1 EQP（机时） 2 OS（外包） 3 MTL（物料） 4 报工群组自变量 |
+| 3 | RESCLASS | numeric | (2,0) |  |  |  | √ |  | 资源大分类：**0 EMP人时（USERNO=作业人员）/ 1 EQP机时（USERNO=报工者=操作报工账号）/ 4 UCB报工群组（每笔EMP冗余一行）**——2026-08-23 连库实测确认（0/1/4）；词典原述含「2 OS（外包） 3 MTL（物料）」未实测，本表实际只见 0/1/4 |
 | 4 | RESTYPE | nvarchar | (50) |  |  |  | √ |  | 资源类别：依据资源主分类记录不同数据 EMP：EMP EQP：设备编号 |
 | 5 | RESITEM | nvarchar | (50) |  |  |  | √ |  | 资源项目：依据资源主分类记录不同数据 EMP：EMP EQP：设备编号 |
 | 6 | RESVALUE | numeric | (15,4) |  |  |  | √ |  | 实际用量：如果是人、机时，其单位为分钟 |

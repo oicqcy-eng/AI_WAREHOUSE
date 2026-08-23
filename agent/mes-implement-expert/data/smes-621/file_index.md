@@ -12,7 +12,7 @@
 | 文件 | 说明 |
 |------|------|
 | `README.md` | 模块地图 + 使用说明 |
-| `01-wip-workorder.md` ~ `08-andon-system-erp.md` | 8 个模块字段级数据字典（189 表 / 12,866 字段） |
+| `01-wip-workorder.md` ~ `08-andon-system-erp.md` | 8 个模块字段级数据字典（192 表 / 12,866 字段） |
 | `knowledge-cards.md` | 领域知识卡片（K-621-01~08） |
 | `pending-questions.md` | 待确认问题 |
 | `file_index.md` | 本索引 |

@@ -22,7 +22,7 @@
 
 | 类别 | 例子 | 变化频率 | 策略 |
 |------|------|:---:|------|
-| ① 表结构/字典 | 表/字段/视图/存储过程 | 极慢 | **按需验证**（`INFORMATION_SCHEMA` 对照 `../smes-621/` 已有 189 表字典，差异补记）；不全量重扫 |
+| ① 表结构/字典 | 表/字段/视图/存储过程 | 极慢 | **按需验证**（`INFORMATION_SCHEMA` 对照 `../smes-621/` 已有 192 表字典，差异补记）；不全量重扫 |
 | ② 主数据/口径 | 设备前缀→厂区、工序、物料分类 | 低频 | **抽口径映射**（如 [`设备编号前缀-厂区映射.md`](设备编号前缀-厂区映射.md)）；⚠️ **2026-08-15 用户决策例外**：为对冲断连风险，设备/人员/工序三类主数据已**一次性全量快照**沉淀（[设备主数据清单.md](设备主数据清单.md)/[人员主数据清单.md](人员主数据清单.md)/[工序作业站字典.md](工序作业站字典.md)）；物料 3 万+ 不全量只抽口径 |
 | ③ 业务流水 | 报工/工单/生产批/不良/点检 | 高频 | **坚决不沉淀**，用时现查、只出报表不落库 |
 | ④ 查询知识 | 表关联链路/时区规则/字段取值口径 | 无 | **最高价值，必沉淀**（参数化模板 + 口径 + 链路注释，即本目录文件） |
@@ -33,7 +33,7 @@
 
 **系统/厂区资产归属（独立系统不混入 Home 通用资产）**：重庆/无锡泽根 sMES 为独立服务器，其**主数据/流程口径单独沉淀**（重庆 → `delivery/projects/hw-spring-mes/input/c_q_mes/`），不并入本目录；`设备编号前缀-厂区映射.md` 是跨厂区**判定总表**，各厂区前缀行（含重庆 `EQ-CQSPR-*`）作为判定依据保留在其中，与详细主数据分开。
 
-## 查询清单（22 个通用）
+## 查询清单（25 个通用）
 
 | 文件 | 查询内容 | 涉及核心表 |
 |------|---------|-----------|
@@ -56,18 +56,18 @@
 | [设备生产查询-SQL.sql](设备生产查询-SQL.sql) | 设备生产情况(含 SMT 区域) | TBLWIPCONT_EQUIPMENT, TBLSMDAREABASIS 等 |
 | [模治具寿命管理历程-SQL.sql](模治具寿命管理历程-SQL.sql) | 模治具寿命管理/状态历程(含寿命延长 AddLife/RealAddLife) | TBLEMSACCESSORYSTATELOG, TBLEQPACCSTATEBASIS, tblEQPAccessoryBasis, tblEQPAccessoryCategory |
 | [物料-生产批使用历程-SQL.sql](物料-生产批使用历程-SQL.sql) | 物料耗用明细(生产批+工序 OPNO/OPNAME) | TBLWIPCONT_MATERIAL, TBLWIPCONT_MATERIALLOT, TBLWIPLOTLOG_REPORT, TBLOPBASIS |
-| [今日设备报工查询-SQL.sql](今日设备报工查询-SQL.sql) | 按厂区设备前缀+日期查报工(**6 视角**：①累计 ②按天 ③明细 ④工单 ⑤人员 ⑥设备, 2026-08-14 重庆模式通用化; `-p prefix=101-01-DH -p date=2026-08-14`; date='' 全量) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLWIPCont_Resource, TBLEQPEQUIPMENTBASIS, tblOPBasis, TBLPRDPRODUCTBASIS, TBLUSRUSERBASIS |
+| [今日设备报工查询-SQL.sql](今日设备报工查询-SQL.sql) | 按厂区设备前缀+日期查报工(**7 视角**：①累计 ②按天 ③明细 ④工单 ⑤人员 ⑥设备 ⑦跨天收口, 2026-08-14 重庆模式通用化; 2026-08-22 增⑦跨天收口=当日出站非当日新开批, 当日实际交付=新开批产出+跨天收口产出; `-p prefix=101-01-DH -p date=2026-08-14`; date='' 全量) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLWIPCont_Resource, TBLEQPEQUIPMENTBASIS, tblOPBasis, TBLPRDPRODUCTBASIS, TBLUSRUSERBASIS |
 | [报工完成度与漏报分析-SQL.sql](报工完成度与漏报分析-SQL.sql) | 报工流程完成度/漏出站(**6 视角**：①完成度总览 ②当日未完结明细 ③滞留清单 ④按设备 ⑤按工序 ⑥按天趋势; 进行中判据=L.ENDTIME 空, `-p prefix= -p date=`; 一厂 8-14 对账 27条/80,244) | TBLWIPCONT_EQUIPMENT, TBLWIPLOTLOG_REPORT, TBLEQPEQUIPMENTBASIS, tblOPBasis |
 | [点检记录查询-SQL.sql](点检记录查询-SQL.sql) | 设备点检执行情况(**6 视角**：①概览 ②按设备 ③记录明细 ④项目明细 ⑤NG清单 ⑥按天趋势; QCRESULT 0=OK/1=NG, QCTYPE 0标准值/1范围值/2显示信息/3输入数据, `-p prefix= -p date=`; 替换客户旧「点检项目-SQL.sql」) | TBLWIPEQPQCLISTLOG, tblWIPEQPQCListDetail, TBLEQPEQUIPMENTBASIS |
 | [发料查询-SQL.sql](发料查询-SQL.sql) | 工单材料领料/缺料核对(标准用量×工单数=理论领料, U9需求REQUIREQTY vs 已领ORGMATERIALQTY, `-p mono=`; 首站扫码上料报"条码不存在MES"排查核心, 用户提供) | Tbloemomateriallist, Tbloemobasis |
 | [发料查询-SQL-SSMS直接执行.sql](发料查询-SQL-SSMS直接执行.sql) | 同一查询的 **SSMS 手动版**(2026-08-21 找回生成): 改顶部 `@mono` 变量值即查任意工单，整段 F5 执行返回 ①发料核对/②扫码上料/③进站核对 三表 | 同左 |
 | [用户权限查询-SQL.sql](用户权限查询-SQL.sql) | 用户作业群组权限排查(**4 视角**：①用户主档 ②群组关联 ③群组权限明细(PRIVTYPE 9=菜单/0=平台/8=按钮) ④控件禁用; `-p userno=HW0403`; H5端看不到功能按钮排查核心, 2026-08-21 三厂小簧派工无按钮实测归纳) | TBLUSRUSERBASIS, TBLUSRUSERGROUP, TBLUSRGROUPBASIS, TBLUSRGROUPPRIV, TBLUSRGROUPPRIVCONTROL |
 | [sMES核心链路-表结构与排障.md](sMES核心链路-表结构与排障.md) | **断连对冲手册**：五链路（报工/权限/生产批/点检/发料）环节编排 + 判读核心 + 断连排障点，逐链路指路本目录查询模板 + `../smes-621/` 字典（2026-08-21 编制） | — |
-| [sMES全量表清单.md](sMES全量表清单.md)（+ [csv](sMES全量表清单.csv)） | **断连地图**：1472 表完整清单 + 分组分布 + **与 189 字典差异分析**（1284 未覆盖，其中 68 张为查询模板核心表已补录 [09-core-ops-补录.md](../smes-621/09-core-ops-补录.md)） | 全库 |
+| [sMES全量表清单.md](sMES全量表清单.md)（+ [csv](sMES全量表清单.csv)） | **断连地图**：1472 表完整清单 + 分组分布 + **与 192 字典差异分析**（1281 未覆盖，其中 68 张为查询模板核心表已补录 [09-core-ops-补录.md](../smes-621/09-core-ops-补录.md)） | 全库 |
 
 ## 报工报表规范（2026-08-14 定版，重庆模式通用化）
 
-各 sMES 厂区「报工查询 → 报表」按 [`厂区报工报表规范.md`](厂区报工报表规范.md) 输出：**分层**（通用模板/厂区实例/厂区报表）+ **7 节板块**（元数据头/累计/按天/明细/人员/工单/观察）+ 厂区定制维度（重庆按产线、一厂大簧按设备）。实例见一厂大簧报表 `delivery/projects/hw-spring-mes/output/yi_chang_da_huang/2026-08-14_一厂大簧报工数据报表.md`。
+各 sMES 厂区「报工查询 → 报表」按 [`厂区报工报表规范.md`](厂区报工报表规范.md) 输出：**分层**（通用模板/厂区实例/厂区报表）+ **8 节板块**（元数据头/累计/按天/明细/人员/工单/跨天收口/观察，2026-08-22 增跨天收口）+ 厂区定制维度（重庆按产线、一厂大簧按设备）。实例见一厂大簧报表 `delivery/projects/hw-spring-mes/output/yi_chang_da_huang/2026-08-14_一厂大簧报工数据报表.md`。
 
 ## 主数据沉淀（2026-08-15，断连对冲）
 

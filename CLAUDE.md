@@ -32,7 +32,7 @@
 ## 系统体系与共享资产（2026-08-14 修正：服务器拓扑）
 同一客户可能存在**多个系统**，资产按**系统体系**组织，不按厂区复制。**服务器拓扑（2026-08-14 用户确认）**：
 - **sMES 共库**：除重庆/无锡泽根外的 sMES（三厂小簧/一厂大簧/二厂大簧等）共用 **192.168.200.18 的 `sMES_Home_Prod`** 一个库 → 通用资产（数据字典 `agent/mes-implement-expert/data/smes-621/`、通用查询 `data/smes-621-sql/`）**一份共享**，各厂区都不复制
-- **独立 MES 服务器**：**重庆 sMES、无锡泽根 sMES** 各自独立服务器/独立库 → 查询走 `--profile`（见 `config/db.local.json` profiles），资产按系统分库
+- **独立 MES 服务器**：**重庆 sMES** 独立服务器/独立库，已接入 → 查询走 `--profile cq`；**无锡泽根 sMES** 独立服务器/独立库，**暂未建 profile（待接入）**（见 `config/db.local.json` profiles），资产按系统分库
 - **厂区限定资产**（按厂区条件限定的 SQL/资料，如按设备前缀/PROCESSTYPE）→ `input/<厂区>/sql/`
 - **独立系统**（LIMS/U9/老MES玖坤）→ 独立资产库 `data/<system>/`（如 `data/lims/`、`data/u9-sql/`），与 smes-621 平级，**不混入** sMES 资产；LIMS 为独立服务器，U9/玖坤另算
 

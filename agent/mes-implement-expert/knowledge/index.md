@@ -16,8 +16,8 @@
 
 | 资产 | 存放位置 | 引用方式 |
 |------|----------|----------|
-| SMES 通用数据字典（sMES_Production_61100，189表/12866字段） | `data/smes-621/`（8 模块 MD + 卡片） | 回答表/字段口径问题时查 `[smes-621]`，详见 `data/smes-621/README.md` |
-| SMES 通用查询 SQL（17 个） | `data/smes-621-sql/`（查询清单 + 索引） | 回答查询/取数问题时查 `[smes-621-sql]`，详见 `data/smes-621-sql/README.md` |
+| SMES 通用数据字典（sMES_Production_61100，192表/12866字段） | `data/smes-621/`（9 模块 MD + 卡片） | 回答表/字段口径问题时查 `[smes-621]`，详见 `data/smes-621/README.md` |
+| SMES 通用查询 SQL（25 个） | `data/smes-621-sql/`（查询清单 + 索引） | 回答查询/取数问题时查 `[smes-621-sql]`，详见 `data/smes-621-sql/README.md` |
 | U9 ERP 接口查询 SQL（MES←U9 发料取数） | `data/u9-sql/`（查询 + 索引 + 业务背景） | 回答 U9 接口/发料同步问题时查 `[u9-sql]`，详见 `data/u9-sql/README.md` |
 
 ## L3 专属知识条目
