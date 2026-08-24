@@ -72,6 +72,8 @@ model-weights/
 *.doc
 *.docx
 *.pdf
+# 例外：smes-v61-training/flows/ 精选流程图资产（每模块 5-8 张代表图，随 md 入库供汇报回溯；全量图仍留在本地 raw/flows-all/ 不入库）
+!agent/mes-implement-expert/data/smes-v61-training/flows/**/*.png
 # 客户原始资料不入库（仅存本地 inbox/，仓库只沉淀整理成果 MD；README.md 除外）
 # 覆盖飞书多维表格 .base 原件、SQL 查询脚本、html 大体积文档等
 delivery/inbox/*
