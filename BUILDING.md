@@ -323,6 +323,36 @@ skills/            ★ 可复用 Claude Skills（SKILL.md 格式）
 
 ## 🗒️ 自动会话日志
 
+### 2026-08-24 19:33 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    a3d5ca1 📚 鼎捷MES V6.1官方培训学习沉淀-第二批8模块(2026-08-24) — 用户投放剩余8份官方操作手册继续分析沉淀(PL111/102/103/104/202/204/205/207),13模块全部分析完毕: PL111系统配置(142页: 系统参数+作业站权限分配+打印模板BAS-D-00090+多语系+自动编号规则)/PL102设备稼动(75页: 稼动率公式+停机原因TBLWIPWAITREASON+非稼动时间设置+稼动看板)/PL103工单管理(113页: 工单开立改制拆单变更结案+优先级)/PL104生产任务中心(227页最大核心45作业: 三大工作平台+工时计算3原则+多人产量登入+解除暂停7处置+报工还原8限制+外包出货回货+网状制程呆滞+子作业, 实测报工主流程海量在用TBLWIPCONT_RESOURCE369万/TBLWIPLOTLOG_REPORT29万/暂停在用于是但多人登入MULTIUSER/调账/还原/外包/ERP抛转全0未启用)/PL202车间物料管控(49页: 领退补料+在制盘点)/PL204 eSOP(20页)/PL205模治具寿命(71页)/PL207 Andon(58页: 异常呼叫+看板联动); 每模块功能点位全录+标准vs实测差异栏(✅⚠️❓)+关联资产+待验证; 用户要求保留流程图→新增flows/<模块>/精选代表图48张随md入库(.gitignore放行flows/例外,全量图仍留本地raw/flows-all不入库),首批5模块图后续批次补; smes-v61-training/README模块清单扩13+flows说明+data/README同步; worklog L-56109d9f53/T-5a472d8375(进度50%)
+    7c0b760 📝 BUILDING.md 自动会话日志随提(2026-08-23) — 追加"本次会话相关提交(最近5条)"记录(320表补录/V6.1培训/三厂小簧实例化/重庆8-22报表)
+    462c8cf 📚 断连对冲补录-真生产独有业务核心320表字段结构入字典(2026-08-23) — 用户问断连能力,审计后批准批量补录缺口业务核心前缀320张; 修复覆盖集TBL前缀匹配bug精确口径与原清单一致(WIP112/PRD61/INV43/QC42/EQP24/OP22/USR11/OEM5); 连库INFORMATION_SCHEMA实测320表/3209列(profile home 0缺失); 生成7补录文件10-wip~16-usr-oem(表清单+字段级全量,表名词根直译辅助检索); 验证320中317张真·设计文档也无(断连原本零结构)仅3张顺手补录; 字典覆盖192+68+320=580表断连可查; smes-621/README+全量表清单分层+file_index+data/README同步; worklog L-5275c936c1/T-58ea9e28e0
+    d70fd63 @ ✍️ smes-v61-training/README补录两体系分离铁律 — 标准教程(smes-v61-training/)与客户实况(smes-621字典/621-sql实测/iiot/u9)互不抄写,仅差异栏引用式对照; 后续模块沉淀禁跨界写入
+    199c5e1 @ 📚 鼎捷MES V6.1官方培训学习沉淀-第一批5模块(2026-08-23) — 建共用资产库agent/mes-implement-expert/data/smes-v61-training/(与smes-621/iiot/u9-sql平级): PL101生产模型配置(45点位: USER_BASIS~RT601全收录+作业站=报工单元/作业站群组=工作中心/产品版本/生产参数卡控/双单位/单位转换/标准机时公式, 发现产品基础数据权限编号文档遗漏)/PL201设备维保(10点位: PM101-PM506+4类保养工单+效率公式=(结案-下线)/预估, 定量定次定时依赖出站报工三厂未启用前无法触发)/PL208追溯(SS117/QTR607/608: 单件级SN正向TBLINVFGDINDETAIL.LOTNO+批次级物料逆向TBLWIPCONT_MATERIALLOT+跨断阶stockin.data.create/issue.wo.item.process→tblOEMOMaterialState待实测)/PL210看板(K01-04+SS101/REPORT_BASIS: 帆软V9/V10+亿信URL拼接+群组权限H5显示)/PL214 IIoT(ESI01-06: production.edc.process计数器≠产量+自动出站保留数-1/0/>0+生产参数GWX检核, 标准采集库MSSQL/ORACLE vs 重庆实际InfluxDB时序库架构差异); 每模块含功能点位全录+标准vs实测差异栏(✅⚠️❓)+关联资产+待验证; 原件PDF入raw/; data/README登记+worklog日志任务
+```
+
+### 2026-08-24 07:48 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    7c0b760 📝 BUILDING.md 自动会话日志随提(2026-08-23) — 追加"本次会话相关提交(最近5条)"记录(320表补录/V6.1培训/三厂小簧实例化/重庆8-22报表)
+    462c8cf 📚 断连对冲补录-真生产独有业务核心320表字段结构入字典(2026-08-23) — 用户问断连能力,审计后批准批量补录缺口业务核心前缀320张; 修复覆盖集TBL前缀匹配bug精确口径与原清单一致(WIP112/PRD61/INV43/QC42/EQP24/OP22/USR11/OEM5); 连库INFORMATION_SCHEMA实测320表/3209列(profile home 0缺失); 生成7补录文件10-wip~16-usr-oem(表清单+字段级全量,表名词根直译辅助检索); 验证320中317张真·设计文档也无(断连原本零结构)仅3张顺手补录; 字典覆盖192+68+320=580表断连可查; smes-621/README+全量表清单分层+file_index+data/README同步; worklog L-5275c936c1/T-58ea9e28e0
+    d70fd63 @ ✍️ smes-v61-training/README补录两体系分离铁律 — 标准教程(smes-v61-training/)与客户实况(smes-621字典/621-sql实测/iiot/u9)互不抄写,仅差异栏引用式对照; 后续模块沉淀禁跨界写入
+    199c5e1 @ 📚 鼎捷MES V6.1官方培训学习沉淀-第一批5模块(2026-08-23) — 建共用资产库agent/mes-implement-expert/data/smes-v61-training/(与smes-621/iiot/u9-sql平级): PL101生产模型配置(45点位: USER_BASIS~RT601全收录+作业站=报工单元/作业站群组=工作中心/产品版本/生产参数卡控/双单位/单位转换/标准机时公式, 发现产品基础数据权限编号文档遗漏)/PL201设备维保(10点位: PM101-PM506+4类保养工单+效率公式=(结案-下线)/预估, 定量定次定时依赖出站报工三厂未启用前无法触发)/PL208追溯(SS117/QTR607/608: 单件级SN正向TBLINVFGDINDETAIL.LOTNO+批次级物料逆向TBLWIPCONT_MATERIALLOT+跨断阶stockin.data.create/issue.wo.item.process→tblOEMOMaterialState待实测)/PL210看板(K01-04+SS101/REPORT_BASIS: 帆软V9/V10+亿信URL拼接+群组权限H5显示)/PL214 IIoT(ESI01-06: production.edc.process计数器≠产量+自动出站保留数-1/0/>0+生产参数GWX检核, 标准采集库MSSQL/ORACLE vs 重庆实际InfluxDB时序库架构差异); 每模块含功能点位全录+标准vs实测差异栏(✅⚠️❓)+关联资产+待验证; 原件PDF入raw/; data/README登记+worklog日志任务
+    fffa3eb 🗂️ 重庆报工报表模式推广-三厂小簧实例化(2026-08-23) — 通用框架(模板V7/规范/一厂实例)已就位只做厂区实例: 实测X%共库报工历史30条/11设备/14批/10报工日(6-09~7-23)8月起无报工=模拟筹备期(9/7~11 K-008)历史均联调测试量勿当生产量; 产出 sql/三厂小簧报工查询-说明.md(薄实例引用通用模板--profile home -p prefix=X 7视角)+knowledge/设备口径卡.md(X系212台+起重机6/工序A/B/Q编码/SCXH群组/报工未启用实况)+README登记; 9/7模拟启用后直接套通用模板跑报表; worklog L-602ec8f13c
+```
+
+### 2026-08-24 07:48 (session: unknown)
+本次会话相关提交（最近5条）:
+```
+    7c0b760 📝 BUILDING.md 自动会话日志随提(2026-08-23) — 追加"本次会话相关提交(最近5条)"记录(320表补录/V6.1培训/三厂小簧实例化/重庆8-22报表)
+    462c8cf 📚 断连对冲补录-真生产独有业务核心320表字段结构入字典(2026-08-23) — 用户问断连能力,审计后批准批量补录缺口业务核心前缀320张; 修复覆盖集TBL前缀匹配bug精确口径与原清单一致(WIP112/PRD61/INV43/QC42/EQP24/OP22/USR11/OEM5); 连库INFORMATION_SCHEMA实测320表/3209列(profile home 0缺失); 生成7补录文件10-wip~16-usr-oem(表清单+字段级全量,表名词根直译辅助检索); 验证320中317张真·设计文档也无(断连原本零结构)仅3张顺手补录; 字典覆盖192+68+320=580表断连可查; smes-621/README+全量表清单分层+file_index+data/README同步; worklog L-5275c936c1/T-58ea9e28e0
+    d70fd63 @ ✍️ smes-v61-training/README补录两体系分离铁律 — 标准教程(smes-v61-training/)与客户实况(smes-621字典/621-sql实测/iiot/u9)互不抄写,仅差异栏引用式对照; 后续模块沉淀禁跨界写入
+    199c5e1 @ 📚 鼎捷MES V6.1官方培训学习沉淀-第一批5模块(2026-08-23) — 建共用资产库agent/mes-implement-expert/data/smes-v61-training/(与smes-621/iiot/u9-sql平级): PL101生产模型配置(45点位: USER_BASIS~RT601全收录+作业站=报工单元/作业站群组=工作中心/产品版本/生产参数卡控/双单位/单位转换/标准机时公式, 发现产品基础数据权限编号文档遗漏)/PL201设备维保(10点位: PM101-PM506+4类保养工单+效率公式=(结案-下线)/预估, 定量定次定时依赖出站报工三厂未启用前无法触发)/PL208追溯(SS117/QTR607/608: 单件级SN正向TBLINVFGDINDETAIL.LOTNO+批次级物料逆向TBLWIPCONT_MATERIALLOT+跨断阶stockin.data.create/issue.wo.item.process→tblOEMOMaterialState待实测)/PL210看板(K01-04+SS101/REPORT_BASIS: 帆软V9/V10+亿信URL拼接+群组权限H5显示)/PL214 IIoT(ESI01-06: production.edc.process计数器≠产量+自动出站保留数-1/0/>0+生产参数GWX检核, 标准采集库MSSQL/ORACLE vs 重庆实际InfluxDB时序库架构差异); 每模块含功能点位全录+标准vs实测差异栏(✅⚠️❓)+关联资产+待验证; 原件PDF入raw/; data/README登记+worklog日志任务
+    fffa3eb 🗂️ 重庆报工报表模式推广-三厂小簧实例化(2026-08-23) — 通用框架(模板V7/规范/一厂实例)已就位只做厂区实例: 实测X%共库报工历史30条/11设备/14批/10报工日(6-09~7-23)8月起无报工=模拟筹备期(9/7~11 K-008)历史均联调测试量勿当生产量; 产出 sql/三厂小簧报工查询-说明.md(薄实例引用通用模板--profile home -p prefix=X 7视角)+knowledge/设备口径卡.md(X系212台+起重机6/工序A/B/Q编码/SCXH群组/报工未启用实况)+README登记; 9/7模拟启用后直接套通用模板跑报表; worklog L-602ec8f13c
+```
+
 ### 2026-08-23 20:22 (session: unknown)
 本次会话相关提交（最近5条）:
 ```
