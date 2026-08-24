@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════
+  华纬科技 · MES/LIMS 周报（2026-08-17 ~ 08-21）· 老总汇报版 v2
+  基于 report-board 模板 v1.0 扩展：三厂小簧置顶（本周主力）+ 顶部锚点导航
+  + 项目状态点 + 就绪度一页纸总览 · 深墨蓝+青绿信号+琥珀警示
+  数据源：本地化工作日志 + 任务池（23 条日志 / 8 项闭环）
+  ════════════════════════════════════════════════════════════════════
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>华纬MES周报·08-17~08-21</title>
+<meta name="description" content="华纬科技 MES/LIMS 周报 2026-08-17~08-21 · 四厂区分线汇报 · 三厂小簧进入 9/7 全流程模拟冲刺">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1624; --bg-rail: #0a111c; --surface: #152238; --surface-2: #1b2e47; --raised: #1f3352;
+  --ink: #eaf0f8; --ink-dim: #93a7c4; --ink-faint: #5f7696;
+  --line: rgba(127, 163, 208, 0.18); --line-strong: rgba(127, 163, 208, 0.34);
+  --signal: #4fd1c5; --signal-soft: rgba(79, 209, 197, 0.12);
+  --warn: #ffb454; --warn-soft: rgba(255, 180, 84, 0.12);
+  --danger: #ff6b5e; --danger-soft: rgba(255, 107, 94, 0.12);
+  --ok: #5acb7c; --ok-soft: rgba(90, 203, 124, 0.12);
+  --ghost: #3c5678;
+  --shadow: 0 18px 40px rgba(3, 8, 16, 0.5); --shadow-sm: 0 8px 22px rgba(3, 8, 16, 0.35);
+  --mono: 'IBM Plex Mono', 'Cascadia Mono', 'Consolas', monospace;
+  --sans: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f2f6fb; --bg-rail: #e9eff7; --surface: #ffffff; --surface-2: #eef3fa; --raised: #ffffff;
+    --ink: #14202e; --ink-dim: #52667f; --ink-faint: #8496af;
+    --line: rgba(24, 55, 90, 0.14); --line-strong: rgba(24, 55, 90, 0.26);
+    --signal: #0d7a82; --signal-soft: rgba(13, 122, 130, 0.10);
+    --warn: #a46500; --warn-soft: rgba(164, 101, 0, 0.10);
+    --danger: #c0392b; --danger-soft: rgba(192, 57, 43, 0.10);
+    --ok: #1e7a40; --ok-soft: rgba(30, 122, 64, 0.10);
+    --ghost: #a8bdd6;
+    --shadow: 0 16px 34px rgba(20, 50, 84, 0.14); --shadow-sm: 0 8px 20px rgba(20, 50, 84, 0.10);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1624; --bg-rail: #0a111c; --surface: #152238; --surface-2: #1b2e47; --raised: #1f3352;
+  --ink: #eaf0f8; --ink-dim: #93a7c4; --ink-faint: #5f7696;
+  --line: rgba(127, 163, 208, 0.18); --line-strong: rgba(127, 163, 208, 0.34);
+  --signal: #4fd1c5; --signal-soft: rgba(79, 209, 197, 0.12);
+  --warn: #ffb454; --warn-soft: rgba(255, 180, 84, 0.12);
+  --danger: #ff6b5e; --danger-soft: rgba(255, 107, 94, 0.12);
+  --ok: #5acb7c; --ok-soft: rgba(90, 203, 124, 0.12);
+  --ghost: #3c5678;
+  --shadow: 0 18px 40px rgba(3, 8, 16, 0.5); --shadow-sm: 0 8px 22px rgba(3, 8, 16, 0.35);
+}
+:root[data-theme="light"] {
+  --bg: #f2f6fb; --bg-rail: #e9eff7; --surface: #ffffff; --surface-2: #eef3fa; --raised: #ffffff;
+  --ink: #14202e; --ink-dim: #52667f; --ink-faint: #8496af;
+  --line: rgba(24, 55, 90, 0.14); --line-strong: rgba(24, 55, 90, 0.26);
+  --signal: #0d7a82; --signal-soft: rgba(13, 122, 130, 0.10);
+  --warn: #a46500; --warn-soft: rgba(164, 101, 0, 0.10);
+  --danger: #c0392b; --danger-soft: rgba(192, 57, 43, 0.10);
+  --ok: #1e7a40; --ok-soft: rgba(30, 122, 64, 0.10);
+  --ghost: #a8bdd6;
+  --shadow: 0 16px 34px rgba(20, 50, 84, 0.14); --shadow-sm: 0 8px 20px rgba(20, 50, 84, 0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px 96px; }
+.mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-dim); font-weight: 700; padding-top: 46px; }
+.eyebrow .tick { width: 26px; height: 2px; background: var(--signal); border-radius: 2px; }
+
+/* ── Hero ── */
+.hero { padding: 26px 0 22px; border-bottom: 1px solid var(--line); }
+.hero h1 { font-size: clamp(34px, 5.2vw, 52px); font-weight: 900; line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; margin-top: 14px; }
+.hero h1 .accent { color: var(--signal); }
+.hero .sub { margin-top: 14px; font-size: clamp(14px, 1.6vw, 17px); color: var(--ink-dim); max-width: 72ch; text-wrap: balance; }
+.hero .sub b { color: var(--ink); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; font-size: 13.5px; color: var(--ink-dim); }
+.chip .k { color: var(--ink-faint); }
+.chip .v { color: var(--ink); font-weight: 700; }
+.chip .v.mono { font-size: 13px; letter-spacing: 0.02em; }
+.chip.warn { border-color: color-mix(in srgb, var(--warn) 45%, transparent); background: var(--warn-soft); }
+.chip.warn .v { color: var(--warn); }
+.chip.signal { border-color: color-mix(in srgb, var(--signal) 45%, transparent); background: var(--signal-soft); }
+.chip.signal .v { color: var(--signal); }
+.chip.danger { border-color: color-mix(in srgb, var(--danger) 45%, transparent); background: var(--danger-soft); }
+.chip.danger .v { color: var(--danger); }
+
+/* ── 顶部锚点导航（sticky） ── */
+.navbar {
+  position: sticky; top: 0; z-index: 50; margin-top: 20px;
+  background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(8px);
+  border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px;
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+}
+.navbar a { font-size: 12.5px; color: var(--ink-dim); text-decoration: none; padding: 5px 11px; border-radius: 8px; font-weight: 700; letter-spacing: 0.02em; transition: background .15s ease, color .15s ease; }
+.navbar a:hover { background: var(--signal-soft); color: var(--signal); }
+.navbar a .n { font-family: var(--mono); font-size: 11px; color: var(--signal); margin-right: 5px; }
+.navbar .sep { color: var(--line-strong); margin: 0 4px; }
+
+/* ── 区块头 ── */
+.sec { margin-top: 46px; }
+.sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.sec-index { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--signal); letter-spacing: 0.06em; }
+.sec-title { font-size: 21px; font-weight: 900; letter-spacing: -0.005em; }
+.sec-head .hint { font-size: 12.5px; color: var(--ink-faint); margin-left: auto; text-align: right; }
+.proj-status { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; padding: 4px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.proj-status .dot { width: 8px; height: 8px; border-radius: 50%; }
+.proj-status.run { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, transparent); background: var(--warn-soft); }
+.proj-status.run .dot { background: var(--warn); }
+.proj-status.hot { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, transparent); background: var(--danger-soft); }
+.proj-status.hot .dot { background: var(--danger); }
+.proj-status.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); background: var(--ok-soft); }
+.proj-status.ok .dot { background: var(--ok); }
+
+/* ── 核心结论卡片 ── */
+.concl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.concl-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 16px; display: flex; gap: 14px; box-shadow: var(--shadow-sm); transition: transform .15s ease, border-color .15s ease; }
+.concl-card:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+.concl-card.wide { grid-column: 1 / -1; }
+.concl-num { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--signal); background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent); border-radius: 8px; min-width: 34px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.concl-card h3 { font-size: 15.5px; font-weight: 700; margin-bottom: 5px; }
+.concl-card p { font-size: 13px; color: var(--ink-dim); line-height: 1.55; }
+.concl-card p b { color: var(--ink); font-weight: 700; }
+
+/* ── 四项目板块（完成/推进/下周/风险） ── */
+.proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.proj-quad { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 12px; box-shadow: var(--shadow-sm); }
+.proj-quad h4 { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.proj-quad h4::before { content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.proj-quad.done h4 { color: var(--ok); } .proj-quad.done h4::before { background: var(--ok); }
+.proj-quad.run h4 { color: var(--signal); } .proj-quad.run h4::before { background: var(--signal); }
+.proj-quad.next h4 { color: var(--ink-dim); } .proj-quad.next h4::before { background: var(--ghost); }
+.proj-quad.risk h4 { color: var(--warn); } .proj-quad.risk h4::before { background: var(--warn); }
+.proj-quad ul { list-style: none; }
+.proj-quad li { font-size: 12.8px; color: var(--ink-dim); line-height: 1.5; padding: 3px 0 3px 0; }
+.proj-quad li b { color: var(--ink); font-weight: 700; }
+.proj-quad li .tag { font-family: var(--mono); font-size: 11px; color: var(--warn); font-weight: 700; }
+.proj-quad li .tag.ok { color: var(--ok); }
+.proj-quad li .tag.sg { color: var(--signal); }
+.proj-kpi { display: flex; gap: 14px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); flex-wrap: wrap; }
+.proj-kpi .pk { font-size: 12px; color: var(--ink-faint); }
+.proj-kpi .pk b { font-family: var(--mono); color: var(--signal); font-size: 15px; margin-right: 5px; font-weight: 700; }
+.proj-kpi .pk.hot b { color: var(--warn); }
+.proj-kpi .pk.ok b { color: var(--ok); }
+
+/* ── 时间线 ── */
+.timeline { position: relative; }
+.tl-row { display: grid; grid-template-columns: 150px 1fr; gap: 18px; position: relative; padding-bottom: 4px; }
+.tl-date { font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--signal); text-align: right; padding-top: 10px; white-space: nowrap; }
+.tl-card { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--ghost); border-radius: 0 10px 10px 0; padding: 10px 14px 9px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.tl-card .t { font-size: 14.5px; font-weight: 700; color: var(--ink); }
+.tl-card .o { font-size: 12.5px; color: var(--ink-dim); margin-left: auto; text-align: right; }
+.tl-row.hot .tl-date { color: var(--warn); }
+.tl-row.hot .tl-card { border-left-color: var(--warn); background: var(--warn-soft); }
+.tl-row.done .tl-date { color: var(--ok); }
+.tl-row.done .tl-card { border-left-color: var(--ok); }
+.tl-row.milestone .tl-card { border-left-width: 4px; border-left-color: var(--signal); }
+.tl-row.milestone .t { color: var(--signal); font-size: 15.5px; }
+.tl-row.milestone .tl-date { font-size: 15px; }
+
+/* ── 行动清单表格 ── */
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); }
+thead th { text-align: left; font-size: 12px; letter-spacing: 0.05em; color: var(--ink-dim); background: var(--surface-2); padding: 11px 16px; border-bottom: 1px solid var(--line-strong); font-weight: 700; white-space: nowrap; }
+tbody td { padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--signal-soft); }
+td.who { font-weight: 700; white-space: nowrap; }
+td.when { font-family: var(--mono); color: var(--signal); white-space: nowrap; font-size: 12.5px; }
+td.when.hot { color: var(--warn); font-weight: 700; }
+
+/* ── 就绪度一页纸 ── */
+.readiness { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rdy { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 13px 16px; box-shadow: var(--shadow-sm); }
+.dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.dot.ok { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-soft); }
+.dot.hot { background: var(--danger); box-shadow: 0 0 0 4px var(--danger-soft); }
+.dot.run { background: var(--warn); box-shadow: 0 0 0 4px var(--warn-soft); }
+.dot.plan { background: var(--ghost); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ghost) 30%, transparent); }
+.rdy .lab { flex: 1; font-size: 13.5px; font-weight: 700; }
+.rdy .val { font-size: 12.5px; color: var(--ink-faint); text-align: right; }
+.rdy .val.hot { color: var(--danger); font-weight: 700; }
+.rdy .val.okv { color: var(--ok); font-weight: 700; }
+.rdy .val.wv { color: var(--warn); font-weight: 700; }
+.rdy .val.mono { font-family: var(--mono); }
+
+/* ── 收尾 ── */
+.closer { margin-top: 48px; background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 32%, transparent); border-radius: 14px; padding: 24px 26px; }
+.closer .lbl { font-size: 12px; letter-spacing: 0.14em; font-weight: 700; color: var(--signal); margin-bottom: 10px; }
+.closer ol { list-style: none; counter-reset: c; }
+.closer li { counter-increment: c; display: flex; gap: 14px; font-size: 15px; line-height: 1.6; padding: 7px 0; }
+.closer li::before { content: counter(c); font-family: var(--mono); font-weight: 700; color: var(--signal); background: var(--signal-soft); border: 1px solid color-mix(in srgb, var(--signal) 30%, transparent); border-radius: 7px; min-width: 26px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; margin-top: 3px; flex-shrink: 0; }
+.closer li b { font-weight: 900; }
+.closer li span { color: var(--ink-dim); }
+.foot { margin-top: 34px; font-size: 12px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 16px; line-height: 1.7; }
+
+/* ── 打印友好 ── */
+@media print {
+  body { background: #fff; color: #14202e; }
+  .navbar { display: none; }
+  .wrap { padding: 0; max-width: none; }
+  .sec { break-inside: avoid; }
+}
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 18px 80px; }
+  .concl, .proj-grid, .readiness { grid-template-columns: 1fr; }
+  .tl-row { grid-template-columns: 1fr; gap: 2px; }
+  .tl-date { text-align: left; padding-top: 2px; }
+  .sec-head .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .concl-card:hover { transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ 眉标 ══ -->
+  <div class="eyebrow"><span class="tick"></span>华纬科技 · MES / LIMS 实施项目 · 周报</div>
+
+  <!-- ══ Hero ══ -->
+  <header class="hero">
+    <h1>MES / LIMS 双线推进周报<br><span class="accent">三厂小簧进入 9/7 全流程模拟冲刺</span></h1>
+    <p class="sub">报告期 <b>2026-08-17 ~ 08-21</b> · 三厂小簧 / 重庆MES / LIMS / 一厂大簧 四厂区分线汇报，共性知识资产（断连对冲）完成深度沉淀。</p>
+    <div class="chips">
+      <span class="chip"><span class="k">报告期</span><span class="v mono">08-17 ~ 08-21</span></span>
+      <span class="chip signal"><span class="k">本周日志</span><span class="v mono">23 条</span></span>
+      <span class="chip"><span class="k">本周闭环</span><span class="v mono">8 项</span></span>
+      <span class="chip warn"><span class="k">下周硬节点</span><span class="v mono">08-28 · 09-07</span></span>
+    </div>
+  </header>
+
+  <!-- ══ 顶部锚点导航 ══ -->
+  <nav class="navbar">
+    <a href="#s1"><span class="n">01</span>结论</a>
+    <span class="sep">·</span>
+    <a href="#s2"><span class="n">02</span>时间线</a>
+    <span class="sep">·</span>
+    <a href="#s3"><span class="n">03</span>三厂小簧</a>
+    <span class="sep">·</span>
+    <a href="#s4"><span class="n">04</span>重庆MES</a>
+    <span class="sep">·</span>
+    <a href="#s5"><span class="n">05</span>LIMS</a>
+    <span class="sep">·</span>
+    <a href="#s6"><span class="n">06</span>一厂大簧</a>
+    <span class="sep">·</span>
+    <a href="#s7"><span class="n">07</span>共性资产</a>
+    <span class="sep">·</span>
+    <a href="#s8"><span class="n">08</span>就绪度</a>
+    <span class="sep">·</span>
+    <a href="#s9"><span class="n">09</span>行动清单</a>
+  </nav>
+
+  <!-- ══ 01 核心结论 ══ -->
+  <section class="sec" id="s1">
+    <div class="sec-head"><span class="sec-index">01</span><span class="sec-title">本周核心结论</span><span class="hint">一页定调 · 老总 30 秒</span></div>
+    <div class="concl">
+      <div class="concl-card"><span class="concl-num">1</span><div><h3>三厂小簧：进入 9/7 模拟筹备冲刺</h3><p>全流程模拟仿真 <b>9/7-9/11 定档</b>；模拟方案 V1.0 / 实施计划 v2.0 / 操作手册 v1.1 / 模拟剧本 v1.1 全部归档，<b>本周闭环 5 项</b>。下一硬节点：<b>8/28 制样功能 + 10 产品控制计划</b>。</p></div></div>
+      <div class="concl-card"><span class="concl-num">2</span><div><h3>重庆：数采范围锁定 32 台，报工连续稳定</h3><p>数采一期范围共识 <b>32 台权威确认</b>（修正历史 48/43/24 错误口径）；报工报表 8-17/20/21 三日连跑，产出率 <b>100% / 97.1% / 100%</b>。</p></div></div>
+      <div class="concl-card"><span class="concl-num">3</span><div><h3>LIMS：34 份模板结果呈现确认过半</h3><p>8-18 沟通会定统一表格 + 两类提取逻辑；实施方清单 <b>摘取整表 17 + 附页 1 + 仅结果值 3</b>，剩 <b>13 项待金辉确认</b> 后定稿报告方案。</p></div></div>
+      <div class="concl-card"><span class="concl-num">4</span><div><h3>共性资产：断连对冲深度沉淀完成</h3><p>U9C <b>7554</b> 表 / sMES <b>1472</b> 表全量清单，68 张核心表结构补录，五链路排障手册——<b>断连也能排查链路</b>。</p></div></div>
+      <div class="concl-card wide"><span class="concl-num">5</span><div><h3>一厂大簧：协同收尾为主，5 项 P2 待办积压</h3><p>子作业报工人员权限闭环；物料/报工相关 <b>5 项 P2 待办</b>（钉报提醒/子作业审批/物料卡控等）已列入 <b>8-24 待办汇报</b>，需排期消解。</p></div></div>
+    </div>
+  </section>
+
+  <!-- ══ 02 关键时间线 ══ -->
+  <section class="sec" id="s2">
+    <div class="sec-head"><span class="sec-index">02</span><span class="sec-title">关键时间线</span><span class="hint">每个节点都是前置依赖</span></div>
+    <div class="timeline">
+      <div class="tl-row done"><div class="tl-date">08-21</div><div class="tl-card"><span class="t">模拟方案 V1.0 · 管理员权限 · eSOP 手册闭环</span><span class="o">三厂小簧 · IT</span></div></div>
+      <div class="tl-row hot"><div class="tl-date">08-24</div><div class="tl-card"><span class="t">王红烨重排实施计划表 · 待办任务汇报</span><span class="o">三厂小簧 · 王红烨 / 集团IT</span></div></div>
+      <div class="tl-row milestone"><div class="tl-date">08-28</div><div class="tl-card"><span class="t">制样功能完成 · 10 产品控制计划导入 · 操作手册</span><span class="o">三厂小簧 · 硬节点</span></div></div>
+      <div class="tl-row hot"><div class="tl-date">08-28</div><div class="tl-card"><span class="t">IQC 数据源及结果回传配置（模拟前置）</span><span class="o">三厂小簧 · IT / U9</span></div></div>
+      <div class="tl-row hot"><div class="tl-date">持续</div><div class="tl-card"><span class="t">重庆看板与报表开发（首要 P1）</span><span class="o">重庆 · 首要完成项</span></div></div>
+      <div class="tl-row milestone"><div class="tl-date">09-04</div><div class="tl-card"><span class="t">关键用户培训</span><span class="o">三厂小簧</span></div></div>
+      <div class="tl-row milestone"><div class="tl-date">09-07</div><div class="tl-card"><span class="t">全流程模拟仿真启动（9/7-9/11 · P1）</span><span class="o">三厂小簧 · 每日复盘</span></div></div>
+    </div>
+  </section>
+
+  <!-- ══ 03 三厂小簧（本周主力） ══ -->
+  <section class="sec" id="s3">
+    <div class="sec-head">
+      <span class="sec-index">03</span>
+      <span class="sec-title">三厂小簧项目</span>
+      <span class="proj-status run">冲刺筹备期 · 硬节点 08-28</span>
+      <span class="hint">本周日志 7 · 闭环 5 · 3 个 P1</span>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-quad done"><h4>本周完成</h4><ul>
+        <li><b>模拟方案 V1.0</b> 制定并发布 <span class="tag ok">08-21</span></li>
+        <li><b>模拟测试计划</b>（王红烨列计划，不绑工作台采购） <span class="tag ok">08-21</span></li>
+        <li><b>eSOP 手册编制与后台维护</b>（模拟前置） <span class="tag ok">08-21</span></li>
+        <li><b>管理员权限改小簧</b>（数据隔离） <span class="tag ok">08-21</span></li>
+        <li>玖坤 MES 设备点检表导出验证 <span class="tag ok">08-19</span></li>
+        <li>模拟剧本 v1.1 / 实施计划表 v2.0 / 操作手册 v1.1 归档（知识卡 K-008~010）</li>
+      </ul></div>
+      <div class="proj-quad run"><h4>本周推进</h4><ul>
+        <li>8-18 <b>工控机平台硬件推进专题会</b>——谢建寅牵头协调、IT 协助（T-f8ce9eff15）</li>
+        <li>8-19 <b>协同推进会定档 9/7-9/11 全流程模拟</b>：IQC→派工→打印派工单→制样→报工→PQC→完工→量产→入库，时间线拆解</li>
+        <li>8-19 项目整体进度汇报更新（58 条日志 / 19 项任务）</li>
+        <li>8-20 <b>客户待办清单 37 条</b>分析与任务池映射（新建 eSOP / 点检资料 2 任务）</li>
+        <li>8-21 <b>U9C ERP 连库启用</b>——IQC 到货单同步链路实测（esb_iqc_receipt_outbox），沉淀 data/u9-sql/ 资产</li>
+      </ul></div>
+      <div class="proj-quad next"><h4>下周继续跟进</h4><ul>
+        <li>08-24 王红烨重排实施计划表</li>
+        <li>08-28 <b>制样检验模块定制开发完成</b> <span class="tag">P1</span></li>
+        <li>08-28 <b>10 个产品控制计划导入</b>（工艺/质量主数据） <span class="tag">P1</span></li>
+        <li>08-28 IQC 数据源及结果回传配置 <span class="tag">P2 · 模拟前置</span></li>
+        <li>08-29 ~ 09-04 制样用户验证 · 关键用户培训（09-04）</li>
+        <li>09-07 ~ 09-11 <b>全流程模拟仿真执行</b> + 每日复盘 <span class="tag">P1</span></li>
+      </ul></div>
+      <div class="proj-quad risk"><h4>风险事项</h4><ul>
+        <li><b>制样检验模块定制开发</b>（含审批流程）——8/28 硬节点 <span class="tag">P1 · 进行中</span></li>
+        <li><b>数采部署与设备参数提供</b>——8/31 上线硬节点 <span class="tag">P1 · 进行中</span></li>
+        <li><b>10 个产品控制计划导入</b>——8/28 <span class="tag">P1 · 进行中</span></li>
+        <li><b>全流程模拟仿真执行</b>——9/7 启动，前置未全部闭环 <span class="tag">P1 · 待启动</span></li>
+        <li>现场硬件采购方案待明确 / 蓝图流程规划会 / 点检资料整理导入 <span class="tag">P2</span></li>
+      </ul></div>
+    </div>
+    <div class="proj-kpi"><span class="pk ok">闭环 <b>5</b> 项</span><span class="pk hot">硬节点 <b>08-28</b></span><span class="pk">下个里程碑 <b>09-07</b></span></div>
+  </section>
+
+  <!-- ══ 04 重庆MES ══ -->
+  <section class="sec" id="s4">
+    <div class="sec-head">
+      <span class="sec-index">04</span>
+      <span class="sec-title">重庆MES项目</span>
+      <span class="proj-status run">稳定运行 · P1 看板推进</span>
+      <span class="hint">本周日志 6 · 报工报表 3 日连跑</span>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-quad done"><h4>本周完成</h4><ul>
+        <li><b>数采范围共识 32 台确认</b>（权威口径，修正历史 48/43/24 错误口径） <span class="tag ok">08-17</span></li>
+        <li>8-17 项目汇报暨周例会主持稿（人名/口径统一修正）</li>
+        <li><b>报工数据报表 3 日连续交付</b>：8-17 <b>41条/7设备/32批</b> 投入=产出3907 · 8-20 <b>37条</b> 投入5509/产出5349(97.1%) · 8-21 <b>36条/7台</b> 投入=产出4557(100%)</li>
+        <li>报表列集规范两次修正沉淀（人员表 7 列、明细补产出列）</li>
+      </ul></div>
+      <div class="proj-quad run"><h4>本周推进</h4><ul>
+        <li>报工每日连库跑数（独立库 --profile cq · 6 视角交叉验证）</li>
+        <li>重庆 + 通用厂区报工报表规范「板块列集铁律」更新</li>
+        <li>发现 <b>SP0063 / SP0070</b>（空心杆热处理）8-17 开批 4 天未收口——列观察重点</li>
+      </ul></div>
+      <div class="proj-quad next"><h4>下周继续跟进</h4><ul>
+        <li><b>看板与报表开发</b>（首要完成项） <span class="tag">P1 · 进行中</span></li>
+        <li>批次追溯实现方案确定 <span class="tag">P2 · 待启动</span></li>
+        <li>质量模块实施推进（追溯脉络/首巡检） <span class="tag">P2 · 待启动</span></li>
+        <li>部门报表收集与验收 · 数采呈现优化与超标报警推送 <span class="tag">P2</span></li>
+        <li>SP0063/SP0070 未收口批持续观察</li>
+      </ul></div>
+      <div class="proj-quad risk"><h4>风险事项</h4><ul>
+        <li><b>产线上线运行与现场运维</b> <span class="tag">P1 · 进行中</span></li>
+        <li><b>集团内部调拨条码跨组织不可用</b>（扫码上料受阻/收货 4 步） <span class="tag">P1 · 进行中</span></li>
+        <li><b>看板与报表开发</b>——首要 P1，8-21 观察逾期 <span class="tag">P1 · 进行中</span></li>
+        <li>台账清理规范导入 / 批次追溯 / 部门报表 <span class="tag">P2</span></li>
+      </ul></div>
+    </div>
+    <div class="proj-kpi"><span class="pk ok">报工产出率 <b>100%</b></span><span class="pk hot">首要 P1 <b>看板开发</b></span><span class="pk">数采口径 <b>32 台</b></span></div>
+  </section>
+
+  <!-- ══ 05 LIMS ══ -->
+  <section class="sec" id="s5">
+    <div class="sec-head">
+      <span class="sec-index">05</span>
+      <span class="sec-title">LIMS 项目</span>
+      <span class="proj-status run">方案确认期 · 13 项待确认</span>
+      <span class="hint">本周日志 2 · 34 份模板推进</span>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-quad done"><h4>本周完成</h4><ul>
+        <li>8-18 <b>LIMS 沟通会</b>：34 份原始记录模板结果呈现方式确认——统一表格形式 + 两类提取逻辑（复杂摘整表 / 简单仅结果值）</li>
+        <li>8-20 实施方 <b>34 份数据提取方式确认清单</b>：摘取整表 17 + 附页 1 + 仅结果值 3 + <b>待确认 13</b></li>
+      </ul></div>
+      <div class="proj-quad run"><h4>本周推进</h4><ul>
+        <li>知识卡《数据提取方式确认清单》沉淀，任务 T-e449d9ae42 转进行中</li>
+        <li>项目计划里程碑 / 风险 / 待办同步更新</li>
+      </ul></div>
+      <div class="proj-quad next"><h4>下周继续跟进</h4><ul>
+        <li><b>13 项待金辉确认</b> → 回传实施方定稿报告方案</li>
+        <li>Excel 模板结构化导入可行性评估 <span class="tag">P2 · 进行中</span></li>
+        <li>报告下载文件加密（禁止编辑） <span class="tag">P2 · 进行中</span></li>
+        <li>设备数采数据采集程序开发 <span class="tag">P2 · 进行中</span></li>
+      </ul></div>
+      <div class="proj-quad risk"><h4>风险事项</h4><ul>
+        <li>委托单号更改 / CNAS 选择确认 <span class="tag">P2 · 暂缓 2 项</span></li>
+        <li>报告下载加密 · 设备数采程序开发 <span class="tag">P2 · 进行中</span></li>
+        <li>温湿度传感器网络故障排查 <span class="tag">P2 · 进行中</span></li>
+        <li>用户需求与系统更改优化（长期） <span class="tag">P2 · 进行中</span></li>
+      </ul></div>
+    </div>
+    <div class="proj-kpi"><span class="pk">34 模板 <b>21/34</b> 已定</span><span class="pk hot">待确认 <b>13</b> 项</span><span class="pk">闭环点 <b>金辉确认</b></span></div>
+  </section>
+
+  <!-- ══ 06 一厂大簧 ══ -->
+  <section class="sec" id="s6">
+    <div class="sec-head">
+      <span class="sec-index">06</span>
+      <span class="sec-title">一厂大簧项目</span>
+      <span class="proj-status hot">收尾期 · 5 项 P2 积压</span>
+      <span class="hint">本周闭环 1 · 待办 5 项</span>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-quad done"><h4>本周完成</h4><ul>
+        <li><b>子作业报工人员操作权限</b> 增加 <span class="tag ok">08-20 闭环</span></li>
+      </ul></div>
+      <div class="proj-quad run"><h4>本周推进</h4><ul>
+        <li>本周无独立厂区日志，间接支撑：<b>厂区报工报表规范</b>通用化沉淀（板块列集铁律）</li>
+      </ul></div>
+      <div class="proj-quad next"><h4>下周继续跟进</h4><ul>
+        <li>钉报报工提醒配置 <span class="tag">P2 · 待启动</span></li>
+        <li>子作业报工审批功能新增 <span class="tag">P2 · 进行中</span></li>
+        <li>物料与单号不匹配问题商讨 <span class="tag">P2 · 进行中</span></li>
+        <li>内部调拨物料条码同步识别 <span class="tag">P2 · 待启动</span></li>
+        <li>计划下放后改物料 / 外来条码上料卡控 <span class="tag">P2 · 待启动</span></li>
+      </ul></div>
+      <div class="proj-quad risk"><h4>风险事项</h4><ul>
+        <li><b>5 项 P2 物料/报工待办积压</b>——已列入 8-24 待办汇报「一厂 5 项积压」，需会后排期认领</li>
+        <li>MES 上线动员与全员培训 <span class="tag">P2 · 进行中</span>（依赖前置功能闭环）</li>
+      </ul></div>
+    </div>
+    <div class="proj-kpi"><span class="pk ok">本周闭环 <b>1</b></span><span class="pk hot">积压待办 <b>5</b> 项</span></div>
+  </section>
+
+  <!-- ══ 07 共性知识资产 ══ -->
+  <section class="sec" id="s7">
+    <div class="sec-head"><span class="sec-index">07</span><span class="sec-title">共性知识资产 · 整体支撑</span><span class="hint">跨厂区复用 · 防断连不中断排查</span></div>
+    <div class="concl">
+      <div class="concl-card wide"><span class="concl-num">◆</span><div><h3>断连对冲深度沉淀（8-21）</h3><p>U9C 侧核心链路表结构（MO_MO 330 列 / MO_MOPickList / PM_Receivement / ESB 队列等五链路）+ sMES 侧五链路排障手册（报工/权限/生产批/点检/发料），<b>数据库即便断连也能判断逻辑、打通链路、排查环节</b>。二轮沉淀落盘 U9C 7554 表 + sMES 1472 表全量清单，68 张核心表全结构补录（09-core-ops）。</p></div></div>
+      <div class="concl-card"><span class="concl-num">◆</span><div><h3>鼎捷 MES 权限表沉淀</h3><p>H5 作业群组权限清单（13 模块 277 项 + 手机报工 38 项 + 权限编号速查索引），跨厂区通用配置。</p></div></div>
+      <div class="concl-card"><span class="concl-num">◆</span><div><h3>HW0403 派工权限排查定论</h3><p>定位根因 = SCXH-PLN001 群组只配平台权限编号、缺 A 系列菜单权限编号 → H5 派工台空白；给出 2 套修复方案，沉淀排障卡 + 通用权限查询模板。</p></div></div>
+      <div class="concl-card"><span class="concl-num">◆</span><div><h3>项目级计划 + 待办汇报</h3><p>项目级计划提炼（M1-M5 五阶段骨架）；8-24 待办任务汇报（90 条未闭环，P1 7 · P2 25）md + 投屏 HTML 已备。</p></div></div>
+    </div>
+  </section>
+
+  <!-- ══ 08 就绪度一页纸 ══ -->
+  <section class="sec" id="s8">
+    <div class="sec-head"><span class="sec-index">08</span><span class="sec-title">就绪度一页纸</span><span class="hint">四项目状态一目了然</span></div>
+    <div class="readiness">
+      <div class="rdy"><span class="dot run"></span><span class="lab">三厂小簧 · 冲刺筹备</span><span class="val wv">硬节点 08-28</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">重庆MES · 稳定运行</span><span class="val wv">P1 看板推进</span></div>
+      <div class="rdy"><span class="dot run"></span><span class="lab">LIMS · 方案确认期</span><span class="val wv">13 项待确认</span></div>
+      <div class="rdy"><span class="dot hot"></span><span class="lab">一厂大簧 · 收尾积压</span><span class="val hot">5 项 P2</span></div>
+      <div class="rdy"><span class="dot ok"></span><span class="lab">共性资产 · 断连对冲沉淀</span><span class="val okv">完成</span></div>
+      <div class="rdy"><span class="dot ok"></span><span class="lab">重庆报工 · 本周产出率</span><span class="val okv">100%</span></div>
+    </div>
+  </section>
+
+  <!-- ══ 09 下周行动清单 ══ -->
+  <section class="sec" id="s9">
+    <div class="sec-head"><span class="sec-index">09</span><span class="sec-title">下周行动清单</span><span class="hint">责任到人 · 死盯硬节点</span></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>责任方</th><th>要交付</th><th>时间</th></tr></thead>
+        <tbody>
+          <tr><td class="who">王红烨</td><td>重排实施计划表（三厂小簧）</td><td class="when hot">08-24</td></tr>
+          <tr><td class="who">IT / 谢建寅</td><td>制样检验模块定制开发完成（含审批流程）</td><td class="when hot">08-28</td></tr>
+          <tr><td class="who">IT / 工艺</td><td>10 个产品控制计划导入（工艺/质量主数据）</td><td class="when hot">08-28</td></tr>
+          <tr><td class="who">IT / IQC</td><td>IQC 数据源及结果回传配置（模拟前置）</td><td class="when hot">08-28</td></tr>
+          <tr><td class="who">重庆 IT</td><td>看板与报表开发推进（首要 P1）</td><td class="when">持续</td></tr>
+          <tr><td class="who">金辉 / LIMS</td><td>34 份模板剩余 13 项提取方式确认，回传实施方</td><td class="when hot">尽快</td></tr>
+          <tr><td class="who">一厂大簧</td><td>5 项 P2 待办排期认领消解</td><td class="when">08-24 汇报后</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ 收尾：三句话带走 ══ -->
+  <section class="closer">
+    <div class="lbl">总结 · 三句话带走</div>
+    <ol>
+      <li><b>三厂小簧进入 9/7 全流程模拟倒计时</b><span> —— 方案/计划/手册本周全部归档，8/28 制样功能 + 10 产品控制计划是最后硬节点。</span></li>
+      <li><b>重庆报工连续稳定、数采范围锁定 32 台</b><span> —— 看板与报表开发仍是首要 P1，需持续推进。</span></li>
+      <li><b>共性知识资产断连对冲沉淀完成</b><span> —— 数据库即便断连，核心链路排查不再受影响，跨厂区可复用。</span></li>
+    </ol>
+  </section>
+
+  <!-- ══ 页脚 ══ -->
+  <div class="foot">
+    数据源：本地化工作日志 + 任务池（2026-08-17 ~ 08-21，23 条日志 / 8 项闭环）+ 会议纪要 · 配套文档：output/待办任务汇报_2026-08-24.md · output/2026-08-24_待办任务汇报_汇报版.html<br>
+    本页仅供投影展示 · 数据截至 2026-08-21 24:00
+  </div>
+
+</div>
+</body>
+</html>
