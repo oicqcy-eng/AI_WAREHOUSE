@@ -1,0 +1,79 @@
+=============================================================
+  控制计划导入分析报告
+=============================================================
+  料号:       11314-000991
+  品名:       Part name零件名称：
+复原弹簧Recovery spring
+  CP编号:     CP-M0991C131-001
+  版本:       Supplier approval供应商批准/Date日期：
+彭理想 2026.7.21
+  总特性数:   91
+  生成时间:   2026-09-01 19:39:07
+=============================================================
+
+  [分布] 品管项目类型:
+     计量: 60 项
+     计数: 31 项
+
+  [作业站类型] Opno 分布:
+     IQC: 6 项
+     PQC: 85 项
+
+  [工序] 工序分布 (12 道工序):
+      IQC  Incoming Inspection 来料检验             6 个特性
+      PQC  Process self verification 过程自验       3 个特性
+      PQC  coil 卷簧                              5 个特性
+      PQC  stress relief annealing 去应力退火        6 个特性
+      PQC  grind ends 端面磨削                      8 个特性
+      PQC  Internal chamfer 内倒角                 4 个特性
+      PQC  Shot peening 0.6 喷丸0.6               5 个特性
+      PQC  compressing 强压缩                      5 个特性
+      PQC  Ultrasonic cleaning 超声波清洗            1 个特性
+      PQC  Finished Product Inspection 成品检验     21 个特性
+      PQC  Package 包装                           3 个特性
+      PQC  Periodic inspection 周期性检验            24 个特性
+
+  [警告] 未解析规格（已视为计数，请确认）:
+     Opno=XH_Q1 QCItem=CP-11314-000991-XH_Q1-2: 9254淬
+     Opno=XH_Q1 QCItem=CP-11314-000991-XH_Q1-7: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=XH_A01 QCItem=CP-11314-000991-XH_A01-2: 9254淬
+     Opno=XH_A01 QCItem=CP-11314-000991-XH_A01-3: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=XH_A01 QCItem=CP-11314-000991-XH_A01-6: （φ33.9）
+     Opno=XH_A01 QCItem=CP-11314-000991-XH_A01-8: 簧圈不允许凹凸不平、划伤、压痕等缺陷
+     Opno=XH_B01 QCItem=CP-11314-000991-XH_B01-1: 摆放方式:弹簧散放,不得超过三层
+     Opno=XH_B01 QCItem=CP-11314-000991-XH_B01-3: 3535分钟
+     Opno=XH_B03 QCItem=CP-11314-000991-XH_B03-2: 270°~300°
+     Opno=XH_B05 QCItem=CP-11314-000991-XH_B05-1: 两端头无尖角、飞边、毛刺残留,不得擦伤临圈
+     Opno=XH_B05 QCItem=CP-11314-000991-XH_B05-3: 金刚砂轮头
+     Opno=XH_B05 QCItem=CP-11314-000991-XH_B05-4: 不得有崩边、裂纹、掉砂、变形等缺陷
+     Opno=XH_B07 QCItem=CP-11314-000991-XH_B07-3: 25~30
+     Opno=XH_B07 QCItem=CP-11314-000991-XH_B07-4: 22
+22分钟
+     Opno=XH_B19 QCItem=CP-11314-000991-XH_B19-2: 弹簧端圈无明显压痕、无变形
+     Opno=XH_B19 QCItem=CP-11314-000991-XH_B19-4: 1次
+     Opno=XH_C05 QCItem=CP-11314-000991-XH_C05-Follow the "Ultrasonic Cleaning Line Surface Treatment Control Plan"按《超声波清洗线表面处理控制计划》执行: 按《超声波清洗线表面处理控制计划》执行
+     Opno=XH_Q4 QCItem=CP-11314-000991-XH_Q4-1: 右旋
+     Opno=XH_Q4 QCItem=CP-11314-000991-XH_Q4-2: 17.75[+0.5,0]
+     Opno=XH_Q4 QCItem=CP-11314-000991-XH_Q4-3: （14.95）
+     Opno=XH_Q4 QCItem=CP-11314-000991-XH_Q4-9: 270°~300°
+     Opno=XH_Q4 QCItem=CP-11314-000991-XH_Q4-21: 3),
+弹簧喷丸,弹簧不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷,零件交付表面防护处理,所有零件在运输,存储（最少3
+     Opno=XH_C19 QCItem=CP-11314-000991-XH_C19-1: 只/箱
+     Opno=XH_C19 QCItem=CP-11314-000991-XH_C19-2: 箱两侧贴合格证
+     Opno=XH_C19 QCItem=CP-11314-000991-XH_C19-3: #字打包
+     Opno=XH_Q5 QCItem=CP-11314-000991-XH_Q5-1: 右旋
+     Opno=XH_Q5 QCItem=CP-11314-000991-XH_Q5-2: 17.75[+0.5,0]
+     Opno=XH_Q5 QCItem=CP-11314-000991-XH_Q5-3: （14.95）
+     Opno=XH_Q5 QCItem=CP-11314-000991-XH_Q5-9: 270°~300°
+     Opno=XH_Q5 QCItem=CP-11314-000991-XH_Q5-21: 3),
+弹簧喷丸,弹簧不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷,零件交付表面防护处理,所有零件在运输,存储（最少3
+     Opno=XH_Q5 QCItem=CP-11314-000991-XH_Q5-23: 4500.22.,0.25.
+弹簧允许颗粒物450最大面积0.22,对较小颗粒的数量没有限制,只要不超过重量限制0.25
+
+  [警告] 缺少 PlanNo（需在补充配置中映射频率 -> PlanNo）:
+     freq: 'Every shift             每班'
+     freq: 'Follow the "Ultrasonic Cleaning Line Surface Treatment Contr'
+     freq: 'annually 每年'
+     共 27 项缺失 PlanNo
+
+============================================================
