@@ -1,6 +1,6 @@
 ---
 name: report-board
-description: 用「控制台风汇报板」模板生成模块化 HTML 汇报页——深墨蓝底+青绿信号+琥珀警示+等宽日期，6 标准区块按需拼装，浏览器投影。Use when: 要出 HTML 汇报/投影版(协同会/周例会/专项汇报)、用户说"汇报版""主持人版""生成汇报页"。
+description: 用「控制台风汇报板」模板生成模块化 HTML 汇报页——深墨蓝底+青绿信号+琥珀警示+等宽日期，6 标准区块按需拼装，浏览器投影。Use when: 要出 HTML 汇报/投影版(协同会/周例会/专项汇报)、用户说"汇报版""主持人版""生成汇报页"。勿用于纯 MD 汇报或强交互数据看板（该用 dataviz）。
 ---
 
 # 控制台风汇报板（report-board）
@@ -55,7 +55,7 @@ description: 用「控制台风汇报板」模板生成模块化 HTML 汇报页�
    - 日期格式统一 `MM-DD`（如 `08-28`），用 `.mono` 等宽
    - `.chips` 只留 3-5 个关键数据
 4. **倒计时可选**：需要则改 script 里 `new Date('YYYY-MM-DD...')` 与 hero 对应 chip，不需要则删两者
-5. **自检**：无残留 `【】`、日期全 `.mono`、状态色点语义正确、文件放 `output/<厂区或主题>/`
+5. **自检（机器兜底，勿纯目测）**：跑 `bash skills/report-board/scripts/self-check.sh <产出.html>`——自动查残留【】占位符/title/TODO/未闭合属性引号/文件体积；全部 PASS 才可交付。脚本每项检查含义见 [README.md](README.md)
 6. **通知用户**：md+docx 版可同内容另出（`agent/mes-report-agent/tools/md-to-docx.js`），HTML 用于投影
 
 ## 交付惯例

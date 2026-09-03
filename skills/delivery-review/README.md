@@ -24,4 +24,17 @@
 4. 归属：成品是否落在 `delivery/projects/<name>/output/`
 5. 沉淀：是否有可复用经验提炼到共享层
 
+## 脱敏扫描脚本（合规检查机器兜底）
+
+```bash
+# 扫通用敏感模式（密钥/token/手机号/邮箱/IP/明文口令）
+bash skills/delivery-review/scripts/scan-sensitive.sh <交付物文件或目录>
+
+# 追加客户敏感词表（真实客户名/人员名/真实编码，每行一个）
+bash skills/delivery-review/scripts/scan-sensitive.sh <路径> --extra <词表.txt>
+```
+
+命中即逐条打印 `文件:行:内容` 并 exit 1（需人工复核是否误报）；无命中 exit 0。
+文本扫描范围：md/txt/html/csv/json/xml/sql/yml/sh/py。
+
 详见 `SKILL.md`。
