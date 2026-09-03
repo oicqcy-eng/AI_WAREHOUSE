@@ -30,7 +30,7 @@ skills/
 ## 加载方式
 
 - 顶层 `skills/` 为**维护源**（便于人阅读），同时**镜像复制**到 `.claude/skills/` 供 Claude Code 自动加载（本会话下次启动生效）
-- **同步规范**：修改 `skills/<name>/` 后，重复制到 `.claude/skills/<name>/`（`Copy-Item -Recurse -Force`），保持两处一致
+- **同步规范**：修改 `skills/<name>/` 后同步到镜像，**勿用 `Copy-Item -Recurse -Force`**（目标已存在时会嵌套复制）；用 `robocopy skills\<name> .claude\skills\<name> /MIR`（PowerShell）或先删目标再复制
 - description 已按官方 best practice 写触发条件（Use when:…），一经挂载会常驻每会话 system prompt（约 100 token/个），故 description 需精炼
 
 ## 规范
