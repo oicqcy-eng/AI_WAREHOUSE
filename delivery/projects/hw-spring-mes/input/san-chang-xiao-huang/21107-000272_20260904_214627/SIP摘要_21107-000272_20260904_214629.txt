@@ -1,0 +1,139 @@
+=============================================================
+  控制计划导入分析报告
+=============================================================
+  料号:       21107-000272
+  品名:       Part name零件名称：
+复原弹簧Recovery spring
+  CP编号:     CP-M0991C433-001
+  版本:       Supplier approval供应商批准/Date日期：
+彭理想 2026.7.21
+  总特性数:   141
+  生成时间:   2026-09-04 21:46:29
+=============================================================
+
+  [分布] 品管项目类型:
+     计量: 69 项
+     计数: 72 项
+
+  [作业站类型] Opno 分布:
+     IQC: 9 项
+     PQC: 132 项
+
+  [工序] 工序分布 (15 道工序):
+      IQC  Incoming Inspection 来料检验             6 个特性
+      IQC  Process self inspection 过程自检         3 个特性
+      PQC  coil 卷簧                              9 个特性
+      PQC  stress relief annealing 去应力退火        7 个特性
+      PQC  grind ends 端面磨削                      8 个特性
+      PQC  Internal chamfer 内倒角                 4 个特性
+      PQC  Shot peening 0.6 喷丸0.6               5 个特性
+      PQC  Shot peening 0.4 喷丸0.4               5 个特性
+      PQC  stereotype 定型                        3 个特性
+      PQC  compressing 强压缩                      5 个特性
+      PQC  demagnetization 退磁                   2 个特性
+      PQC  Ultrasonic cleaning 超声波清洗            37 个特性
+      PQC  Finished Product Inspection 成品检验     20 个特性
+      PQC  Package 包装                           3 个特性
+      PQC  Periodic Inspection 周期性检验            24 个特性
+
+  [警告] 未解析规格（已视为计数，请确认）:
+     Opno=IQC QCItem=CP-21107-000272-IQC-1-2: 55淬
+     Opno=IQC QCItem=CP-21107-000272-IQC-1-3: 1910-2010
+     Opno=IQC QCItem=CP-21107-000272-IQC-7: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=IQC QCItem=CP-21107-000272-IQC-2-2: 55淬
+     Opno=IQC QCItem=CP-21107-000272-IQC-2-3: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=XH_A01 QCItem=CP-21107-000272-XH_A01-1: 右旋
+     Opno=XH_A01 QCItem=CP-21107-000272-XH_A01-4: 0.5-1 ,
+过渡圈0.5-1圈，保持中间内径不少于两圈
+     Opno=XH_A01 QCItem=CP-21107-000272-XH_A01-6: Φ33.1 [+0.3，0]
+     Opno=XH_A01 QCItem=CP-21107-000272-XH_A01-7: 140[+3，0]
+     Opno=XH_A01 QCItem=CP-21107-000272-XH_A01-8: 簧圈不允许凹凸不平、划伤、压痕等缺陷
+     Opno=XH_A01 QCItem=CP-21107-000272-XH_A01-11: 无破损、松动
+     Opno=XH_B01 QCItem=CP-21107-000272-XH_B01-1: 摆放方式: 弹簧散放，不得超过三层
+     Opno=XH_B01 QCItem=CP-21107-000272-XH_B01-3: 3535分钟
+     Opno=XH_B01 QCItem=CP-21107-000272-XH_B01-6: （Φ32.7）
+     Opno=XH_B03 QCItem=CP-21107-000272-XH_B03-2: 300°±30°
+     Opno=XH_B05 QCItem=CP-21107-000272-XH_B05-1: 两端头无尖角、飞边、毛刺残留，不得擦伤临圈
+     Opno=XH_B05 QCItem=CP-21107-000272-XH_B05-3: 金刚砂轮头
+     Opno=XH_B05 QCItem=CP-21107-000272-XH_B05-4: 不得有崩边、裂纹、掉砂、变形等缺陷
+     Opno=XH_B07 QCItem=CP-21107-000272-XH_B07-3: 25～30
+     Opno=XH_B07 QCItem=CP-21107-000272-XH_B07-4: 25
+25 分钟
+     Opno=XH_B08 QCItem=CP-21107-000272-XH_B08-3: 25～30
+     Opno=XH_B08 QCItem=CP-21107-000272-XH_B08-4: 10
+10 分钟
+     Opno=XH_B02 QCItem=CP-21107-000272-XH_B02-1: 摆放方式: 弹簧散放，不得超过三层
+     Opno=XH_B02 QCItem=CP-21107-000272-XH_B02-3: 1010分钟
+     Opno=XH_B19 QCItem=CP-21107-000272-XH_B19-2: 弹簧端圈无明显压痕、无变形
+     Opno=XH_B19 QCItem=CP-21107-000272-XH_B19-4: 1次
+     Opno=XH_B27 QCItem=CP-21107-000272-XH_B27-2: 端头间隙间不得存在丸粒
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-3: 8% (500 , 8% 460 40)
+8%（500容量，8%即加水460溶剂40）
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-6: 65℃～70℃
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-8: 5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-9: 15 ;
+每生产15天需清洗滤网；
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-10: 30 ;
+每生产30天需更换滤芯；
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-11: 30
+每生产30天需清槽换液
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-12: 6% (500 , 6% 470 30)
+6%（500容量，6%即加水470溶剂30）
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-15: 65℃～70℃
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-17: 5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-18: 15 ;
+每生产15天需清洗滤网；
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-19: 30 ;
+每生产30天需更换滤芯；
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-20: 30
+每生产30天需清槽换液
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-21: 5% (500 , 5% 475 25)
+5%（500容量，5%即加水475溶剂25）
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-24: 65℃～70℃
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-25: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-26: 15 ;
+每生产15天需清洗滤网；
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-27: 30 ;
+每生产30天需更换滤芯；
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-28: 30
+每生产30天需清槽换液
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-29: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-31: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-32: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-33: 15
+每生产15天需清洗滤网
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-34: 30
+每生产30天需更换滤芯
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-35: 90
+每生产90天需更换防锈油
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-36: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-37: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-38: 20
+20秒
+     Opno=XH_C05 QCItem=CP-21107-000272-XH_C05-39: 表面不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷，表面干燥
+     Opno=XH_Q4 QCItem=CP-21107-000272-XH_Q4-2: 右旋
+     Opno=XH_Q4 QCItem=CP-21107-000272-XH_Q4-4: 7.15
+     Opno=XH_Q4 QCItem=CP-21107-000272-XH_Q4-8: （Φ32.7）参考
+     Opno=XH_Q4 QCItem=CP-21107-000272-XH_Q4-10: 300°± 30°
+     Opno=XH_Q4 QCItem=CP-21107-000272-XH_Q4-20: 表面为喷丸处理，不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷，表面干燥无油污
+     Opno=XH_C19 QCItem=CP-21107-000272-XH_C19-1: 只/箱
+     Opno=XH_C19 QCItem=CP-21107-000272-XH_C19-2: 箱两侧贴合格证
+     Opno=XH_C19 QCItem=CP-21107-000272-XH_C19-3: #字打包
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-2: 右旋
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-4: 7.15
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-8: （Φ32.7）参考
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-10: 300°± 30°
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-20: 表面为喷丸处理，不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷，表面干燥无油污
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-21: 450 0.22. , 0.25
+弹簧允许颗粒物450 最大面积0.22，对较小颗粒的数量没有限制，只要不超过重量限制0
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-22: 弹簧在压力管从套环接触延伸弹簧的位置到±38.5最大行程之间以1m/s速度做100万次以正弦方式疲劳试验后自由高度损失不
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-23: a.试验行程：0-70%弹簧行程，加载次数：25万次；b.试验行程：0-90%弹簧行程，加载次数：2万次；c.试验行程：
+     Opno=XH_Q5 QCItem=CP-21107-000272-XH_Q5-24: 弹簧以0-3*压并力大小，以2HZ做2000次循环试验，弹簧自由高度损失不大于5%，刚度损失不大于5%，弹簧无破损及异常
+
+============================================================

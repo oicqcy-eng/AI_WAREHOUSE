@@ -1,0 +1,122 @@
+=============================================================
+  控制计划导入分析报告
+=============================================================
+  料号:       21107-000142
+  品名:       Part name零件名称：Rebound spring回弹弹簧
+  CP编号:     CP-004970003053-001
+  版本:       /
+  总特性数:   99
+  生成时间:   2026-09-04 23:51:43
+=============================================================
+
+  [分布] 品管项目类型:
+     计量: 40 项
+     计数: 59 项
+
+  [作业站类型] Opno 分布:
+     IQC: 7 项
+     PQC: 92 项
+
+  [工序] 工序分布 (13 道工序):
+      IQC  Incoming Inspection 来料检验             4 个特性
+      IQC  Process self verification 过程自验       3 个特性
+      PQC  coil 卷簧                              5 个特性
+      PQC  stress relief annealing 去应力退火        4 个特性
+      PQC  grind ends 端面磨削                      6 个特性
+      PQC  Internal chamfer 内倒角                 4 个特性
+      PQC  Shot peening 0.6 喷丸0.6               4 个特性
+      PQC  stereotype 定型                        3 个特性
+      PQC  compressing 强压缩                      4 个特性
+      PQC  demagnetization 退磁                   2 个特性
+      PQC  Ultrasonic cleaning 超声波清洗            37 个特性
+      PQC  Finished Product Inspection 成品检验     20 个特性
+      PQC  Package 包装                           3 个特性
+
+  [警告] 未解析规格（已视为计数，请确认）:
+     Opno=IQC QCItem=CP-21107-000142-IQC-1-2: 55淬
+     Opno=IQC QCItem=CP-21107-000142-IQC-4: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=IQC QCItem=CP-21107-000142-IQC-2-2: 55淬
+     Opno=IQC QCItem=CP-21107-000142-IQC-2-3: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=XH_A01 QCItem=CP-21107-000142-XH_A01-1: 右旋
+     Opno=XH_A01 QCItem=CP-21107-000142-XH_A01-6: 簧圈不允许凹凸不平、划伤、压痕等缺陷
+     Opno=XH_B01 QCItem=CP-21107-000142-XH_B01-1: 摆放方式: 弹簧散放，不得超过三层
+     Opno=XH_B01 QCItem=CP-21107-000142-XH_B01-3: 3535分钟
+     Opno=XH_B03 QCItem=CP-21107-000142-XH_B03-2: 270°[+ 60°，0]
+     Opno=XH_B05 QCItem=CP-21107-000142-XH_B05-2: 两端头无尖角、飞边、毛刺残留，不得擦伤临圈
+     Opno=XH_B05 QCItem=CP-21107-000142-XH_B05-3: 金刚砂轮头
+     Opno=XH_B05 QCItem=CP-21107-000142-XH_B05-4: 不得有崩边、裂纹、掉砂、变形等缺陷
+     Opno=XH_B07 QCItem=CP-21107-000142-XH_B07-3: 25～30
+     Opno=XH_B02 QCItem=CP-21107-000142-XH_B02-1: 摆放方式: 弹簧散放，不得超过三层
+     Opno=XH_B02 QCItem=CP-21107-000142-XH_B02-3: 1010分钟
+     Opno=XH_B19 QCItem=CP-21107-000142-XH_B19-2: 弹簧端圈无明显压痕、弹簧无变形
+     Opno=XH_B19 QCItem=CP-21107-000142-XH_B19-4: 1次
+     Opno=XH_B27 QCItem=CP-21107-000142-XH_B27-2: 端头间隙间不得存在丸粒
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-3: 8% (500 , 8% 460 40)
+8%（500容量，8%即加水460溶剂40）
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-6: 65℃～70℃
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-8: 5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-9: 15 ;
+每生产15天需清洗滤网；
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-10: 30 ;
+每生产30天需更换滤芯；
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-11: 30
+每生产30天需清槽换液
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-12: 6% (500 , 6% 470 30)
+6%（500容量，6%即加水470溶剂30）
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-15: 65℃～70℃
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-17: 5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-18: 15 ;
+每生产15天需清洗滤网；
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-19: 30 ;
+每生产30天需更换滤芯；
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-20: 30
+每生产30天需清槽换液
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-21: 5% (500 , 5% 475 25)
+5%（500容量，5%即加水475溶剂25）
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-24: 65℃～70℃
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-25: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-26: 15 ;
+每生产15天需清洗滤网；
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-27: 30 ;
+每生产30天需更换滤芯；
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-28: 30
+每生产30天需清槽换液
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-29: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-31: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-32: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-33: 15
+每生产15天需清洗滤网
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-34: 30
+每生产30天需更换滤芯
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-35: 90
+每生产90天需更换防锈油
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-36: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-37: 5
+5分钟
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-38: 20
+20秒
+     Opno=XH_C05 QCItem=CP-21107-000142-XH_C05-39: 表面不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷，表面干燥
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-2: 右旋
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-3: 13.75[+0.2,0]
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-4: 10.55
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-11: 270°[+ 60°,0]
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-15: 1.5 (1596) , , 1
+将弹簧1.5（1596）压三次后，测量其前后高度差，最大为1
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-16: 最小疲劳寿命要求完成ab步骤，cd步骤记录实际数据，弹簧无破损及异常变形且高度永久变形小于2mm
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-17: 70% (745) 250000 , 1.6,
+将弹簧压至70%（745）循环25万次，频率最小1.6，弹簧无破损及异常
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-18: - , 70
+将弹簧装好塑料底座用拉拔试验机测试最小拉脱底座的力＞70
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-19: 1000, , 3
+零件允许最大颗粒物小于1000，对较小颗粒的数量没有限制，不超过重量限制3
+     Opno=XH_Q4 QCItem=CP-21107-000142-XH_Q4-20: 表面不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷，表面干燥
+     Opno=XH_C19 QCItem=CP-21107-000142-XH_C19-1: 只/箱
+     Opno=XH_C19 QCItem=CP-21107-000142-XH_C19-2: 箱两侧贴合格证
+     Opno=XH_C19 QCItem=CP-21107-000142-XH_C19-3: #字打包
+
+============================================================
