@@ -93,6 +93,8 @@
 | 场景 | 操作 |
 |------|------|
 | **打开录入页**（日常直接录入） | **双击 `start-worklog.bat`** → 浏览器自动打开 → 下拉选择/填写 → 保存 |
+| 查字段契约 | `node agent/mes-report-agent/tools/worklog-append.js schema`（字段全集/必填/默认/结果类型词表） |
+| 找关联任务 | `node agent/mes-report-agent/tools/worklog-append.js search-task '<关键词>'`（未闭环优先，返回 `_id` 供关联） |
 | 追加日志 | `node agent/mes-report-agent/tools/worklog-append.js log '<json>'` |
 | 追加任务 | `node agent/mes-report-agent/tools/worklog-append.js task '<json>'` |
 | 提取区间数据（周报/月报素材） | `node agent/mes-report-agent/tools/export-range.js <起> <止>` |
@@ -101,6 +103,7 @@
 | **导出 Excel**（发人/存档） | `node agent/mes-report-agent/tools/export-excel.js log\|task\|all [--project=X] [--month=YYYY-MM] [--out=路径]` |
 
 **追加时的纪律**：
+- **先 `schema` 看字段契约 → 写日志前用 `search-task '<关键词>'` 找应关联的任务 `_id`**（免去手工翻 task-pool.json 探测字段/任务）
 - 日志按 `记录日期` 的月份自动写入对应 `logs/YYYY-MM.json`；任务追加到 `task-pool.json`
 - 追加前**先读对应文件**确认不重复（同一件事不重复入库）
 - 修改记录：录入页【编辑】或 CLI `update-log/update-task`（按 `_id` 定位）；**部分字段更新即可，未传字段保留原值**（实现为原记录+patch 合并，见 §10 坑1）

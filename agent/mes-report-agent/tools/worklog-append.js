@@ -58,8 +58,8 @@ function saveJson(file, data) {
 }
 
 function appendLog(rec) {
-  // 必填校验
-  for (const k of ['记录日期', '所属项目', '工作内容', '结果类型', '是否形成任务']) {
+  // 必填校验（契约与 schema 共用 LOG_REQUIRED，防漂移）
+  for (const k of LOG_REQUIRED) {
     if (!rec[k]) throw new Error('日志缺少必填字段: ' + k);
   }
   // 日期格式校验
@@ -79,8 +79,8 @@ function appendLog(rec) {
 }
 
 function appendTask(rec) {
-  // 必填校验
-  for (const k of ['归集标题', '对应项目', '问题来源', '优先级']) {
+  // 必填校验（契约与 schema 共用 TASK_REQUIRED，防漂移）
+  for (const k of TASK_REQUIRED) {
     if (!rec[k]) throw new Error('任务缺少必填字段: ' + k);
   }
   // 补缺省
@@ -204,15 +204,72 @@ function findTask(id) {
   return i === -1 ? null : { rec: arr[i], file: TASK_FILE };
 }
 
+// ---------- 只读辅助：schema 契约 / 按关键词找任务（供投喂前查字段、查关联任务用） ----------
+const LOG_FIELDS = ['记录日期', '所属项目', '工作内容', '结果类型', '是否形成任务', '业务模块', '项目阶段', '责任人', '关联任务', '协作人', '交付产出']; // 规范序（不含 _id）
+const LOG_REQUIRED = ['记录日期', '所属项目', '工作内容', '结果类型', '是否形成任务'];
+const TASK_FIELDS = ['归集标题', '对应项目', '问题来源', '优先级', '发现日期', '计划完成日期', '实际闭环日期', '任务状态', '进度百分比', '闭环判定标准', '周报归集分类', '协调资源需求', '卡点&问题描述']; // 规范序（不含 _id）
+const TASK_REQUIRED = ['归集标题', '对应项目', '问题来源', '优先级'];
+
+function printSchema() {
+  // 结果类型：spec(report-bitable-spec.md §表1) 定义 8 项；实测日志另出现 4 项扩展词
+  const RT_SPEC = ['需求确认', '方案确认', '风险暴露', '数据完成', '培训完成', '配置完成', '上线验证', '问题关闭'];
+  const RT_EXTRA = ['数据完善', '会议纪要', '数据修正', '知识沉淀'];
+  const fmt = (list, defs) => list.map(k => {
+    const tag = LOG_REQUIRED.includes(k) || TASK_REQUIRED.includes(k) ? '必填' : '选填';
+    const d = defs && (k in defs) && defs[k] !== '' ? ('  默认: ' + defs[k]) : '';
+    return '  ' + k + (tag === '必填' ? ' *必填' : '') + d;
+  }).join('\n');
+  return [
+    '=== worklog schema ===',
+    '【日志 log】追加 → logs/YYYY-MM.json',
+    fmt(LOG_FIELDS, LOG_DEFAULTS),
+    '【任务 task】追加 → task-pool.json（_id 用 update-task 关联/推进）',
+    fmt(TASK_FIELDS, TASK_DEFAULTS),
+    '【结果类型词表】spec 定义: ' + RT_SPEC.join(' / '),
+    '实测扩展(数据中已用, spec 未列): ' + RT_EXTRA.join(' / '),
+    '缺省档取最低档(详见 report-bitable-spec.md §4.4)；字段解读优先级=先解读上下文→拿不准问用户→才落缺省',
+    '_id 自动生成(哈希); update-* 为部分字段合并(传什么改什么, 其余保留); delete 按 _id 精确',
+    '=== 结束 ===',
+  ].join('\n');
+}
+
+function searchTasks(kw, opts) {
+  const arr = loadJson(TASK_FILE, []);
+  const kwL = String(kw).toLowerCase();
+  // 命中：归集标题 / 对应项目 / 卡点&问题描述 / _id
+  const hit = arr.filter(t => [t['归集标题'], t['对应项目'], t['卡点&问题描述'], t['_id']].some(v => String(v || '').toLowerCase().includes(kwL)));
+  const sortW = { '已闭环': 9, '': 3 }; // 未闭环/无状态优先，闭环沉底
+  hit.sort((a, b) => (sortW[a['任务状态']] ?? 2) - (sortW[b['任务状态']] ?? 2) || (a['发现日期'] || '').localeCompare(b['发现日期'] || ''));
+  const lines = hit.slice(0, opts && opts.limit ? opts.limit : 12).map(t => [
+    t['_id'],
+    '[' + (t['任务状态'] || '无状态') + (t['优先级'] ? ' P' + t['优先级'].replace('P', '') : '') + ']',
+    (t['对应项目'] || ''), '|', (t['归集标题'] || '').slice(0, 60),
+    t['进度百分比'] ? '(' + t['进度百分比'] + ')' : '',
+  ].join(' '));
+  return { total: hit.length, shown: lines.length, lines, query: kw };
+}
+
 // ---------- 导出（供 worklog-server.js / Claude 工具复用） ----------
-module.exports = { appendLog, appendTask, updateLog, updateTask, deleteLog, deleteTask, findLog, findTask, loadJson, saveJson, makeId, LOG_DEFAULTS, TASK_DEFAULTS, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY };
+module.exports = { appendLog, appendTask, updateLog, updateTask, deleteLog, deleteTask, findLog, findTask, searchTasks, printSchema, loadJson, saveJson, makeId, LOG_DEFAULTS, TASK_DEFAULTS, LOG_FIELDS, LOG_REQUIRED, TASK_FIELDS, TASK_REQUIRED, LOGS_DIR, TASK_FILE, WORKLOG_DIR, TODAY };
 
 // ---------- CLI 入口 ----------
 if (require.main === module) {
   const mode = process.argv[2];
   const jsonArg = process.argv[3];
+
+  // 只读辅助：schema（打印字段契约）/ search-task（按关键词找关联任务）
+  if (mode === 'schema') { console.log(printSchema()); process.exit(0); }
+  if (mode === 'search-task') {
+    if (!jsonArg) { console.error('用法: node worklog-append.js search-task \'<关键词>\''); process.exit(1); }
+    const r = searchTasks(jsonArg);
+    console.log('命中 ' + r.total + ' 条任务' + (r.total > r.shown ? '（仅显示前 ' + r.shown + '）' : '') + "，关键词: '" + r.query + "'");
+    r.lines.forEach(l => console.log('  ' + l));
+    process.exit(0);
+  }
+
   if (!mode || !jsonArg) {
-    console.error('用法: node worklog-append.js log|task \'<json>\'  或  node worklog-append.js update-log|update-task \'<{_id,...}>\'');
+    console.error('用法: node worklog-append.js log|task|update-log|update-task|delete-log|delete-task \'<json>\'');
+    console.error('  或: node worklog-append.js schema | search-task \'<关键词>\'');
     process.exit(1);
   }
   let rec;
