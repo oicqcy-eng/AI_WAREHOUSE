@@ -16,6 +16,8 @@ worklog/
 
 **附件**：日志/任务可带可选 `附件` 字段（文件名），文件放 `attachments/` 下。录入页填文件名→最近记录显示 📎 可点击打开；Excel 导出带附件列。
 
+**字段完整契约 → [SCHEMA.md](SCHEMA.md)**（字段全集/词表/日期格式/卡点更新纪律；报告脚本与读数以此为准，改字段先改它）。
+
 ## 操作方式
 
 | 操作 | 命令 |
@@ -25,7 +27,7 @@ worklog/
 | 追加任务 | `node agent/mes-report-agent/tools/worklog-append.js task '<json>'` |
 | 更新日志 | `node agent/mes-report-agent/tools/worklog-append.js update-log '{"_id":"L-xxx",...要改的字段}'` |
 | 更新任务 | `node agent/mes-report-agent/tools/worklog-append.js update-task '{"_id":"T-xxx",...要改的字段}'` |
-| 提取区间数据 | `node agent/mes-report-agent/tools/export-range.js <起> <止>`（如 `2026-08-03 2026-08-09`）|
+| **周报/月报数据包** | `node agent/mes-report-agent/tools/export-range.js <起> <止>`（蒸馏包：区间日志+窗口任务变化+项目快照+P1/P2风险；`--todos` 追加未闭环清单、`--all` 全量）|
 | 生成仪表盘 | `node agent/mes-report-agent/tools/generate-dashboard.js` → 浏览器打开 `delivery/projects/hw-spring-mes/output/dashboard.html` |
 | 导出 Excel | `node agent/mes-report-agent/tools/export-excel.js log\|task\|all [--project=X] [--month=YYYY-MM]` |
 

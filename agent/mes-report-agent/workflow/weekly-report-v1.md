@@ -35,9 +35,11 @@ prompt/weekly-report-v1.md
 | 任务池（主数据源） | `data/worklog/task-pool.json` | `export-range.js` 直接读 |
 | 原始工作日志（过程佐证） | `data/worklog/logs/YYYY-MM.json` | `export-range.js` 直接读 |
 
-> **默认方式**：`export-range.js <周起> <周止>` 输出日志+任务池+P1/P2 风险，Claude 按四模块组织成稿（见 §2）。
+> **默认方式（唯一推荐）**：`export-range.js <周起> <周止>` 一次输出周报蒸馏数据包（①区间日志→完成事项/叙述佐证；②窗口任务变化＝新发现/闭环/卡点更新含尾注→本周动态；③项目状态快照→待办计数；④P1/P2 未闭环风险含原因），Claude 按四模块组织成稿（见 §2）。
 >
-> **若要用 weekly-extract.js 的四模块预分组**：需先 `export-excel.js task --out=tmp/tasks.csv` / `log --out=tmp/logs.csv` 转 CSV，再跑 `weekly-extract.js --year --week --tasks tmp/tasks.csv --logs tmp/logs.csv`（列名须匹配脚本约定）。此路径为兼容保留，新流程推荐 export-range.js。
+> `--todos` 追加未闭环任务清单（P3/P4/待启动/暂缓，写全项目"待办事项"时用）；`--all` 回显含已闭环的任务池全量。字段契约与卡点更新纪律见 `data/worklog/SCHEMA.md`。
+>
+> **weekly-extract.js 为兼容保留**（CSV 四模块预分组旧径，需先 export-excel 转 CSV），新流程不用它。
 
 ### 2. 生成数据素材（一条命令）
 
