@@ -13,7 +13,12 @@
 | 客户交付执行层 | delivery/ | inbox, projects/<客户项目> |
 | 共享基础设施 | shared/ | database, gateway, monitoring, security, automation |
 
-辅助区：`skills/`（可复用 Claude Skills）、`docs/`（规范与行业知识）、`memory/`（项目设计记忆）、`cicd/` `environments/` `scripts/`。
+辅助区：`.claude/skills/`（可复用 Claude Skills）、`docs/`（规范与行业知识）、`memory/`（项目设计记忆）、`cicd/` `environments/` `scripts/`。
+
+- `.claude/settings.local.json`：本地配置（gitignore），不得提交
+- `tmp/`：会话临时中转区，执行**写入时分类**（禁止遗留）——①被引用的脚本→对应 Skill 的 scripts/；②分析产出→output/reports/；③Runtime Deps（node_modules/）锁定版本不可删；④真正的中间产物（仅本轮计算需要）本轮结束即删除。判断不清的在同目录创建 `<文件名>.tmpmeta` 记录待确认，最长滞留 14 天
+- 审计/反思产物归档到 `delivery/projects/hw-spring-mes/output/reports/`
+- `file_index`：各项目/系统独立维护；项目级用 `F-0xx`，资产库级加前缀（`SQL-0xx`/`U9-0xx`/`LIMS-0xx`）；`作业流程字典.md` 中 `XH_Axx→F-xxx` 为列映射引用，非 file_index 编号
 
 依赖方向：`shared → base → manufacturing → operations`；`ai/` 横切；`agent/` 使用 ai/ 的推理与向量库及业务层数据；`delivery/` 客户端项目，交付后回哺 knowledge/skills。
 
@@ -40,3 +45,18 @@
 
 ## 命名规范
 - 目录: kebab-case（厂区子目录特例用全小写下划线，见交付项目组织规则）; 脚本: 动词开头; 不存放真实密钥
+
+## Worklog 契约速查（worklog-schema.js 真源）
+
+**必填集**（硬校验，缺了直接抛错）：
+- 日志 5 项：`记录日期` / `所属项目` / `工作内容` / `结果类型` / `是否形成任务`
+- 任务 4 项：`归集标题` / `对应项目` / `问题来源` / `优先级`
+
+**枚举真源**：`tools/worklog-schema.js` 的 `OPTIONS`。文档只记计数，不复制取值。
+扩展枚举流程：改 `OPTIONS` → 跑 `validate` → 同步各文档「N 项」计数。
+
+**缺省值策略**：兜底合法当且仅当它是下游排序/分组/状态机的单位元；是「事实断言」则禁止兜底。
+现存有效兜底（仅非必填字段）：日志 `责任人='陈宇'`；任务 `任务状态='待启动'`、`周报归集分类='长期跟踪'`、`发现日期=当天`。
+`结果类型` / `业务模块` / `项目阶段` / `问题来源` 无兜底，判不了就问用户。
+
+**写入校验三类并查**：①枚举成员性 ②`_id` 规范性 ③`关联任务` 引用存在性。默认 `warn`（告警仍写入），`strict` 只拦 error 级（新引入的未知枚举值 / `_id` 格式不符）。

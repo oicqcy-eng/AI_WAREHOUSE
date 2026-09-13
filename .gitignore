@@ -41,7 +41,7 @@ Thumbs.db
 tmp/
 temp/
 *.bak
-*.old
+# 覆盖 worklog/logs/ 的例外：排除备份文件*.old
 
 # ── 大文件 / 模型权重 ──
 *.iso
@@ -95,3 +95,19 @@ delivery/inbox/日常运维报错截图/*
 !agent/mes-report-agent/data/worklog/logs/*
 !agent/mes-report-agent/data/worklog/attachments/
 !agent/mes-report-agent/data/worklog/attachments/*
+
+# ── 显式阻断（防止例外规则被覆盖）──
+# 全量训练截图（flows-all/）永久排除，只保留 flows/ 精选图
+!agent/mes-implement-expert/data/smes-v61-training/raw/flows-all/
+agent/mes-implement-expert/data/smes-v61-training/raw/flows-all/**
+# 交付产物（output/）永久排除：docx/xlsx/pptx/pdf/png
+delivery/projects/hw-spring-mes/output/**/*.docx
+delivery/projects/hw-spring-mes/output/**/*.xlsx
+delivery/projects/hw-spring-mes/output/**/*.pptx
+delivery/projects/hw-spring-mes/output/**/*.pdf
+delivery/projects/hw-spring-mes/output/**/*.png
+delivery/projects/hw-spring-mes/output/**/*.xls
+delivery/projects/hw-spring-mes/output/**/*.ppt
+
+# 覆盖 worklog/logs/ 例外：备份文件仍排除
+agent/mes-report-agent/data/worklog/logs/*.bak

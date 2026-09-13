@@ -1,0 +1,78 @@
+=============================================================
+  控制计划导入分析报告
+=============================================================
+  料号:       M0991E116
+  品名:       Part name零件名称：
+复原弹簧Recovery spring
+  CP编号:     CP-M0991E116-001
+  版本:       Supplier approval供应商批准/Date日期：
+彭理想 2026.7.21
+  总特性数:   39
+  生成时间:   2026-09-08 23:32:59
+=============================================================
+
+  [分布] 品管项目类型:
+     计量: 11 项
+     计数: 28 项
+
+  [作业站类型] Opno 分布:
+     IQC: 0 项
+     PQC: 39 项
+
+  [工序] 工序分布 (4 道工序):
+      PQC  Incoming Inspection 来料检验             6 个特性
+      PQC  Process self inspection 过程自检         1 个特性
+      PQC  coil 卷簧                              1 个特性
+      PQC  Ultrasonic cleaning 超声波清洗            31 个特性
+
+  [警告] 未解析规格（已视为计数，请确认）:
+     Opno=PQC QCItem=CP-M0991E116-PQC-2: 70
+     Opno=PQC QCItem=CP-M0991E116-PQC-7: 表面无锈迹、拉丝、麻点等缺陷
+     Opno=PQC QCItem=CP-M0991E116-PQC-10: 无破损、松动
+     Opno=PQC QCItem=CP-M0991E116-PQC-8: 5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-9: 15 ;
+每生产15天需清洗滤网；
+     Opno=PQC QCItem=CP-M0991E116-PQC-11: 30
+每生产30天需清槽换液
+     Opno=PQC QCItem=CP-M0991E116-PQC-12: 6% (500 , 6% 470 30)
+6%（500容量，6%即加水470溶剂30）
+     Opno=PQC QCItem=CP-M0991E116-PQC-15: 65℃～70℃
+     Opno=PQC QCItem=CP-M0991E116-PQC-17: 5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-18: 15 ;
+每生产15天需清洗滤网；
+     Opno=PQC QCItem=CP-M0991E116-PQC-19: 30 ;
+每生产30天需更换滤芯；
+     Opno=PQC QCItem=CP-M0991E116-PQC-20: 30
+每生产30天需清槽换液
+     Opno=PQC QCItem=CP-M0991E116-PQC-21: 5% (500 , 5% 475 25)
+5%（500容量，5%即加水475溶剂25）
+     Opno=PQC QCItem=CP-M0991E116-PQC-24: 65℃～70℃
+     Opno=PQC QCItem=CP-M0991E116-PQC-25: 5
+5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-26: 15 ;
+每生产15天需清洗滤网；
+     Opno=PQC QCItem=CP-M0991E116-PQC-27: 30 ;
+每生产30天需更换滤芯；
+     Opno=PQC QCItem=CP-M0991E116-PQC-28: 30
+每生产30天需清槽换液
+     Opno=PQC QCItem=CP-M0991E116-PQC-29: 5
+5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-31: 5
+5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-32: 5
+5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-33: 15
+每生产15天需清洗滤网
+     Opno=PQC QCItem=CP-M0991E116-PQC-34: 30
+每生产30天需更换滤芯
+     Opno=PQC QCItem=CP-M0991E116-PQC-35: 90
+每生产90天需更换防锈油
+     Opno=PQC QCItem=CP-M0991E116-PQC-36: 5
+5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-37: 5
+5分钟
+     Opno=PQC QCItem=CP-M0991E116-PQC-38: 20
+20秒
+     Opno=PQC QCItem=CP-M0991E116-PQC-39: 表面不允许有划伤,锈蚀,不允许有肉眼可见的有害缺陷，表面干燥
+
+============================================================

@@ -1,0 +1,169 @@
+{
+  "defaults": {
+    "qcobjecttype": 3,
+    "qcitemno_prefix": "CP",
+    "unit": "",
+    "default_rule_no": "",
+    "inspection_flags": {
+      "pqc": 0,
+      "firstinsp": 0,
+      "inspect": 1,
+      "selfinsp": 0,
+      "lastinsp": 0
+    },
+    "employee_map": {
+      "操作工": "",
+      "检验员": "",
+      "inspector": "",
+      "operator": ""
+    },
+    "plan_no_map": {},
+    "default_sampling_plan": {
+      "desc": "未识别频次按每批并结合容量生成",
+      "planno": "每批抽1件"
+    },
+    "sampling_plan_map": [
+      {"sample_size": "1", "frequency": "each batch", "desc": "来料抽检-每批1件", "planno": "每批抽1件"},
+      {"sample_size": "3", "frequency": "each batch", "desc": "来料抽检-每批3件", "planno": "每批抽3件"},
+      {"sample_size": "1", "frequency": "quarterly", "desc": "来料季度抽检", "planno": "每季度抽1件"},
+      {"sample_size": "1", "frequency": "per piece", "desc": "逐件确认", "planno": "逐件确认"},
+      {"sample_size": "5", "frequency": "initial workpiece", "desc": "首件检验-5件", "planno": "首件抽5件"},
+      {"sample_size": "1", "frequency": "initial workpiece", "desc": "首件检验-1件", "planno": "首件抽1件"},
+      {"sample_size": "1", "frequency": "hour", "desc": "自检定时抽检-1件", "planno": "定时抽1件"},
+      {"sample_size": "3", "frequency": "hour", "desc": "自检定时抽检-3件", "planno": "定时抽3件"},
+      {"sample_size": "1", "frequency": "首中末", "desc": "巡检首中末", "planno": "首中末巡检"},
+      {"sample_size": "1", "frequency": "beginning", "desc": "巡检首中末", "planno": "首中末巡检"},
+      {"sample_size": "Continuous", "frequency": "100%", "desc": "全检-连续", "planno": "100%全检"},
+      {"sample_size": "10", "frequency": "each batch", "desc": "出厂抽检-每批10件", "planno": "每批抽10件"},
+      {"sample_size": "4", "frequency": "every year", "desc": "年度型式试验", "planno": "年度抽4件"},
+      {"sample_size": "4", "frequency": "each batch", "desc": "出厂抽检-每批4件", "planno": "每批抽4件"},
+      {"sample_size": "100%", "frequency": "hour", "desc": "连续监控每小时记录", "planno": "每小时抽检"},
+      {"sample_size": "", "frequency": "100%", "desc": "包装全检确认", "planno": "包装全检"},
+      {"sample_size": "1", "frequency": "次/周", "desc": "每周抽检1件", "planno": "每周抽1件"},
+      {"sample_size": "1", "frequency": "次/月", "desc": "每月抽检1件", "planno": "每月抽1件"},
+      {"sample_size": "1", "frequency": "每月", "desc": "每月抽检1件", "planno": "每月抽1件"}
+    ],
+    "reason_map": {},
+    "reason_keyword_map": {
+      "外观": "BF01"
+    },
+    "process_type_map": {
+      "1": "IQC",
+      "2": "IQC"
+    },
+    "spec_truncation": {
+      "max_length": 120,
+      "patterns": [
+        {
+          "keyword": "疲劳",
+          "replacement": "最小疲劳寿命要求完成步骤,步骤记录实际数据,弹簧无破损及异常变形且高度永久变形小于2"
+        }
+      ]
+    },
+    "process_flow": {
+      "enabled": true,
+      "product_version": "1",
+      "flow_type": "小簧流程",
+      "section_no": "QD-04",
+      "skip_iqc": true,
+      "time_defaults": {
+        "fixed_machine_time": 0,
+        "variable_machine_time": 0,
+        "machine_unit_batch": 1,
+        "fixed_labor_time": 0,
+        "variable_labor_time": 0,
+        "labor_unit_batch": 1
+      },
+      "process_merge": {
+        "2": {"force_firstinsp": true}
+      },
+      "opno_map": {
+        "成型1": "XH_A02",
+        "成型2": "XH_A03",
+        "成型3": "XH_A04",
+        "成型4": "XH_A05",
+        "成型5": "XH_A06",
+        "成型6": "XH_A07",
+        "卷簧放钢丝": "XH_A08",
+        "卷簧": "XH_A01",
+        "领料": "XH_A01",
+        "来料检查": "XH_Q1",
+        "回火": "XH_B01",
+        "去应力退火": "XH_B01",
+        "端面磨削": "XH_B03",
+        "精磨": "XH_B04",
+        "内倒角": "XH_B05",
+        "外倒角": "XH_B06",
+        "去毛刺": "XH_B21",
+        "喷丸": "XH_B07",
+        "喷丸0.6": "XH_B07",
+        "喷丸0.4": "XH_B08",
+        "抛丸": "XH_B07",
+        "中段上防锈油": "XH_B09",
+        "包塑": "XH_B10",
+        "注塑": "XH_B11",
+        "圈弹簧": "XH_B12",
+        "拆弹簧": "XH_B13",
+        "负荷分选": "XH_B14",
+        "长度分选": "XH_B15",
+        "光电分选": "XH_B16",
+        "内外径分选": "XH_B17",
+        "同心度分选": "XH_B18",
+        "定型": "XH_B02",
+        "强压缩": "XH_B19",
+        "热压缩": "XH_B20",
+        "焊接": "XH_B22",
+        "去焊渣": "XH_B23",
+        "抛光": "XH_B24",
+        "挑选": "XH_B25",
+        "修正": "XH_B26",
+        "退磁": "XH_B27",
+        "打字": "XH_B28",
+        "套海棉管": "XH_B29",
+        "安装注塑件": "XH_B30",
+        "簧体印漆": "XH_B31",
+        "端面印漆": "XH_B32",
+        "特氟龙": "XH_B33",
+        "达克罗": "XH_B34",
+        "电镀": "XH_B35",
+        "转运": "XH_B36",
+        "超声波清洗": "XH_C05",
+        "压装": "XH_C16",
+        "压装端盖": "XH_C16",
+        "检验": "XH_C17",
+        "GP12全检": "XH_C17",
+        "包装": "XH_C19",
+        "发黑": "XH_C03",
+        "电泳": "XH_C04",
+        "磷化": "XH_C02",
+        "喷塑": "XH_C01",
+        "清洗（不锈钢产品）": "XH_C06",
+        "表面喷字/码": "XH_C07",
+        "表面画色标": "XH_C08",
+        "补漆": "XH_C09",
+        "端面刷漆": "XH_C10",
+        "上速干油": "XH_C11",
+        "上脱水性防锈油": "XH_C12",
+        "上SM-2B防锈油": "XH_C13",
+        "贴消音布": "XH_C14",
+        "装消音棉": "XH_C15",
+        "称重": "XH_C18",
+        "来料检验": "XH_Q1",
+        "过程自验": "XH_Q2",
+        "过程巡验": "XH_Q3",
+        "成品检验": "XH_Q4",
+        "周期性检验": "XH_Q5"
+      }
+    }
+  },
+  "products": {
+    "004970003302": {
+      "part_name": "Rebound spring回弹弹簧",
+      "notes": "三厂小簧-回弹弹簧控制计划"
+    },
+    "004970003295": {
+      "part_name": "Rebound spring回弹弹簧",
+      "notes": "三厂小簧-回弹弹簧控制计划"
+    }
+  }
+}
