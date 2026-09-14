@@ -1,0 +1,26 @@
+{
+  "_comment": "换机配置模板 — 部署目标 C:\\Users\\<用户>\\.claude\\settings.json",
+  "_howto": "复制本文件为 settings.user.local.json，填入真实 AUTH_TOKEN，然后跑 bootstrap\\deploy.ps1",
+  "_note": "settings.user.local.json 已被 .gitignore 排除，绝不入库；含 key 的文件只通过便携备份 zip 传递",
+
+  "effortLevel": "high",
+  "includeCoAuthoredBy": false,
+
+  "env": {
+    "_comment_base": "── 接入端点（三选一，对应不同 provider）──",
+    "ANTHROPIC_BASE_URL": "https://api.deepseek.com",
+    "ANTHROPIC_AUTH_TOKEN": "<在此填入 API key>",
+
+    "_comment_model": "── 模型名（须与 provider 端真实 id 完全一致，大小写敏感）──",
+    "ANTHROPIC_MODEL": "deepseek-flash",
+    "ANTHROPIC_REASONING_MODEL": "DeepSeek-V4-Flash-0731",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL_NAME": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL_NAME": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL_NAME": "deepseek-v4-pro",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "deepseek-flash"
+  }
+}

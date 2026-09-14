@@ -50,3 +50,17 @@ node agent/mes-implement-expert/tools/query-mes.js -q "SELECT 1" --profile home
 ### 详细操作教程（保存起来，换电脑照着做）
 
 **《[换机迁移操作教程.md](换机迁移操作教程.md)》** 已沉淀在 scripts/ 下，包含：旧电脑准备 → 新电脑装环境 → 还原 → 判断还原成功（**不靠连库**）→ 换成新公司/新项目数据库怎么改（`db.local.json` profiles）→ 常见问题。换机前把这份教程 + zip 一起拷走即可。
+
+### ⚠️ 模型接入层（换机启动不了的头号原因）
+
+上面两个脚本**不覆盖模型接入配置**——它由 cc-switch 写入用户级 `~/.claude/settings.json`，既不在 git、也不在 zip 里，换机必丢 → Claude Code 回落官方 API、无有效 key → **启动失败**。
+
+这一层由仓库 **`bootstrap/`** 补齐：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify   # 还原后自检四项
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1           # 部署配置
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture  # cc-switch 切换后存回仓库
+```
+
+详见 [bootstrap/README.md](../bootstrap/README.md)。**换机完整顺序：clone → restore-new-pc.ps1 → bootstrap\deploy.ps1 -Verify → 重开 Claude Code 窗口。**

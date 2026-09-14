@@ -5,6 +5,12 @@
 # MES 只读库连接凭据 + 本地 agent 覆盖配置（真实值不入库；模板 db.local.example.json 入库）
 agent/mes-implement-expert/config/db.local.json
 agent/mes-implement-expert/config/agent.local.yaml
+# 换机配置真值（含明文 API key；由 bootstrap/deploy.ps1 部署到 ~/.claude/settings.json）
+# 只通过便携备份 zip 传递，绝不入库。模板 settings.user.example.json 入库。
+bootstrap/settings.user.local.json
+bootstrap/*.local.md
+# 项目级本地配置——不依赖用户级全局 gitignore（换机后全局 ignore 不在，靠这条兜底）
+.claude/settings.local.json
 *.pem
 *.p12
 *.pfx
