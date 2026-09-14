@@ -146,9 +146,23 @@ FreeLLMAPI (localhost:3001)
    PORT=3001
    ```
 3. **启动**：`npm run dev`（同时启动 server:3001 + dashboard:5173）
-4. **统一 key**：服务启动时自动生成，格式 `freellmapi-<hex>`，记录后写入 `~/.claude/settings.json` 的 `ANTHROPIC_AUTH_TOKEN`
+4. **统一 key**：格式 `freellmapi-<hex>`，**生成一次后持久化在 `freeapi.db` 的 settings 表**（源码 `server/src/db/index.ts` 的 `getUnifiedApiKey` / `regenerateUnifiedKey`），**重启不变**——不存在"每次启动换 key 导致配置失效"的问题。取用后写入 `~/.claude/settings.json` 的 `ANTHROPIC_AUTH_TOKEN`
 5. **添加供应商**：打开 `http://localhost:5173`，在 Keys 页添加各供应商的 API key（nvidia/智谱/DeepSeek 官方等）
 6. **验证**：`curl -H "Authorization: Bearer <统一key>" http://localhost:3001/v1/models` 应返回模型列表
+7. **换机迁移**（2026-09-14 新增）：`.env` + `server\data\freeapi.db` 由 `bootstrap\deploy.ps1 -CaptureFree` / `-DeployFree` 随便携备份走。
+   ⚠️ **`.env` 里的 `ENCRYPTION_KEY` 是解密 `freeapi.db` 全部 provider key 的唯一钥匙——只拷 db 不拷 .env = 所有 key 全废。**
+   详见 `bootstrap/README.md`。
+
+### 排障：面板打不开 ≠ 配置不生效
+
+最常见的误判。两者根因完全不同：
+
+| 症状 | 根因 | 处理 |
+|------|------|------|
+| `localhost:5173` / `:3001` 打不开 | **服务没在跑**（前台 `npm run dev`，关窗口/重启即停，**无自启动**） | `cd %USERPROFILE%\freellmapi; npm run dev` |
+| Claude Code 不走 FreeLLMAPI | `~/.claude/settings.json` 的 `ANTHROPIC_BASE_URL` **压根没指向它** | 改 BASE_URL 为 `http://localhost:3001` 并重开窗口 |
+
+先跑 `bootstrap\deploy.ps1 -Verify`，它的第 [5] 项会直接告诉你是哪一种。
 
 ### 常见误解澄清（基于 2026-09-10 千问文档修正）
 

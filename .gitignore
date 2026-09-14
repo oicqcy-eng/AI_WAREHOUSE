@@ -9,6 +9,9 @@ agent/mes-implement-expert/config/agent.local.yaml
 # 只通过便携备份 zip 传递，绝不入库。模板 settings.user.example.json 入库。
 bootstrap/settings.user.local.json
 bootstrap/*.local.md
+# FreeLLMAPI 凭据与数据库（.env 含 ENCRYPTION_KEY 主密钥；freeapi.db 存全部 provider 加密 key）
+# 同样只通过便携备份 zip 传递，绝不入库
+bootstrap/freellmapi.local/
 # 项目级本地配置——不依赖用户级全局 gitignore（换机后全局 ignore 不在，靠这条兜底）
 .claude/settings.local.json
 *.pem

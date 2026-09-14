@@ -14,8 +14,9 @@
 | ② 网络出口 | 代理软件 TUN/fake-ip | DNS 解析不到模型端点 | ⚠️ 靠人（见排障） |
 | ③ 本地凭据 | `agent/mes-implement-expert/config/db.local.json` | MES 库连不上 | 已在 `backup-portable.ps1` |
 | ④ 运行时依赖 | `tmp/node_modules`（mssql/xlsx/docx/jszip） | 工具链断裂 | `cd tmp; npm install` |
+| ⑤ FreeLLMAPI | `~\freellmapi\.env` + `server\data\freeapi.db` | **provider key 全部解不开** | ✅ `-CaptureFree` / `-DeployFree` |
 
-**2026-09-14 定版**：① 是历次"换机能启动不了"的主因——它既不在 git，也不在备份 zip 里。
+**2026-09-14 定版**：① 和 ⑤ 是历次"换机能启动不了"的主因——它们既不在 git，也不在备份 zip 里。
 
 ## 换机三步
 
@@ -28,22 +29,28 @@ powershell -ExecutionPolicy Bypass -File scripts\restore-new-pc.ps1 -ZipPath <�
 
 # 3) 部署模型配置到 Claude Code 读取位置 + 自检
 powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
+
+# 4) 若用 FreeLLMAPI：还原其凭据与数据库（须先 git clone + npm install）
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
 ```
 
 跑完 3) 后**重开 Claude Code 窗口**（env 在进程启动时读取一次，旧窗口改文件无效）。
+
+> 注意 4) 的前提：FreeLLMAPI 本机已装（`git clone` + `npm install`）。它是独立项目，不随本仓库走。
 
 ## 文件说明
 
 | 文件 | 入库 | 说明 |
 |------|:----:|------|
 | `README.md` | ✅ | 本文件 |
-| `deploy.ps1` | ✅ | 部署 / 抓取 / 自检 |
+| `deploy.ps1` | ✅ | 部署 / 抓取 / 自检（模型配置 + FreeLLMAPI 两套） |
 | `settings.user.example.json` | ✅ | 脱敏模板，结构参考，**不含真实 token** |
 | `settings.user.local.json` | ❌ gitignore | **真实配置**（含 API key），由 `deploy.ps1 -Capture` 生成 |
+| `freellmapi.local/` | ❌ gitignore | FreeLLMAPI 的 `.env` + `freeapi.db` 三件套，由 `-CaptureFree` 生成 |
 | `proxies.local.md` | ❌ gitignore | 代理/网络环境备忘（如需要） |
 
-> ⚠️ `settings.user.local.json` 含明文 API key。
-> 它**被 `.gitignore` 排除，绝不入库**，但**会被 `scripts/backup-portable.ps1` 收进便携 zip**（zip 是本地文件，不上传）。
+> ⚠️ 上述 ❌ 的文件都含明文凭据。
+> 它们**被 `.gitignore` 排除，绝不入库**，但**会被 `scripts/backup-portable.ps1` 收进便携 zip**（zip 是本地文件，不上传）。
 > 这是刻意的：**换机恢复靠 zip，不是靠 git**。
 
 ## 日常操作
@@ -73,7 +80,59 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1
 powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
 ```
 
-依次检查：模型配置三项 → 端点连通性 → DB 凭据 → Node 依赖，每项给出 ✅/❌ 与修复提示。
+依次检查五项：模型配置 → 端点连通性 → DB 凭据 → Node 依赖 → FreeLLMAPI，每项给出 ✅/❌ 与修复提示。
+
+### 抓取 / 还原 FreeLLMAPI 凭据
+
+```powershell
+# 旧机器：把 .env + freeapi.db 存回仓库（跑前先停服务，避免拷到半写状态）
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -CaptureFree
+
+# 新机器：从仓库装回 freellmapi 安装目录
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
+
+# 装在非默认位置时指定路径
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree -FreellmapiPath D:\freellmapi
+```
+
+**两个安全设计**：
+- `-CaptureFree` 检测到 node 进程在跑会**拒绝执行**（写库时复制会拿到不一致快照），确认无碍加 `-Force`
+- `-DeployFree` 发现目标 `freeapi.db` 比仓库里的**更新**会**拒绝覆盖**（防丢本机新数据），确认要覆盖加 `-Force`
+
+## FreeLLMAPI
+
+本地 LLM 聚合网关（[github](https://github.com/tashfeenahmed/freellmapi)），把多个供应商聚合成一个统一端点。**独立项目，不随本仓库走。**
+
+| 项 | 值 |
+|---|---|
+| 安装位置 | `%USERPROFILE%\freellmapi`（默认，可用 `-FreellmapiPath` 改） |
+| 服务 | `http://localhost:3001` |
+| 面板 | `http://localhost:5173` |
+| 启动 | `cd %USERPROFILE%\freellmapi; npm run dev` |
+| 统一 key | 存在 `freeapi.db` 的 settings 表，**重启不变**（不是每次重新生成） |
+
+### 它和 Claude Code 的关系
+
+**两者是独立的**。Claude Code 用不用它，只看 `~/.claude/settings.json` 的 `ANTHROPIC_BASE_URL`：
+
+| BASE_URL | 走哪 |
+|---|---|
+| `http://localhost:3001` | FreeLLMAPI（`model=auto` 自动路由到有 quota 的上游） |
+| `https://api.deepseek.com/anthropic` | 直连 DeepSeek，**与 FreeLLMAPI 无关** |
+
+> ⚠️ 最常见的误解："FreeLLMAPI 面板打不开" 和 "Claude Code 配置不生效" 是**两件事**。
+> 面板打不开 = 服务没启动（前台进程，关窗口/重启即停，**无自启动**）；
+> 配置不生效 = BASE_URL 压根没指向它。先跑 `-Verify` 分清是哪一种。
+
+### 换机为什么要带它
+
+`freeapi.db` 里存着**所有 provider 的加密 key**，而解密的唯一钥匙是 `.env` 里的 `ENCRYPTION_KEY`。
+
+```
+只拷 freeapi.db、丢了 .env  →  库里所有 key 全部解不开，等于全废
+```
+
+所以 `-CaptureFree` **两个一起拷**。`node_modules` 不拷（可 `npm install` 重建）。
 
 ## 排障：启动不了怎么查
 
@@ -99,7 +158,13 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
 
 5) 依赖装没装     dir tmp\node_modules\mssql
                   → 缺失就 cd tmp; npm install
+
+6) FreeLLMAPI     netstat -ano | findstr ":3001"
+   面板/接口打不开 → 无监听 = 服务没启动 → cd %USERPROFILE%\freellmapi; npm run dev
+                  → 有监听还打不开 = 看 BASE_URL 是否真指向 localhost:3001
 ```
+
+> 一条命令代替上面全部：`bootstrap\deploy.ps1 -Verify`
 
 ## 与 cc-switch 的关系
 
@@ -118,6 +183,7 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
 
 ## 相关文档
 
-- `docs/cc-switch-配置说明.md` — provider 清单、排障记录、base URL 备忘
+- `docs/cc-switch-配置说明.md` — provider 清单、排障记录、base URL 备忘、FreeLLMAPI 详解
 - `scripts/换机迁移操作教程.md` — 完整换机流程
 - `scripts/backup-portable.ps1` / `restore-new-pc.ps1` — 便携备份与还原
+- FreeLLMAPI 上游项目 — https://github.com/tashfeenahmed/freellmapi

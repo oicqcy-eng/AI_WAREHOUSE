@@ -2,18 +2,24 @@
 # ============================================================
 # 作用: 在「仓库配置真值」与「Claude Code 实际读取位置」之间搬运。
 #
-#   -Deploy    (默认) bootstrap\settings.user.local.json  →  %USERPROFILE%\.claude\settings.json
-#   -Capture           %USERPROFILE%\.claude\settings.json →  bootstrap\settings.user.local.json
-#   -Verify            自检四项（模型配置 / 端点连通 / DB 凭据 / Node 依赖）
+#   -Deploy      (默认) bootstrap\settings.user.local.json  →  %USERPROFILE%\.claude\settings.json
+#   -Capture            %USERPROFILE%\.claude\settings.json  →  bootstrap\settings.user.local.json
+#   -CaptureFree        freellmapi .env + freeapi.db         →  bootstrap\freellmapi.local\
+#   -DeployFree         bootstrap\freellmapi.local\          →  freellmapi 安装目录
+#   -Verify             自检五项（模型配置/端点连通/DB 凭据/Node 依赖/FreeLLMAPI）
 #
 # 为什么需要它: Claude Code 只从固定路径读配置，不认仓库里的任意文件夹。
 #              所以配置真值放仓库随 git/备份走，靠本脚本部署到正确位置。
+#              开关可组合，如 -Capture -CaptureFree 一次抓全。
 #
 # 用法:
-#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1            # 部署
-#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture   # 抓取回仓库
-#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify    # 自检
-#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Force     # 跳过确认
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1                  # 部署模型配置
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture         # 抓取模型配置回仓库
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -CaptureFree     # 抓取 FreeLLMAPI 凭据
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree      # 还原 FreeLLMAPI 凭据
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify          # 自检
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture -CaptureFree
+#   powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree -FreellmapiPath D:\freellmapi
 #
 # 注意: 部署后必须【重开 Claude Code 窗口】—— env 在进程启动时读取一次，旧窗口无效。
 #
@@ -25,9 +31,12 @@
 #      [System.IO.File]::WriteAllText(<本文件>, $c, (New-Object System.Text.UTF8Encoding($true)))
 # ============================================================
 param(
-    [switch]$Capture,
-    [switch]$Verify,
-    [switch]$Force
+    [switch]$Capture,          # 抓取 ~/.claude/settings.json    → 仓库
+    [switch]$CaptureFree,      # 抓取 freellmapi .env + db       → 仓库
+    [switch]$Verify,           # 自检（只读）
+    [switch]$DeployFree,       # 部署仓库 freellmapi 文件        → 本机
+    [switch]$Force,            # 目标比源新时仍强制覆盖
+    [string]$FreellmapiPath = "$env:USERPROFILE\freellmapi"   # 本机 FreeLLMAPI 安装位置
 )
 
 $ErrorActionPreference = 'Stop'
@@ -36,6 +45,7 @@ $Here   = $PSScriptRoot                                        # bootstrap\
 $RepoRoot = Split-Path -Parent $Here                           # 仓库根
 $Target = Join-Path $HOME '.claude\settings.json'              # Claude Code 实际读取位置
 $Repo   = Join-Path $Here 'settings.user.local.json'           # 仓库配置真值
+$FreeRepo = Join-Path $Here 'freellmapi.local'                 # FreeLLMAPI 真值（gitignore）
 $Stamp  = Get-Date -Format 'yyyyMMdd-HHmmss'
 
 # ── 输出小工具 ────────────────────────────────────────────────
@@ -203,6 +213,32 @@ function Invoke-Verify {
     }
     Write-Host ''
 
+    # ── [5] FreeLLMAPI ──
+    Write-Host '[5] FreeLLMAPI 本地聚合网关' -ForegroundColor White
+    $freeEnv = Join-Path $FreellmapiPath '.env'
+    $freeDb  = Join-Path $FreellmapiPath 'server\data\freeapi.db'
+    if (-not (Test-Path $FreellmapiPath)) {
+        Say-Warn '本机未安装 FreeLLMAPI' "预期位置: $FreellmapiPath（不用它可忽略此项）"
+    } else {
+        $freeMiss = @()
+        if (-not (Test-Path $freeEnv)) { $freeMiss += '.env' }
+        if (-not (Test-Path $freeDb))  { $freeMiss += 'server\data\freeapi.db' }
+        if ($freeMiss.Count -eq 0) {
+            Say-Ok '凭据与数据库齐备' "$FreellmapiPath"
+        } else {
+            Say-Bad "缺少: $($freeMiss -join ', ')" '从便携备份还原后跑 -DeployFree'
+            $fail++
+        }
+        # 服务是否在跑（面板/API 打不开的头号原因是服务没启动，不是配置问题）
+        $listening = netstat -ano | Select-String ':3001\s+.*LISTENING' | Select-Object -First 1
+        if ($listening) {
+            Say-Ok '服务在运行（端口 3001 监听中）' '面板 http://localhost:5173'
+        } else {
+            Say-Warn '服务未运行（端口 3001 无监听）' "启动: cd $FreellmapiPath; npm run dev（前台进程，关窗口即停）"
+        }
+    }
+    Write-Host ''
+
     # ── 汇总 ──
     if ($fail -eq 0) {
         Write-Host '自检通过：环境可正常启动。' -ForegroundColor Green
@@ -266,13 +302,123 @@ function Invoke-Deploy {
 }
 
 # ════════════════════════════════════════════════════════════
-# 分发
+# 模式 4：-CaptureFree  抓取 FreeLLMAPI 凭据与数据库回仓库
 # ════════════════════════════════════════════════════════════
-if ($Capture -and $Verify) {
-    Write-Host '-Capture 与 -Verify 不能同时使用。' -ForegroundColor Red
-    exit 1
+$FREE_FILES = @('.env', 'freeapi.db', 'freeapi.db-wal', 'freeapi.db-shm')
+
+function Invoke-CaptureFree {
+    Write-Host '=== 抓取 FreeLLMAPI 凭据回仓库 ===' -ForegroundColor Cyan
+
+    if (-not (Test-Path $FreellmapiPath)) {
+        Write-Host "找不到 FreeLLMAPI 安装目录: $FreellmapiPath" -ForegroundColor Red
+        Write-Host '用 -FreellmapiPath <路径> 指定实际位置。' -ForegroundColor Yellow
+        exit 1
+    }
+
+    $envFile = Join-Path $FreellmapiPath '.env'
+    $dbFile  = Join-Path $FreellmapiPath 'server\data\freeapi.db'
+    if (-not (Test-Path $envFile)) { Write-Host "缺少 .env: $envFile" -ForegroundColor Red; exit 1 }
+    if (-not (Test-Path $dbFile))  { Write-Host "缺少 freeapi.db: $dbFile" -ForegroundColor Red; exit 1 }
+
+    # db 在写的时候复制会拿到不一致快照
+    $proc = Get-Process node -ErrorAction SilentlyContinue
+    if ($proc) {
+        Write-Host 'FreeLLMAPI 似乎正在运行（检测到 node 进程）。' -ForegroundColor Yellow
+        Write-Host '服务在写库时复制可能拿到不一致的 db —— 建议先停服务再抓取。' -ForegroundColor Yellow
+        if (-not $Force) {
+            Write-Host '确认要继续请加 -Force。' -ForegroundColor Yellow
+            exit 1
+        }
+        Write-Host '（-Force 已指定，继续）' -ForegroundColor DarkGray
+    }
+
+    New-Item -ItemType Directory -Force -Path $FreeRepo | Out-Null
+    Copy-Item $envFile (Join-Path $FreeRepo '.env') -Force
+    foreach ($f in $FREE_FILES | Where-Object { $_ -ne '.env' }) {
+        $s = Join-Path $FreellmapiPath "server\data\$f"
+        if (Test-Path $s) { Copy-Item $s (Join-Path $FreeRepo $f) -Force }
+    }
+
+    $dbSize = [math]::Round((Get-Item (Join-Path $FreeRepo 'freeapi.db')).Length / 1MB, 1)
+    Write-Host "  已抓取 -> $FreeRepo" -ForegroundColor Green
+    Write-Host "    .env        含 ENCRYPTION_KEY（解密 freeapi.db 全部 provider key 的主密钥）" -ForegroundColor DarkGray
+    Write-Host "    freeapi.db  $dbSize MB" -ForegroundColor DarkGray
+    Write-Host "    已排除 node_modules（换机用 npm install 重建）" -ForegroundColor DarkGray
+    Write-Host ''
+    Write-Host '下一步: 跑 scripts\backup-portable.ps1 让备份 zip 带上这些文件。' -ForegroundColor Yellow
 }
 
-if ($Capture) { Invoke-Capture }
-elseif ($Verify) { Invoke-Verify }
-else { Invoke-Deploy }
+# ════════════════════════════════════════════════════════════
+# 模式 5：-DeployFree  把仓库里的 FreeLLMAPI 文件装回本机
+# ════════════════════════════════════════════════════════════
+function Invoke-DeployFree {
+    Write-Host '=== 部署 FreeLLMAPI 凭据到本机 ===' -ForegroundColor Cyan
+
+    if (-not (Test-Path (Join-Path $FreeRepo 'freeapi.db'))) {
+        Write-Host "仓库内没有 FreeLLMAPI 真值: $FreeRepo" -ForegroundColor Red
+        Write-Host '先在旧机器上跑 -CaptureFree，或从便携备份 zip 还原。' -ForegroundColor Yellow
+        exit 1
+    }
+    if (-not (Test-Path $FreellmapiPath)) {
+        Write-Host "本机还没有 FreeLLMAPI: $FreellmapiPath" -ForegroundColor Red
+        Write-Host '先克隆并安装：' -ForegroundColor Yellow
+        Write-Host '  git clone https://github.com/tashfeenahmed/freellmapi  ' + $FreellmapiPath -ForegroundColor Yellow
+        Write-Host '  cd ' + $FreellmapiPath + '; npm install' -ForegroundColor Yellow
+        Write-Host '（node_modules 不入库，必须在新机器重建）' -ForegroundColor DarkGray
+        exit 1
+    }
+
+    $srcDb = Join-Path $FreeRepo 'freeapi.db'
+    $dstDb = Join-Path $FreellmapiPath 'server\data\freeapi.db'
+
+    # 防误覆盖：目标库比源新，说明本机已有更新的数据
+    if ((Test-Path $dstDb) -and (-not $Force)) {
+        $sTime = (Get-Item $srcDb).LastWriteTime
+        $dTime = (Get-Item $dstDb).LastWriteTime
+        if ($dTime -gt $sTime) {
+            Write-Host '目标 freeapi.db 比仓库里的更新 —— 覆盖会丢失本机较新的数据。' -ForegroundColor Red
+            Write-Host "  仓库: $sTime" -ForegroundColor DarkGray
+            Write-Host "  本机: $dTime" -ForegroundColor DarkGray
+            Write-Host '确认要覆盖请加 -Force（或先跑 -CaptureFree 把本机版本存回仓库）。' -ForegroundColor Yellow
+            exit 1
+        }
+    }
+
+    $dstDir = Join-Path $FreellmapiPath 'server\data'
+    New-Item -ItemType Directory -Force -Path $dstDir | Out-Null
+
+    # 覆盖前备份
+    foreach ($f in $FREE_FILES) {
+        $d = Join-Path $dstDir $f
+        if ($f -eq '.env') { $d = Join-Path $FreellmapiPath '.env' }
+        if (Test-Path $d) {
+            Copy-Item $d "$d.bak-$Stamp" -Force
+            Write-Host "  已备份 -> $d.bak-$Stamp" -ForegroundColor DarkGray
+        }
+    }
+
+    Copy-Item (Join-Path $FreeRepo '.env') (Join-Path $FreellmapiPath '.env') -Force
+    Write-Output '  .env 已还原'
+    foreach ($f in $FREE_FILES | Where-Object { $_ -ne '.env' }) {
+        $s = Join-Path $FreeRepo $f
+        if (Test-Path $s) {
+            Copy-Item $s (Join-Path $dstDir $f) -Force
+            Write-Output "  $f 已还原"
+        }
+    }
+
+    Write-Host ''
+    Write-Host '  部署完成。' -ForegroundColor Green
+    Write-Host '启动服务: cd ' + $FreellmapiPath + '; npm run dev' -ForegroundColor Yellow
+    Write-Host '注意：服务是前台进程，关窗口即停，无自启动（见 README「FreeLLMAPI」节）。' -ForegroundColor DarkGray
+}
+
+# ════════════════════════════════════════════════════════════
+# 分发
+# ════════════════════════════════════════════════════════════
+$did = $false
+if ($Capture)     { Invoke-Capture;     $did = $true }
+if ($CaptureFree) { Invoke-CaptureFree; $did = $true }
+if ($Verify)      { Invoke-Verify;      $did = $true }
+if ($DeployFree)  { Invoke-DeployFree;  $did = $true }
+if (-not $did)    { Invoke-Deploy }
