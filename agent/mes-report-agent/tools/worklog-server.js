@@ -32,17 +32,10 @@ const ATTACH_DIR = path.join(WORKLOG_DIR, 'attachments');
 const PORT = process.env.WORKLOG_PORT || 8787;
 const UI_FILE = path.join(__dirname, 'worklog-ui.html');
 
-// ===== 选项枚举（与 report-bitable-spec.md §1/§2 一致） =====
-const OPTIONS = {
-  projects: ['三厂小簧sMES', '一厂大簧sMES', '二厂大簧sMES', '重庆sMES项目', '实验室Lims项目', '无锡泽根sMES项目', '华纬其它项目'],
-  resultTypes: ['问题关闭', '方案确认', '配置完成', '培训完成', '数据完成', '上线验证', '风险暴露', '需求确认'],
-  modules: ['生产报工', '工单管理', '物料管控', '质量模块', '设备维保', '模治具管理', '安灯异常', '设备数采', '系统接口', '报表看板', '系统管理'],
-  stages: ['需求调研', '方案设计', '基础资料收集', '培训上线', '现场实施', '运维优化'],
-  priority: ['P1', 'P2', 'P3', 'P4'],
-  taskStatus: ['待启动', '进行中', '暂缓', '已闭环'],
-  sources: ['现场反馈', '系统异常', '用户需求', '会议决策', '领导要求', '审厂要求'],
-  weekCat: ['本周完成', '本周推进', '重点问题', '下周计划', '长期跟踪'],
-};
+// ===== 选项枚举：唯一真源 tools/worklog-schema.js（原本地 OPTIONS 副本已删除） =====
+// /api/options 沿原样下发同一对象，因此额外带上 projectShort（项目简称）与 yesNo（是/否），
+// 供录入页的前端映射使用 —— 协议只增不改，9 个下拉的填充逻辑不变。
+const { OPTIONS } = require('./worklog-schema.js');
 
 // ===== 读取全量日志（跨月） =====
 function allLogs() {

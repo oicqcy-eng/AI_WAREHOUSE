@@ -13,14 +13,14 @@
    ↓ ① 数据准备（自动，本地权威数据源）
 tools/export-range.js <周起> <周止>   ← 从 data/worklog/ 提取
    ↓ 输出：区间日志（按项目分组）+ 任务池全量 + P1/P2未闭环风险
-（或 tools/weekly-extract.js --year YYYY --week NN 做四模块预分组，见下）
    ↓ ② 生成（读素材 + prompt 模板）
 prompt/weekly-report-v1.md
    ↓ ③ 成稿
 项目经理周报（全项目汇总 或 单项目）
 ```
 
-> **数据源变更（2026-08-09 本地化后）**：任务池/日志已迁至本地 `data/worklog/`（task-pool.json + logs/YYYY-MM.json），不再从飞书导出 CSV。优先用 `export-range.js` 取原始数据；`weekly-extract.js` 保留四模块预分组能力，但需先把 worklog 导出为它认的 CSV 才能用（见 §1 备注）。
+> **数据源变更（2026-08-09 本地化后）**：任务池/日志已迁至本地 `data/worklog/`（task-pool.json + logs/YYYY-MM.json），不再从飞书导出 CSV。取数一律走 `export-range.js`（见 §1）。
+> **2026-09-11**：旧的 CSV 预分组工具 `tools/weekly-extract.js` 已删除 —— 它读的是飞书时代的 `data/task-pool-supplement.csv` 与 `data/history-log-governance.csv`（数据源已不存在），且其英文 status 枚举根本不属于 worklog 契约。四模块分组改由 AI 读 `export-range.js` 素材后直接组织。
 
 ---
 
@@ -39,19 +39,7 @@ prompt/weekly-report-v1.md
 >
 > `--todos` 追加未闭环任务清单（P3/P4/待启动/暂缓，写全项目"待办事项"时用）；`--all` 回显含已闭环的任务池全量。字段契约与卡点更新纪律见 `data/worklog/SCHEMA.md`。
 >
-> **weekly-extract.js 为兼容保留**（CSV 四模块预分组旧径，需先 export-excel 转 CSV），新流程不用它。
-
-### 2. 生成数据素材（一条命令）
-
-```bash
-# 全项目汇总周报
-node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32
-
-# 单项目周报（如一厂大簧、三厂小簧）
-node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --project 三厂小簧sMES
-```
-
-输出：`tmp/weekly-input-2026-W32.md`（或 `weekly-input-2026-W32-三厂小簧sMES.md`）
+> **取数只有 §1 一条路**：`export-range.js`。旧的四模块预分组工具 `weekly-extract.js` 已于 2026-09-11 删除（读飞书时代 CSV，数据源已不存在），四模块分组改由 AI 读素材后组织。
 
 ### 3. 生成周报（AI 润色成稿）
 
@@ -83,9 +71,15 @@ node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --proj
 
 ## 样例验证（2026 年第 32 周）
 
-### 命令
+> ⚠️ **历史样例**：下列素材由已删除的 `weekly-extract.js` 产出（2026-09-11 移除），
+> 保留它只为展示「素材 → 周报」的形态。现在取数请用 §1 的 `export-range.js`；
+> 素材字段与分组口径可能与该样例不同。
+
+### 命令（历史，已不可执行 —— 工具已于 2026-09-11 删除，此处仅存形以对照）
+
 ```bash
-node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --project 三厂小簧sMES
+# 已废弃，勿运行：weekly-extract.js 不存在
+# node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --project 三厂小簧sMES
 ```
 
 ### 输出素材（节选）
@@ -154,11 +148,42 @@ node agent/mes-report-agent/tools/weekly-extract.js --year 2026 --week 32 --proj
 
 ---
 
+## 完整工具链（V1.1 补充）
+
+### MD 版 → DOCX 版（WPS 打开用）
+```bash
+node agent/mes-report-agent/tools/md-to-docx.js delivery/projects/hw-spring-mes/output/reports/2026-XX-WXX.md delivery/projects/hw-spring-mes/output/reports/2026-XX-WXX.docx "标题"
+```
+
+### HTML 投影汇报版（控制台风）
+```
+触发条件：用户说"汇报版""主持人版""生成汇报页"
+自动调用 /report-board skill，生成深墨蓝底 HTML
+```
+
+### 完整流程
+```
+生成2026年第XX周周报
+  ↓
+① export-range.js <周起> <周止>
+  → 输出：周报蒸馏数据包（区间日志+任务池+风险）
+  ↓
+② AI 读 prompt/weekly-report-v1.md 润色成稿
+  → 输出：周报.md（delivery/projects/hw-spring-mes/output/）
+  ↓
+③ md-to-docx.js
+  → 输出：周报.docx（WPS 友好）
+  ↓
+④ [可选] report-board skill
+  → 输出：周报_汇报版.html（投影汇报）
+```
+
 ## 后续演进（V2+，暂不实现）
 - 飞书多维表格 API 直接读取（免手动导出 CSV）
 - 自动按周归档历史周报 → `docs/changelogs/`
 - 周报→月报/总监简报的联动生成
 - 任务池状态自动更新（闭环判定）
+- 周报 HTML 自动部署到 intranet
 
 ## 运行前提
 - Node.js ≥ 12（脚本依赖内置 fs/path，无第三方包）

@@ -1,0 +1,59 @@
+{
+  "version": "1.0.0",
+  "description": "search-knowledge.js 结构化检索测试用例",
+  "tests": [
+    {
+      "id": "SK-001",
+      "description": "单关键词搜索：条码",
+      "query": "条码",
+      "expectedMinResults": 3,
+      "expectedIds": ["K-301", "K-302", "K-621-01"]
+    },
+    {
+      "id": "SK-002",
+      "description": "多词 AND 搜索：外协 条码",
+      "query": "外协 条码",
+      "options": {"domain": "barcode"},
+      "expectedMinResults": 1,
+      "expectedIds": ["K-302"]
+    },
+    {
+      "id": "SK-003",
+      "description": "Domain 过滤：LIMS",
+      "query": "LIMS",
+      "options": {"domain": "lims"},
+      "expectedMinResults": 3,
+      "expectedIds": ["K-lims-req", "K-lims-basic", "K-lims-plan"]
+    },
+    {
+      "id": "SK-004",
+      "description": "Domain 过滤：equipment",
+      "query": "设备 点检",
+      "options": {"domain": "equipment"},
+      "expectedMinResults": 2,
+      "expectedIds": ["K-621-04", "K-621-09"]
+    },
+    {
+      "id": "SK-005",
+      "description": "Project 过滤：hw-spring-mes + 条码",
+      "query": "条码",
+      "options": {"project": "hw-spring-mes"},
+      "expectedMinResults": 0,
+      "note": "条码相关内容在 cross-project case 中，hw-spring-mes 项目内无直接条码知识条目"
+    },
+    {
+      "id": "SK-006",
+      "description": "空查询 + domain 过滤",
+      "query": "",
+      "options": {"domain": "barcode"},
+      "expectedMinResults": 3
+    },
+    {
+      "id": "SK-007",
+      "description": "不存在的关键词",
+      "query": "xyz不存在的关键词123",
+      "expectedMinResults": 0,
+      "expectedMaxResults": 0
+    }
+  ]
+}

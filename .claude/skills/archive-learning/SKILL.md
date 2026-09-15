@@ -90,6 +90,15 @@ description: 处理 inbox 新资料——判断归属(项目/厂区/共用)、�
 - **页面要求**: 报表/看板的结构、字段、更新频率
 - **待确认项**: 资料中不明确、需向客户确认的内容
 
+### 5.1 文件命名规范检查（针对 file_index.md）
+
+在归档 process 中，若涉及 file_index.md 条目编号，需检查命名规范：
+
+- 项目级（delivery/projects/<客户>/input/<厂区>/knowledge/file_index.md）：使用 `F-0xx` 格式
+- 资产库级（agent/mes-implement-expert/data/<system>/file_index.md）：使用系统前缀（如 `SQL-0xx`、`U9-0xx`、`LIMS-0xx`）
+
+若发现不符合规范的条目，应在归档前进行修正或标记为待确认。
+
 ### 6. 更新知识库（写入四件套）
 
 **通用经验** → `docs/industry-knowledge/` 或 `agent/_shared/`（可复用才放）

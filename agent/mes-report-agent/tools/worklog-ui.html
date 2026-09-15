@@ -78,10 +78,7 @@ mark{background:#FFF3B0;padding:0 2px;border-radius:3px;color:inherit}
       <div class="row"><label>项目阶段</label><select id="f-stage"></select></div>
       <div class="row"><label>结果类型 *</label><select id="f-result"></select></div>
       <div class="row"><label>是否形成任务 *</label>
-        <div class="radio-row">
-          <label><input type="radio" name="f-task" value="是"> 是</label>
-          <label><input type="radio" name="f-task" value="否" checked> 否</label>
-        </div>
+        <div class="radio-row" id="f-task-radios"></div>
       </div>
       <div class="row"><label>责任人</label><input type="text" id="f-owner" placeholder="默认陈宇"></div>
       <div class="row"><label>协作人</label><input type="text" id="f-coworker" placeholder="如：张三、李四"></div>
@@ -124,7 +121,7 @@ mark{background:#FFF3B0;padding:0 2px;border-radius:3px;color:inherit}
         <div id="toast-task"></div>
       </div>
     </div>
-    <div class="legend">* 为必填；未填字段按规范取最低档（结果类型=需求确认、优先级=P4 等）</div>
+    <div class="legend">* 为必填；<b>结果类型 / 业务模块 / 项目阶段已无兜底</b>——判不了就问，留空优于填假值。其余可选字段留空即留空；兜底只给非必填字段（任务：任务状态=待启动、周报归集分类=长期跟踪、发现日期=当天；日志：责任人=陈宇）</div>
   </div>
 
   <!-- ===== 最近记录 ===== -->
@@ -145,7 +142,7 @@ var O = null;
 var TODAY = '';
 var CURRENT_TAB = 'log'; // 当前 tab：log / task
 var SEARCHING = false; // 当前是否在搜索结果态
-var PROJ_SHORT = { '三厂小簧sMES':'三厂小簧', '一厂大簧sMES':'一厂大簧', '二厂大簧sMES':'二厂大簧', '重庆sMES项目':'重庆', '实验室Lims项目':'实验室Lims', '无锡泽根sMES项目':'无锡泽根', '华纬其它项目':'华纬其它' };
+var PROJ_SHORT = {}; // 由 /api/options 的 projectShort 填充（原是这里的本地副本，2026-09-11 迁入 worklog-schema.js）
 function shortProj(p){ return PROJ_SHORT[p] || p; }
 
 // ---- 渲染辅助：HTML 转义 + 关键字高亮 ----
@@ -184,6 +181,12 @@ function fillSelect(id, arr, defaultVal){
   var el = document.getElementById(id);
   el.innerHTML = '<option value="">（未选）</option>' + arr.map(function(x){ return '<option'+(x===defaultVal?' selected':'')+'>'+x+'</option>'; }).join('');
 }
+// 单选组：集合取自契约（/api/options.yesNo），默认选中项在此显式声明
+function fillRadio(boxId, name, arr, defaultVal){
+  document.getElementById(boxId).innerHTML = arr.map(function(x){
+    return '<label><input type="radio" name="'+name+'" value="'+esc(x)+'"'+(x===defaultVal?' checked':'')+'> '+esc(x)+'</label>';
+  }).join('');
+}
 function updateAttachLink(inpId, linkId){
   var inp = document.getElementById(inpId);
   var link = document.getElementById(linkId);
@@ -220,9 +223,11 @@ async function api(path, opts){
 async function init(){
   var r = await api('/api/options');
   O = r.data; TODAY = r.today;
+  PROJ_SHORT = O.projectShort || {};
   document.getElementById('todayInfo').textContent = '今日 ' + TODAY;
   document.getElementById('f-date').value = TODAY;
   document.getElementById('t-found').value = TODAY;
+  fillRadio('f-task-radios', 'f-task', O.yesNo, '否');
   fillSelect('f-project', O.projects);
   fillSelect('f-module', O.modules);
   fillSelect('f-stage', O.stages);

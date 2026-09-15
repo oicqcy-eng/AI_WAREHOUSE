@@ -1,6 +1,6 @@
 # 周报生成 Prompt — V1（四模块版）
 
-> 用途：将周报数据素材（`tools/export-range.js` 提取，或 `tools/weekly-extract.js` 预分组），组织为规范的项目周报。
+> 用途：将周报数据素材（`tools/export-range.js` 提取），组织为规范的项目周报。
 > 使用方式：把素材文件内容粘贴给 Claude（或本 Agent 读取该文件），附带本 prompt。
 
 ---

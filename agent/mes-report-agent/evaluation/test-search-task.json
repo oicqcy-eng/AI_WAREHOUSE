@@ -1,0 +1,17 @@
+[
+  {
+    "query": "条码",
+    "expect": "返回含条码关键词的任务",
+    "minResults": 1
+  },
+  {
+    "query": "非 existent keyword xyz123",
+    "expect": "返回 0 条",
+    "minResults": 0
+  },
+  {
+    "query": "数采",
+    "expect": "返回设备数采相关任务",
+    "minResults": 1
+  }
+]

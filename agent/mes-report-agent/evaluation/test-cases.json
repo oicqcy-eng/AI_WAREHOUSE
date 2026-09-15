@@ -1,0 +1,281 @@
+[
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "所属项目",
+    "value": "三厂小簧sMES",
+    "expect": "pass",
+    "desc": "合法枚举值 三厂小簧sMES (所属项目)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "所属项目",
+    "value": "一厂大簧sMES",
+    "expect": "pass",
+    "desc": "合法枚举值 一厂大簧sMES (所属项目)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "结果类型",
+    "value": "问题关闭",
+    "expect": "pass",
+    "desc": "合法枚举值 问题关闭 (结果类型)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "结果类型",
+    "value": "方案确认",
+    "expect": "pass",
+    "desc": "合法枚举值 方案确认 (结果类型)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "业务模块",
+    "value": "生产报工",
+    "expect": "pass",
+    "desc": "合法枚举值 生产报工 (业务模块)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "业务模块",
+    "value": "工单管理",
+    "expect": "pass",
+    "desc": "合法枚举值 工单管理 (业务模块)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "项目阶段",
+    "value": "需求调研",
+    "expect": "pass",
+    "desc": "合法枚举值 需求调研 (项目阶段)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "项目阶段",
+    "value": "方案设计",
+    "expect": "pass",
+    "desc": "合法枚举值 方案设计 (项目阶段)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "是否形成任务",
+    "value": "是",
+    "expect": "pass",
+    "desc": "合法枚举值 是 (是否形成任务)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "是否形成任务",
+    "value": "否",
+    "expect": "pass",
+    "desc": "合法枚举值 否 (是否形成任务)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "对应项目",
+    "value": "三厂小簧sMES",
+    "expect": "pass",
+    "desc": "合法枚举值 三厂小簧sMES (对应项目)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "对应项目",
+    "value": "一厂大簧sMES",
+    "expect": "pass",
+    "desc": "合法枚举值 一厂大簧sMES (对应项目)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "问题来源",
+    "value": "现场反馈",
+    "expect": "pass",
+    "desc": "合法枚举值 现场反馈 (问题来源)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "问题来源",
+    "value": "系统异常",
+    "expect": "pass",
+    "desc": "合法枚举值 系统异常 (问题来源)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "优先级",
+    "value": "P1",
+    "expect": "pass",
+    "desc": "合法枚举值 P1 (优先级)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "优先级",
+    "value": "P2",
+    "expect": "pass",
+    "desc": "合法枚举值 P2 (优先级)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "任务状态",
+    "value": "待启动",
+    "expect": "pass",
+    "desc": "合法枚举值 待启动 (任务状态)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "任务状态",
+    "value": "进行中",
+    "expect": "pass",
+    "desc": "合法枚举值 进行中 (任务状态)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "周报归集分类",
+    "value": "本周完成",
+    "expect": "pass",
+    "desc": "合法枚举值 本周完成 (周报归集分类)"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "周报归集分类",
+    "value": "本周推进",
+    "expect": "pass",
+    "desc": "合法枚举值 本周推进 (周报归集分类)"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "结果类型",
+    "value": "瞎写结果",
+    "expect": "error",
+    "desc": "未知枚举值应报error"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "业务模块",
+    "value": "瞎写模块",
+    "expect": "error",
+    "desc": "未知枚举值应报error"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "问题来源",
+    "value": "瞎写来源",
+    "expect": "error",
+    "desc": "未知枚举值应报error"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "所属项目",
+    "value": "重庆MES项目",
+    "expect": "legacy",
+    "desc": "已知legacy: 重庆MES项目"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "结果类型",
+    "value": "知识沉淀",
+    "expect": "legacy",
+    "desc": "已知legacy: 知识沉淀"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "业务模块",
+    "value": "报工管理",
+    "expect": "legacy",
+    "desc": "已知legacy: 报工管理"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "项目阶段",
+    "value": "模拟筹备",
+    "expect": "legacy",
+    "desc": "已知legacy: 模拟筹备"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "对应项目",
+    "value": "重庆MES项目",
+    "expect": "legacy",
+    "desc": "已知legacy: 重庆MES项目"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "问题来源",
+    "value": "问题管制表",
+    "expect": "legacy",
+    "desc": "已知legacy: 问题管制表"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "周报归集分类",
+    "value": "本周进行",
+    "expect": "legacy",
+    "desc": "已知legacy: 本周进行"
+  },
+  {
+    "type": "enum",
+    "kind": "log",
+    "field": "业务模块",
+    "value": "",
+    "expect": "pass",
+    "desc": "空值是合法的（业务模块）"
+  },
+  {
+    "type": "enum",
+    "kind": "task",
+    "field": "计划完成日期",
+    "value": "",
+    "expect": "pass",
+    "desc": "空值是合法的（计划完成日期）"
+  },
+  {
+    "type": "required",
+    "kind": "log",
+    "fields": [
+      "记录日期",
+      "所属项目",
+      "工作内容"
+    ],
+    "missing": "结果类型",
+    "expect": "error",
+    "desc": "缺少必填字段应报错（结果类型）"
+  },
+  {
+    "type": "required",
+    "kind": "task",
+    "fields": [
+      "归集标题",
+      "对应项目"
+    ],
+    "missing": "优先级",
+    "expect": "error",
+    "desc": "缺少必填字段应报错（优先级）"
+  }
+]

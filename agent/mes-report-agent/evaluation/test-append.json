@@ -1,0 +1,32 @@
+[
+  {
+    "action": "append-log",
+    "payload": "合法日志",
+    "expect": "success"
+  },
+  {
+    "action": "append-log",
+    "payload": "缺结果类型",
+    "expect": "error_required"
+  },
+  {
+    "action": "append-log",
+    "payload": "非法枚举值+warn模式",
+    "expect": "success_with_warn"
+  },
+  {
+    "action": "append-log",
+    "payload": "非法枚举值+strict模式",
+    "expect": "error_blocked"
+  },
+  {
+    "action": "update-log",
+    "payload": "无关字段patch",
+    "expect": "no_warn_for_legacy"
+  },
+  {
+    "action": "update-log",
+    "payload": "把结果类型改空",
+    "expect": "error_required"
+  }
+]

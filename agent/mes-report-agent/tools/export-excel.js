@@ -22,6 +22,7 @@
 const fs = require('fs');
 const path = require('path');
 const XLSX = require('xlsx');
+const { LOG_FIELDS, TASK_FIELDS } = require('./worklog-schema.js'); // 仅用于校验表头是否越出契约
 
 const WORKLOG = path.join(__dirname, '..', 'data', 'worklog');
 const LOGS_DIR = path.join(WORKLOG, 'logs');
@@ -30,6 +31,14 @@ const OUT_DIR = path.join(__dirname, '..', '..', '..', 'delivery', 'projects', '
 
 const LOG_HEADERS = ['记录日期', '所属项目', '工作内容', '结果类型', '是否形成任务', '业务模块', '项目阶段', '责任人', '协作人', '交付产出', '附件'];
 const TASK_HEADERS = ['归集标题', '对应项目', '问题来源', '优先级', '发现日期', '计划完成日期', '实际闭环日期', '任务状态', '进度百分比', '闭环判定标准', '周报归集分类', '协调资源需求', '附件', '卡点&问题描述'];
+
+// 列集与列序**保持原样**：改列会动到用户已有的 Excel 模板/公式，且 TASK 的「附件」位置与
+// TASK_FIELDS 的规范序不同，直接由契约派生会改列序。改为断言「表头 ⊆ 契约字段」——
+// 这只在契约漏登记时失败（此前 TASK_FIELDS 就漏了 `附件`，属契约漏登记而非表头多列，已补进 schema）。
+for (const [name, hs, fields] of [['LOG', LOG_HEADERS, LOG_FIELDS], ['TASK', TASK_HEADERS, TASK_FIELDS]]) {
+  const stray = hs.filter(h => !fields.includes(h));
+  if (stray.length) throw new Error(name + '_HEADERS 含契约外字段: ' + stray.join(' / ') + '（先补进 worklog-schema.js 再导出）');
+}
 
 function parseArgs() {
   const mode = process.argv[2];

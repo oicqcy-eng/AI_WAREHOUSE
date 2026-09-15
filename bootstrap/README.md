@@ -6,7 +6,7 @@
 
 ## 为什么需要这个目录
 
-智能体能"跑起来"依赖四层，其中三层在仓库外、换机必丢：
+智能体能"跑起来"依赖五层，其中三层在仓库外、换机必丢：
 
 | 层 | 位置 | 换机后果 | 本目录覆盖 |
 |----|------|---------|-----------|
@@ -18,25 +18,133 @@
 
 **2026-09-14 定版**：① 和 ⑤ 是历次"换机能启动不了"的主因——它们既不在 git，也不在备份 zip 里。
 
-## 换机三步
+---
+
+## 📋 换机操作说明（小白友好版）
+
+### 前置准备
+
+换机前，在旧机器上做一次备份：
 
 ```powershell
-# 1) 克隆仓库
-git clone https://github.com/oicqcy-eng/AI_WAREHOUSE.git D:\AI_WAREHOUSE
+# 进入仓库根目录
+cd D:\AI_WAREHOUSE
 
-# 2) 还原便携备份（含本目录的 settings.user.local.json + db.local.json）
-powershell -ExecutionPolicy Bypass -File scripts\restore-new-pc.ps1 -ZipPath <备份zip>
+# 1) 抓取当前配置回仓库（model config + FreeLLMAPI 凭据）
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -CaptureFree
 
-# 3) 部署模型配置到 Claude Code 读取位置 + 自检
-powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
-
-# 4) 若用 FreeLLMAPI：还原其凭据与数据库（须先 git clone + npm install）
-powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
+# 2) 做便携备份（包含所有 gitignore 的真值文件）
+powershell -ExecutionPolicy Bypass -File scripts\backup-portable.ps1
 ```
 
-跑完 3) 后**重开 Claude Code 窗口**（env 在进程启动时读取一次，旧窗口改文件无效）。
+备份 zip 会生成在 `scripts/backup-portable/` 目录，**保存到 U 盘或云盘**，换机时带过去。
 
-> 注意 4) 的前提：FreeLLMAPI 本机已装（`git clone` + `npm install`）。它是独立项目，不随本仓库走。
+---
+
+### 换机后三步走
+
+#### 第 1 步：克隆仓库
+
+```bash
+# 打开 Git Bash 或 PowerShell，执行：
+git clone https://github.com/oicqcy-eng/AI_WAREHOUSE.git D:\AI_WAREHOUSE
+```
+
+如果 GitHub 连不上（直连被墙），**开 Clash Verge 代理后再试**：
+
+```bash
+# 先确认 Clash 已启动（7897 端口监听中）
+netstat -ano | findstr ":7897"
+
+# 再克隆（git 已配好代理，这条命令会自动走代理）
+git clone https://github.com/oicqcy-eng/AI_WAREHOUSE.git D:\AI_WAREHOUSE
+```
+
+---
+
+#### 第 2 步：安装 FreeLLMAPI（重要！）
+
+FreeLLMAPI 是一个**独立项目**，不随本仓库走，需要单独安装：
+
+```powershell
+# 1) 下载 FreeLLMAPI（约 20MB）
+cd %USERPROFILE%
+git clone https://github.com/tashfeenahmed/freellmapi.git
+cd freellmapi
+
+# 2) 安装依赖（约 3-5 分钟，需要 npm）
+npm install
+
+# 3) 确认安装成功
+dir node_modules | findstr "vite express sqlite"
+```
+
+> ⚠️ **npm install 必须在 FreeLLMAPI 目录里跑**，不是仓库根目录！
+
+---
+
+#### 第 3 步：恢复配置
+
+```powershell
+# 进入仓库根目录
+cd D:\AI_WAREHOUSE
+
+# 1) 部署模型配置到 Claude Code 读取位置
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1
+
+# 2) 部署 FreeLLMAPI 凭据与数据库
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
+
+# 3) 自检（四项全绿 = 换机成功）
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
+```
+
+---
+
+#### 第 4 步：启动服务
+
+```powershell
+# 启动 FreeLLMAPI（前台进程，关窗口即停）
+cd %USERPROFILE%\freellmapi
+npm run dev
+```
+
+启动成功后：
+- 面板地址：`http://localhost:5173`
+- API 地址：`http://localhost:3001`
+- 日志会打印 `Server listening on port 3001`
+
+---
+
+#### 第 5 步：验证 Claude Code
+
+新开一个 Claude Code 窗口，随便问一句测试：
+
+```
+你好，请回复 OK
+```
+
+如果回复正常，换机成功 ✅
+
+---
+
+### 日常启动（非换机）
+
+平时不需要重跑 npm install，只需：
+
+```powershell
+# 1) 启动 FreeLLMAPI
+cd %USERPROFILE%\freellmapi
+npm run dev
+
+# 2) 开 Claude Code 窗口
+claude
+```
+
+**注意**：`npm run dev` 是前台进程，关窗口或重启电脑后需重新跑。
+
+---
 
 ## 文件说明
 
@@ -53,16 +161,18 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
 > 它们**被 `.gitignore` 排除，绝不入库**，但**会被 `scripts/backup-portable.ps1` 收进便携 zip**（zip 是本地文件，不上传）。
 > 这是刻意的：**换机恢复靠 zip，不是靠 git**。
 
+---
+
 ## 日常操作
 
 ### 抓取当前配置回仓库（换机前 / 切换 provider 后）
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -CaptureFree
 ```
 
-把当前生效的 `~/.claude/settings.json` 原样存回 `bootstrap/settings.user.local.json`，
-下次备份 zip 就会带上最新版本。
+把当前生效的 `~/.claude/settings.json` 原样存回 `bootstrap/settings.user.local.json`，下次备份 zip 就会带上最新版本。
 
 > 用 cc-switch 切换 provider 后，**记得跑一次 `-Capture`**，否则仓库里留的是旧 provider 配置。
 
@@ -70,6 +180,7 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Capture
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1
+powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
 ```
 
 覆盖前会自动备份目标文件为 `settings.json.bak-<时间戳>`，可随时回退。
@@ -82,22 +193,7 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -Verify
 
 依次检查五项：模型配置 → 端点连通性 → DB 凭据 → Node 依赖 → FreeLLMAPI，每项给出 ✅/❌ 与修复提示。
 
-### 抓取 / 还原 FreeLLMAPI 凭据
-
-```powershell
-# 旧机器：把 .env + freeapi.db 存回仓库（跑前先停服务，避免拷到半写状态）
-powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -CaptureFree
-
-# 新机器：从仓库装回 freellmapi 安装目录
-powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree
-
-# 装在非默认位置时指定路径
-powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree -FreellmapiPath D:\freellmapi
-```
-
-**两个安全设计**：
-- `-CaptureFree` 检测到 node 进程在跑会**拒绝执行**（写库时复制会拿到不一致快照），确认无碍加 `-Force`
-- `-DeployFree` 发现目标 `freeapi.db` 比仓库里的**更新**会**拒绝覆盖**（防丢本机新数据），确认要覆盖加 `-Force`
+---
 
 ## FreeLLMAPI
 
@@ -134,6 +230,8 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree -Freel
 
 所以 `-CaptureFree` **两个一起拷**。`node_modules` 不拷（可 `npm install` 重建）。
 
+---
+
 ## 排障：启动不了怎么查
 
 按顺序排除，**从上往下**，第一项失败就是根因：
@@ -166,6 +264,8 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree -Freel
 
 > 一条命令代替上面全部：`bootstrap\deploy.ps1 -Verify`
 
+---
+
 ## 与 cc-switch 的关系
 
 | | cc-switch | 本目录 |
@@ -180,6 +280,8 @@ powershell -ExecutionPolicy Bypass -File bootstrap\deploy.ps1 -DeployFree -Freel
 - 用 `deploy.ps1` 部署后 → 不要立刻在 cc-switch 里点切换，否则被覆写
 
 想把切换能力也搬进仓库（不再依赖 cc-switch）见 `docs/cc-switch-配置说明.md`。
+
+---
 
 ## 相关文档
 

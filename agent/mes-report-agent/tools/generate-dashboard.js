@@ -9,6 +9,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { OPTIONS } = require('./worklog-schema.js'); // 枚举唯一真源
 
 const WORKLOG = path.join(__dirname, '..', 'data', 'worklog');
 const LOGS_DIR = path.join(WORKLOG, 'logs');
@@ -56,7 +57,7 @@ const wStartStr = wStart.getFullYear() + '-' + p2(wStart.getMonth() + 1) + '-' +
 const weekLogs = logs.filter(l => (l['记录日期'] || '') >= wStartStr && (l['记录日期'] || '') <= today);
 
 // ① 各项目健康度（任务池）
-const PROJECTS = ['三厂小簧sMES', '一厂大簧sMES', '二厂大簧sMES', '重庆sMES项目', '实验室Lims项目', '无锡泽根sMES项目', '华纬其它项目'];
+const PROJECTS = OPTIONS.projects; // 顺序即图表项目序，取自契约
 function health() {
   const rows = PROJECTS.map(proj => {
     const ts = tasks.filter(t => t['对应项目'] === proj);
@@ -73,7 +74,7 @@ function health() {
 // ② P1-P4 未闭环分布
 function priDist() {
   const open = tasks.filter(t => !done(t));
-  return ['P1', 'P2', 'P3', 'P4'].map(p => ({ name: p, value: open.filter(t => t['优先级'] === p).length }));
+  return OPTIONS.priority.map(p => ({ name: p, value: open.filter(t => t['优先级'] === p).length }));
 }
 
 // ③ 业务模块工作分布（日志业务模块字段）
@@ -99,7 +100,13 @@ function monthlyTrend() {
 
 // ⑤ 项目×状态堆叠
 function projStatus() {
+  // 顺序**即渲染下标**：下方堆叠图按 data[0]=进行中 / data[1]=待启动 / data[2]=暂缓 / data[3]=已闭环 取用
+  // （见本文件 ⑤ 图的 series 定义）。所以不能直接 = OPTIONS.taskStatus（契约序是 待启动,进行中,暂缓,已闭环），
+  // 那会让图例与柱子错位。改为：显示序本地声明 + 集合必须与契约一致，漂移时立刻失败而非静默出错图表。
   const sts = ['进行中', '待启动', '暂缓', '已闭环'];
+  if (sts.length !== OPTIONS.taskStatus.length || !sts.every(s => OPTIONS.taskStatus.includes(s))) {
+    throw new Error('任务状态显示序与契约 OPTIONS.taskStatus 不一致（顺序即渲染下标，新增状态须同时改图表 series），请同步');
+  }
   const rows = PROJECTS.map(proj => {
     const ts = tasks.filter(t => t['对应项目'] === proj);
     if (!ts.length) return null;
@@ -299,7 +306,7 @@ ch5.setOption({
 // ⑥ 本周重点待协调（按项目归集，组内按优先级→截止日期）
 var coordEl = document.getElementById('coord');
 function escH(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-var PRI_RANK = { P1:0, P2:1, P3:2, P4:3 };
+var PRI_RANK = ${JSON.stringify(Object.fromEntries(OPTIONS.priority.map((p, i) => [p, i])))}; // 由契约顺序派生（纯位置排名，顺序即语义）
 function needCoordHtml(){
   if (DATA.needCoord.length === 0) return '<li class="sub">无待协调事项</li>';
   // 组内排序：P1→P4，再到截止日期（早→晚，无期在后）

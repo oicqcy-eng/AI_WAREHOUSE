@@ -19,7 +19,7 @@
 | tools/ | 报表查询 / 图表生成 / 文档导出脚本 |
 | workflow/ | 汇报生成流程定义 |
 | data/ | 汇报数据字典 / 样例 / 数据治理成果 |
-| evaluation/ | 汇报质量测试集 / 标准答案 |
+| evaluation/ | worklog 契约测试基线 + 回归测试（run-tests.js + test-cases.json） |
 | runbooks/ | 使用 / 维护 / 故障手册 |
 
 ## 数据资产（data/）
@@ -41,7 +41,7 @@
 ```
 输入「生成2026年第XX周MES项目周报」
    ↓ ① 数据提取（本地权威源）
-tools/export-range.js 2026-08-03 2026-08-09   （或 weekly-extract.js 预分组）
+tools/export-range.js 2026-08-03 2026-08-09
    ↓ 输出：区间日志 + 任务池全量 + P1/P2 未闭环风险
    ↓ ② AI 润色成稿（读素材 + prompt/weekly-report-v1.md）
 输出：全项目汇总 或 单项目周报（本周完成/核心问题及风险/待办事项/下周重点计划）
@@ -50,7 +50,6 @@ tools/export-range.js 2026-08-03 2026-08-09   （或 weekly-extract.js 预分组
 | 文件 | 作用 |
 |------|------|
 | `tools/export-range.js` | 从本地 worklog 提取区间日志+任务池+风险（主数据流）|
-| `tools/weekly-extract.js` | 周次解析 + 四模块预分组（兼容保留，需 CSV 输入）|
 | `prompt/weekly-report-v1.md` | 周报生成 Prompt 模板（四模块 + 两种输出模式）|
 | `workflow/weekly-report-v1.md` | 周报生成闭环流程文档 + 样例验证 |
 
@@ -61,6 +60,17 @@ tools/export-range.js 2026-08-03 2026-08-09   （或 weekly-extract.js 预分组
 node agent/mes-report-agent/tools/export-range.js 2026-08-03 2026-08-09
 # 2. 把数据 + prompt/weekly-report-v1.md 交给 Claude 生成周报
 ```
+
+### 输出 IT管理部工单表（IT事项格式）
+
+把工作日志里的**日常处理新增事项**转成公司 IT管理部 ITIL 工单表格式，供复制黏贴、免二次登记：
+
+```bash
+node agent/mes-report-agent/tools/generate-hwit.js [输出路径]
+```
+
+模板原件在 `config/`，下拉规格 / ITIL 矩阵 / SLA / 工作台规则见 `runbooks/hwit-工单表生成.md`。
+**产物是消耗品**，黏贴后即作废；规则只沉淀在本 agent 内，**不进任何项目 `knowledge/`**。
 
 ### 输出 docx（WPS 打开用）
 

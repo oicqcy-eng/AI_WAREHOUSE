@@ -1,0 +1,127 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-09-12T01:00:00Z",
+  "schemaVersion": "worklog-schema-1.0.0",
+  "dataset": {
+    "logs": 488,
+    "tasks": 219,
+    "logFiles": 9
+  },
+  "contract": {
+    "options": {
+      "projects": 7,
+      "resultTypes": 8,
+      "modules": 11,
+      "stages": 6,
+      "priority": 4,
+      "taskStatus": 4,
+      "sources": 6,
+      "weekCat": 5,
+      "yesNo": 2
+    },
+    "requiredFields": {
+      "log": ["记录日期", "所属项目", "工作内容", "结果类型", "是否形成任务"],
+      "task": ["归集标题", "对应项目", "问题来源", "优先级"]
+    },
+    "validModes": ["warn", "strict"],
+    "defaultMode": "warn"
+  },
+  "data": {
+    "logs": {
+      "记录日期": {"present": 488, "empty": 0},
+      "所属项目": {"present": 488, "empty": 0},
+      "工作内容": {"present": 488, "empty": 0},
+      "结果类型": {"present": 434, "empty": 54},
+      "是否形成任务": {"present": 488, "empty": 0},
+      "业务模块": {"present": 433, "empty": 55},
+      "项目阶段": {"present": 432, "empty": 56},
+      "责任人": {"present": 487, "empty": 1},
+      "协作人": {"present": 91, "empty": 397},
+      "交付产出": {"present": 343, "empty": 131},
+      "关联任务": {"present": 20, "empty": 468},
+      "附件": {"present": 2, "empty": 486}
+    },
+    "tasks": {
+      "归集标题": {"present": 219, "empty": 0},
+      "对应项目": {"present": 219, "empty": 0},
+      "问题来源": {"present": 219, "empty": 0},
+      "优先级": {"present": 219, "empty": 0},
+      "发现日期": {"present": 219, "empty": 0},
+      "计划完成日期": {"present": 86, "empty": 133},
+      "实际闭环日期": {"present": 123, "empty": 96},
+      "任务状态": {"present": 219, "empty": 0},
+      "进度百分比": {"present": 151, "empty": 68},
+      "闭环判定标准": {"present": 217, "empty": 2},
+      "周报归集分类": {"present": 219, "empty": 0},
+      "协调资源需求": {"present": 74, "empty": 145},
+      "卡点&问题描述": {"present": 195, "empty": 24},
+      "附件": {"present": 1, "empty": 52}
+    }
+  },
+  "issues": {
+    "byLevel": {
+      "legacy": 172,
+      "error": 8,
+      "warn": 14,
+      "info": 8
+    },
+    "byClass": {
+      "enum": 118,
+      "id": 25,
+      "ref": 5,
+      "required": 54
+    },
+    "byField": {
+      "结果类型": 75,
+      "项目阶段": 41,
+      "业务模块": 27,
+      "_id": 25,
+      "关联任务": 5,
+      "所属项目": 19,
+      "问题来源": 5,
+      "对应项目": 4,
+      "周报归集分类": 1
+    }
+  },
+  "observations": {
+    "O1_问题来源": {
+      "status": "观察中",
+      "currentEnum": ["现场反馈", "系统异常", "用户需求", "会议决策", "领导要求", "审厂要求"],
+      "legacyValues": ["问题管制表", "用户投放"],
+      "triggerForStrict": [
+        "连续一个治理周期无新增未定义来源",
+        "历史 legacy 来源完成逐条归类",
+        "新增来源经业务确认",
+        "正式来源枚举覆盖率 ≥99%",
+        "剩余异常全部有明确处理规则"
+      ]
+    },
+    "O2_计划完成日期": {
+      "status": "不必填（观察）",
+      "emptyCount": 133,
+      "presentCount": 86,
+      "triggerForReEval": [
+        "实际业务证明：没有该字段严重影响任务管理",
+        "大量依赖该字段进行周报/逾期判断/任务排序/项目进度预测"
+      ]
+    }
+  },
+  "decisions": {
+    "frozen": ["C1_业务模块", "C2_项目阶段", "C3_所属项目", "C4_结果类型"],
+    "observation": ["O1_问题来源", "O2_计划完成日期"]
+  },
+  "nextSteps": {
+    "tier2Actions": [
+      "固化 baseline.json 作为回归基准",
+      "建立 enum-validation.json 测试用例",
+      "建立 task-search.json 测试用例",
+      "建立 worklog-append.json 测试用例"
+    ],
+    "deferred": [
+      "registry.js（工具规模起来后）",
+      "Vector DB（语料规模达到阈值后）",
+      "shared/mes-assets 大迁移（契约稳定后）",
+      "大规模目录重构（ROI 低，按需处理）"
+    ]
+  }
+}
